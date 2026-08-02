@@ -17692,7 +17692,7 @@ var historyField_ = /* @__PURE__ */ StateField.define({
     return new HistoryState(json.done.map(HistEvent.fromJSON), json.undone.map(HistEvent.fromJSON));
   }
 });
-function history(config = {}) {
+function history2(config = {}) {
   return [
     historyField_,
     historyConfig.of(config),
@@ -21969,7 +21969,7 @@ var basicSetup = /* @__PURE__ */ (() => [
   lineNumbers(),
   highlightActiveLineGutter(),
   highlightSpecialChars(),
-  history(),
+  history2(),
   foldGutter(),
   drawSelection(),
   dropCursor(),
@@ -25308,8 +25308,21 @@ var _tmpl$21 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-
 var _tmpl$22 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
 var _tmpl$23 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
 var _tmpl$24 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
-var LS_SOLVED_KEY = "bob_solved_chores";
-var LS_CODE_PREFIX = "bob_chore_code_";
+var LS_SOLVED_KEY = "bob05_solved_chores";
+var LS_CODE_PREFIX = "bob05_chore_code_";
+function routeExerciseId() {
+  const segments = location.pathname.replace(/\/+$/, "").split("/");
+  const slug = segments[segments.length - 1];
+  return getExercise(slug) ? slug : null;
+}
+var BASE_PATH = (() => {
+  let p = location.pathname.replace(/\/+$/, "");
+  if (routeExerciseId())
+    p = p.slice(0, p.lastIndexOf("/"));
+  return p;
+})();
+var homeUrl = () => BASE_PATH + "/";
+var exerciseUrl = (id2) => `${BASE_PATH}/${id2}`;
 var svgCache = new Map;
 var svgSignals = new Map;
 function getIconUrl(name2, color = "e7e5e4", size = 24) {
@@ -25935,12 +25948,20 @@ function HomeScreen(props) {
   })();
 }
 function App() {
-  const [screen, setScreen] = createSignal("home");
-  const [currentId, setCurrentId] = createSignal(null);
+  const [currentId, setCurrentId] = createSignal(routeExerciseId());
   const [solved, setSolved] = createSignal(loadSolved());
   const [pyodideState, setPyodideState] = createSignal("loading");
   const [pyodideText, setPyodideText] = createSignal("Waking up Bob's robot helper...");
   const currentExercise = createMemo(() => getExercise(currentId()));
+  onMount(() => {
+    if (currentId()) {
+      history.replaceState(null, "", homeUrl());
+      history.pushState(null, "", exerciseUrl(currentId()));
+    }
+    const onPopState = () => setCurrentId(routeExerciseId());
+    window.addEventListener("popstate", onPopState);
+    onCleanup(() => window.removeEventListener("popstate", onPopState));
+  });
   onMount(async () => {
     try {
       await initBob((state, text) => {
@@ -25954,8 +25975,12 @@ function App() {
     }
   });
   const pickExercise = (id2) => {
+    history.pushState(null, "", exerciseUrl(id2));
     setCurrentId(id2);
-    setScreen("practice");
+  };
+  const goHome = () => {
+    history.pushState(null, "", homeUrl());
+    setCurrentId(null);
   };
   const markSolved = (id2) => {
     const next = new Set(solved());
@@ -25971,14 +25996,14 @@ function App() {
     if (next) {
       pickExercise(next.id);
     } else {
-      setScreen("home");
+      goHome();
     }
   };
   return (() => {
     var _el$115 = _tmpl$24(), _el$116 = _el$115.firstChild, _el$117 = _el$116.firstChild, _el$118 = _el$117.nextSibling;
     insert(_el$115, createComponent(Show, {
       get when() {
-        return memo(() => screen() === "practice")() ? currentExercise() : null;
+        return currentExercise();
       },
       keyed: true,
       get fallback() {
@@ -25991,7 +26016,7 @@ function App() {
         exercise: ex,
         solved,
         pyodideState,
-        onBack: () => setScreen("home"),
+        onBack: goHome,
         onSolved: markSolved,
         onNext: nextChore
       })

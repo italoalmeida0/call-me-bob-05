@@ -17,9 +17,29 @@ import { Prec } from "@codemirror/state";
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
 import { initBob, grade, formatPython } from "./grader.js";
 
-const LS_SOLVED_KEY = "bob_solved_chores";
-const LS_CODE_PREFIX = "bob_chore_code_";
+const LS_SOLVED_KEY = "bob05_solved_chores";
+const LS_CODE_PREFIX = "bob05_chore_code_";
 const REPO_URL = "https://github.com/italoalmeida0/call-me-bob-05";
+
+// ==========================================
+// ROUTING (history-aware SPA on GitHub Pages)
+// The build clones dist/ into dist/<exercise-id>/ so every chore has a real
+// URL; here we map the URL back to state and drive the browser history.
+// ==========================================
+function routeExerciseId() {
+  const segments = location.pathname.replace(/\/+$/, "").split("/");
+  const slug = segments[segments.length - 1];
+  return getExercise(slug) ? slug : null;
+}
+
+const BASE_PATH = (() => {
+  let p = location.pathname.replace(/\/+$/, "");
+  if (routeExerciseId()) p = p.slice(0, p.lastIndexOf("/"));
+  return p;
+})();
+
+const homeUrl = () => BASE_PATH + "/";
+const exerciseUrl = (id) => `${BASE_PATH}/${id}`;
 
 // ==========================================
 // ICON SYSTEM (iconify)
@@ -600,8 +620,8 @@ function HomeScreen(props) {
           </div>
           <p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">
             Bob has a to-do list. You have Python. Help Bob tally his crates,
-            book the barns, plant the coil garden and untangle his chore wheel
-            — one chore at a time, right in your browser.
+            book the barns, plant the coil garden and untangle his chore wheel —
+            one chore at a time, right in your browser.
           </p>
           <a
             href={REPO_URL}
@@ -705,8 +725,7 @@ function HomeScreen(props) {
 // APP
 // ==========================================
 function App() {
-  const [screen, setScreen] = createSignal("home");
-  const [currentId, setCurrentId] = createSignal(null);
+  const [currentId, setCurrentId] = createSignal(routeExerciseId());
   const [solved, setSolved] = createSignal(loadSolved());
   const [pyodideState, setPyodideState] = createSignal("loading");
   const [pyodideText, setPyodideText] = createSignal(
@@ -714,6 +733,18 @@ function App() {
   );
 
   const currentExercise = createMemo(() => getExercise(currentId()));
+
+  onMount(() => {
+    // Opened via a direct chore link (F5 / shared URL): slip Home underneath
+    // in history so the browser Back button stays inside the site.
+    if (currentId()) {
+      history.replaceState(null, "", homeUrl());
+      history.pushState(null, "", exerciseUrl(currentId()));
+    }
+    const onPopState = () => setCurrentId(routeExerciseId());
+    window.addEventListener("popstate", onPopState);
+    onCleanup(() => window.removeEventListener("popstate", onPopState));
+  });
 
   onMount(async () => {
     try {
@@ -729,8 +760,13 @@ function App() {
   });
 
   const pickExercise = (id) => {
+    history.pushState(null, "", exerciseUrl(id));
     setCurrentId(id);
-    setScreen("practice");
+  };
+
+  const goHome = () => {
+    history.pushState(null, "", homeUrl());
+    setCurrentId(null);
   };
 
   const markSolved = (id) => {
@@ -748,14 +784,14 @@ function App() {
     if (next) {
       pickExercise(next.id);
     } else {
-      setScreen("home");
+      goHome();
     }
   };
 
   return (
     <div class="h-full flex flex-col overflow-hidden">
       <Show
-        when={screen() === "practice" ? currentExercise() : null}
+        when={currentExercise()}
         keyed
         fallback={<HomeScreen solved={solved} onPick={pickExercise} />}
       >
@@ -764,7 +800,7 @@ function App() {
             exercise={ex}
             solved={solved}
             pyodideState={pyodideState}
-            onBack={() => setScreen("home")}
+            onBack={goHome}
             onSolved={markSolved}
             onNext={nextChore}
           />

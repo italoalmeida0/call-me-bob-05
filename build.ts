@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, rmSync } from "fs";
+import { existsSync, mkdirSync, rmSync, cpSync, readdirSync, statSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -31,6 +31,20 @@ async function build() {
       }
       process.exit(1);
     }
+
+    // GitHub Pages has no SPA fallback: clone the built site into
+    // dist/<exercise-id>/ so each chore URL (e.g. /call-me-bob-05/chore-wheel)
+    // serves a real page and survives F5. The app reads the slug from the URL.
+    const { EXERCISES } = await import(path.join(ROOT, "src", "exercises.js"));
+    const files = readdirSync(distDir).filter((f) =>
+      statSync(path.join(distDir, f)).isFile(),
+    );
+    for (const ex of EXERCISES) {
+      const dir = path.join(distDir, ex.id);
+      mkdirSync(dir, { recursive: true });
+      for (const f of files) cpSync(path.join(distDir, f), path.join(dir, f));
+    }
+    console.log(`Cloned site into ${EXERCISES.length} chore routes.`);
 
     console.log("Build completed successfully!");
   } catch (error) {
