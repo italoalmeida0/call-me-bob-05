@@ -114,7 +114,31 @@ function saveCode(ex, code) {
 const TWO_SPACES = "  ";
 
 function insertTwoSpaces(view) {
-  view.dispatch(view.state.replaceSelection(TWO_SPACES));
+  const { state } = view;
+  const hasSelection = state.selection.ranges.some((r) => !r.empty);
+
+  // Plain cursor: insert two spaces at the caret
+  if (!hasSelection) {
+    view.dispatch(state.replaceSelection(TWO_SPACES));
+    return true;
+  }
+
+  // With a selection: indent every selected line instead of replacing it
+  const changes = [];
+  const seen = new Set();
+  for (const range of state.selection.ranges) {
+    const first = state.doc.lineAt(range.from).number;
+    let last = state.doc.lineAt(range.to).number;
+    // A selection ending exactly at a line start doesn't include that line
+    if (range.to === state.doc.line(last).from) last -= 1;
+    for (let n = first; n <= last; n++) {
+      const from = state.doc.line(n).from;
+      if (seen.has(from)) continue;
+      seen.add(from);
+      changes.push({ from, insert: TWO_SPACES });
+    }
+  }
+  view.dispatch({ changes, userEvent: "input" });
   return true;
 }
 

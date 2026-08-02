@@ -25361,7 +25361,36 @@ function saveCode(ex, code2) {
 }
 var TWO_SPACES = "  ";
 function insertTwoSpaces(view) {
-  view.dispatch(view.state.replaceSelection(TWO_SPACES));
+  const {
+    state
+  } = view;
+  const hasSelection2 = state.selection.ranges.some((r) => !r.empty);
+  if (!hasSelection2) {
+    view.dispatch(state.replaceSelection(TWO_SPACES));
+    return true;
+  }
+  const changes = [];
+  const seen = new Set;
+  for (const range of state.selection.ranges) {
+    const first = state.doc.lineAt(range.from).number;
+    let last = state.doc.lineAt(range.to).number;
+    if (range.to === state.doc.line(last).from)
+      last -= 1;
+    for (let n = first;n <= last; n++) {
+      const from = state.doc.line(n).from;
+      if (seen.has(from))
+        continue;
+      seen.add(from);
+      changes.push({
+        from,
+        insert: TWO_SPACES
+      });
+    }
+  }
+  view.dispatch({
+    changes,
+    userEvent: "input"
+  });
   return true;
 }
 function removeTwoSpaces(view) {
