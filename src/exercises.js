@@ -23,7 +23,7 @@
 export const TIERS = [
   { tier: 1, label: "Day 1", subtitle: "Dock & Garden" },
   { tier: 2, label: "Day 2", subtitle: "Around the Village" },
-  { tier: 3, label: "Day 3", subtitle: "Big Brain Chores" },
+  { tier: 3, label: "Day 3", subtitle: "Loose Ends" },
 ];
 
 export const EXERCISES = [
@@ -149,71 +149,6 @@ export const EXERCISES = [
   // -----------------------------------------------------------------------
   // DAY 2
   // -----------------------------------------------------------------------
-  {
-    id: "chore-wheel",
-    tier: 2,
-    title: "The Chore Wheel",
-    tagline: "Bob's chore chart loops back on itself. Again.",
-    icon: "autorenew",
-    funcName: "has_chore_loop",
-    topics: ["Graph Cycle Detection", "DFS"],
-    stub: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:\n    pass\n",
-    story: [
-      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
-      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends.",
-    ],
-    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
-    rules: [
-      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
-      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
-      "A chore pointing to itself is a loop",
-      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
-      "The chart may have disconnected parts; a loop anywhere counts",
-      "An empty chart has no loop (return False)",
-    ],
-    examples: [
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
-        output: "False",
-        note: "a straight line: 1 -> 2 -> 3 -> done",
-      },
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
-        output: "True",
-        note: "1 -> 2 -> 3 -> 1 -> ...",
-      },
-      {
-        input: "has_chore_loop({1: [1]})",
-        output: "True",
-        note: "chore 1 points to itself",
-      },
-      {
-        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
-        output: "False",
-        note: "arrows may merge — only loops matter",
-      },
-      {
-        input: "has_chore_loop({})",
-        output: "False",
-      },
-    ],
-    tests: [
-      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
-      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
-      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
-      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" },
-    ],
-  },
   {
     id: "barn-bookings",
     tier: 2,
@@ -348,12 +283,9 @@ export const EXERCISES = [
     ],
   },
 
-  // -----------------------------------------------------------------------
-  // DAY 3
-  // -----------------------------------------------------------------------
   {
     id: "signpost-repaint",
-    tier: 3,
+    tier: 2,
     title: "Signpost Repaint",
     tagline: "Turn one village sign into another, one letter at a time.",
     icon: "signpost",
@@ -412,6 +344,75 @@ export const EXERCISES = [
       { call: 'repaint_steps("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', args: '("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', expected: "5" },
       { call: 'repaint_steps("abc", "abc", [])', args: '("abc", "abc", [])', expected: "1" },
       { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" },
+    ],
+  },
+
+  // -----------------------------------------------------------------------
+  // DAY 3
+  // -----------------------------------------------------------------------
+  {
+    id: "chore-wheel",
+    tier: 3,
+    title: "The Chore Wheel",
+    tagline: "Bob's chore chart loops back on itself. Again.",
+    icon: "autorenew",
+    funcName: "has_chore_loop",
+    topics: ["Graph Cycle Detection", "DFS"],
+    stub: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:\n    pass\n",
+    story: [
+      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
+      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends.",
+    ],
+    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
+    rules: [
+      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
+      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
+      "A chore pointing to itself is a loop",
+      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
+      "The chart may have disconnected parts; a loop anywhere counts",
+      "An empty chart has no loop (return False)",
+    ],
+    examples: [
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
+        output: "False",
+        note: "a straight line: 1 -> 2 -> 3 -> done",
+      },
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
+        output: "True",
+        note: "1 -> 2 -> 3 -> 1 -> ...",
+      },
+      {
+        input: "has_chore_loop({1: [1]})",
+        output: "True",
+        note: "chore 1 points to itself",
+      },
+      {
+        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
+        output: "False",
+        note: "arrows may merge — only loops matter",
+      },
+      {
+        input: "has_chore_loop({})",
+        output: "False",
+      },
+    ],
+    tests: [
+      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
+      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
+      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
+      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" },
     ],
   },
 ];
