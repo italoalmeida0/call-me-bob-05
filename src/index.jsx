@@ -20,6 +20,11 @@ import { initBob, grade, formatPython } from "./grader.js";
 const LS_SOLVED_KEY = "bob05_solved_chores";
 const LS_CODE_PREFIX = "bob05_chore_code_";
 const REPO_URL = "https://github.com/italoalmeida0/call-me-bob-05";
+const PREV_SITE = {
+  label: "call-me-bob 04",
+  url: "https://italoalmeida0.github.io/call-me-bob-04/",
+};
+const NEXT_SITE = null;
 
 // ==========================================
 // ROUTING (history-aware SPA on GitHub Pages)
@@ -716,6 +721,32 @@ function HomeScreen(props) {
           No timers, no pressure. Bob grades with his little robot helper — it
           runs entirely in your browser.
         </p>
+
+        {/* Sibling to-do lists */}
+        <div class="flex items-center justify-center gap-2 pb-8">
+          <Show when={PREV_SITE}>
+            {(s) => (
+              <a
+                href={s().url}
+                class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"
+              >
+                <Icon name="arrow-back" color="a8a29e" size={14} />
+                <span>{s().label}</span>
+              </a>
+            )}
+          </Show>
+          <Show when={NEXT_SITE}>
+            {(s) => (
+              <a
+                href={s().url}
+                class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"
+              >
+                <span>{s().label}</span>
+                <Icon name="arrow-forward" color="a8a29e" size={14} />
+              </a>
+            )}
+          </Show>
+        </div>
       </div>
     </div>
   );

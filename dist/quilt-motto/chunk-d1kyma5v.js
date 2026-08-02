@@ -25303,13 +25303,19 @@ var _tmpl$16 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leadin
 var _tmpl$17 = /* @__PURE__ */ template(`<li class="flex items-start gap-2 text-sm text-[#d6d3d1]"><span class="text-amber-500 mt-0.5 shrink-0"></span><span>`);
 var _tmpl$18 = /* @__PURE__ */ template(`<div class="text-[11px] text-[#78716c] mt-1 italic">`);
 var _tmpl$19 = /* @__PURE__ */ template(`<div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2"><div class="text-[12px] font-mono text-sky-300 break-all"></div><div class="text-[12px] font-mono text-[#a8a29e] break-all"><span class=text-[#57534e]>→ `);
-var _tmpl$20 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.`);
+var _tmpl$20 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.</p><div class="flex items-center justify-center gap-2 pb-8">`);
 var _tmpl$21 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-baseline gap-2 mb-3"><h2 class="text-sm font-black uppercase tracking-widest text-amber-500"></h2><span class="text-xs text-[#57534e] font-semibold"></span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`);
 var _tmpl$22 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
 var _tmpl$23 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
-var _tmpl$24 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
+var _tmpl$24 = /* @__PURE__ */ template(`<a class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>`);
+var _tmpl$25 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
 var LS_SOLVED_KEY = "bob05_solved_chores";
 var LS_CODE_PREFIX = "bob05_chore_code_";
+var PREV_SITE = {
+  label: "call-me-bob 04",
+  url: "https://italoalmeida0.github.io/call-me-bob-04/"
+};
+var NEXT_SITE = null;
 function routeExerciseId() {
   const segments = location.pathname.replace(/\/+$/, "").split("/");
   const slug = segments[segments.length - 1];
@@ -25853,7 +25859,7 @@ function PracticeScreen(props) {
 function HomeScreen(props) {
   const solvedCount = () => EXERCISES.filter((e) => props.solved().has(e.id)).length;
   return (() => {
-    var _el$83 = _tmpl$20(), _el$84 = _el$83.firstChild, _el$85 = _el$84.firstChild, _el$86 = _el$85.firstChild, _el$87 = _el$86.nextSibling, _el$88 = _el$87.nextSibling, _el$89 = _el$88.firstChild, _el$90 = _el$88.nextSibling, _el$91 = _el$90.nextSibling, _el$92 = _el$91.firstChild, _el$93 = _el$91.nextSibling, _el$94 = _el$93.firstChild, _el$95 = _el$94.firstChild, _el$96 = _el$94.nextSibling, _el$97 = _el$96.firstChild, _el$99 = _el$97.nextSibling, _el$98 = _el$99.nextSibling, _el$100 = _el$85.nextSibling;
+    var _el$83 = _tmpl$20(), _el$84 = _el$83.firstChild, _el$85 = _el$84.firstChild, _el$86 = _el$85.firstChild, _el$87 = _el$86.nextSibling, _el$88 = _el$87.nextSibling, _el$89 = _el$88.firstChild, _el$90 = _el$88.nextSibling, _el$91 = _el$90.nextSibling, _el$92 = _el$91.firstChild, _el$93 = _el$91.nextSibling, _el$94 = _el$93.firstChild, _el$95 = _el$94.firstChild, _el$96 = _el$94.nextSibling, _el$97 = _el$96.firstChild, _el$99 = _el$97.nextSibling, _el$98 = _el$99.nextSibling, _el$100 = _el$85.nextSibling, _el$101 = _el$100.nextSibling;
     insert(_el$86, createComponent(Icon, {
       name: "smart-toy",
       color: "fbbf24",
@@ -25880,25 +25886,25 @@ function HomeScreen(props) {
             return tierExercises().length > 0;
           },
           get children() {
-            var _el$101 = _tmpl$21(), _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$103.nextSibling, _el$105 = _el$102.nextSibling;
-            insert(_el$103, () => tier.label);
-            insert(_el$104, () => tier.subtitle);
-            insert(_el$105, createComponent(For, {
+            var _el$102 = _tmpl$21(), _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.nextSibling, _el$106 = _el$103.nextSibling;
+            insert(_el$104, () => tier.label);
+            insert(_el$105, () => tier.subtitle);
+            insert(_el$106, createComponent(For, {
               get each() {
                 return tierExercises();
               },
               children: (ex) => (() => {
-                var _el$106 = _tmpl$23(), _el$107 = _el$106.firstChild, _el$108 = _el$107.nextSibling, _el$109 = _el$108.firstChild, _el$110 = _el$109.firstChild, _el$111 = _el$109.nextSibling, _el$113 = _el$108.nextSibling;
-                _el$106.$$click = () => props.onPick(ex.id);
-                insert(_el$107, createComponent(Icon, {
+                var _el$107 = _tmpl$23(), _el$108 = _el$107.firstChild, _el$109 = _el$108.nextSibling, _el$110 = _el$109.firstChild, _el$111 = _el$110.firstChild, _el$112 = _el$110.nextSibling, _el$114 = _el$109.nextSibling;
+                _el$107.$$click = () => props.onPick(ex.id);
+                insert(_el$108, createComponent(Icon, {
                   get name() {
                     return ex.icon;
                   },
                   color: "fbbf24",
                   size: 26
                 }));
-                insert(_el$110, () => ex.title);
-                insert(_el$109, createComponent(Show, {
+                insert(_el$111, () => ex.title);
+                insert(_el$110, createComponent(Show, {
                   get when() {
                     return props.solved().has(ex.id);
                   },
@@ -25910,39 +25916,67 @@ function HomeScreen(props) {
                     });
                   }
                 }), null);
-                insert(_el$111, () => ex.tagline);
-                insert(_el$108, createComponent(Show, {
+                insert(_el$112, () => ex.tagline);
+                insert(_el$109, createComponent(Show, {
                   get when() {
                     return ex.topics;
                   },
                   get children() {
-                    var _el$112 = _tmpl$22();
-                    insert(_el$112, createComponent(For, {
+                    var _el$113 = _tmpl$22();
+                    insert(_el$113, createComponent(For, {
                       get each() {
                         return ex.topics;
                       },
                       children: (topic) => (() => {
-                        var _el$114 = _tmpl$15();
-                        insert(_el$114, topic);
-                        return _el$114;
+                        var _el$115 = _tmpl$15();
+                        insert(_el$115, topic);
+                        return _el$115;
                       })()
                     }));
-                    return _el$112;
+                    return _el$113;
                   }
                 }), null);
-                insert(_el$113, createComponent(Icon, {
+                insert(_el$114, createComponent(Icon, {
                   name: "chevron-right",
                   color: "57534e",
                   size: 20
                 }));
-                return _el$106;
+                return _el$107;
               })()
             }));
-            return _el$101;
+            return _el$102;
           }
         });
       }
     }), _el$100);
+    insert(_el$101, createComponent(Show, {
+      when: PREV_SITE,
+      children: (s) => (() => {
+        var _el$116 = _tmpl$24(), _el$117 = _el$116.firstChild;
+        insert(_el$116, createComponent(Icon, {
+          name: "arrow-back",
+          color: "a8a29e",
+          size: 14
+        }), _el$117);
+        insert(_el$117, () => s().label);
+        createRenderEffect(() => setAttribute(_el$116, "href", s().url));
+        return _el$116;
+      })()
+    }), null);
+    insert(_el$101, createComponent(Show, {
+      when: NEXT_SITE,
+      children: (s) => (() => {
+        var _el$118 = _tmpl$24(), _el$119 = _el$118.firstChild;
+        insert(_el$119, () => s().label);
+        insert(_el$118, createComponent(Icon, {
+          name: "arrow-forward",
+          color: "a8a29e",
+          size: 14
+        }), null);
+        createRenderEffect(() => setAttribute(_el$118, "href", s().url));
+        return _el$118;
+      })()
+    }), null);
     createRenderEffect((_$p) => setStyleProperty(_el$95, "width", `${solvedCount() / EXERCISES.length * 100}%`));
     return _el$83;
   })();
@@ -26000,8 +26034,8 @@ function App() {
     }
   };
   return (() => {
-    var _el$115 = _tmpl$24(), _el$116 = _el$115.firstChild, _el$117 = _el$116.firstChild, _el$118 = _el$117.nextSibling;
-    insert(_el$115, createComponent(Show, {
+    var _el$120 = _tmpl$25(), _el$121 = _el$120.firstChild, _el$122 = _el$121.firstChild, _el$123 = _el$122.nextSibling;
+    insert(_el$120, createComponent(Show, {
       get when() {
         return currentExercise();
       },
@@ -26020,10 +26054,10 @@ function App() {
         onSolved: markSolved,
         onNext: nextChore
       })
-    }), _el$116);
-    insert(_el$118, pyodideText);
-    createRenderEffect(() => className(_el$117, `status-dot ${pyodideState()}`));
-    return _el$115;
+    }), _el$121);
+    insert(_el$123, pyodideText);
+    createRenderEffect(() => className(_el$122, `status-dot ${pyodideState()}`));
+    return _el$120;
   })();
 }
 render(() => createComponent(App, {}), document.getElementById("root"));
