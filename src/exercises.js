@@ -7,6 +7,7 @@
  *   title     story title
  *   tagline   one-line teaser for the card
  *   icon      material-symbols icon name
+ *   topics    study-topic chips shown under the title
  *   funcName  the main function the player must implement
  *   stub      starter code shown in the editor
  *   story     array of paragraphs (the subject, Bob-flavored)
@@ -37,6 +38,7 @@ export const EXERCISES = [
     tagline: "Bob tallies crates on the dock with a lazy shorthand.",
     icon: "inventory-2",
     funcName: "pack_tally",
+    topics: ["Run-Length Encoding", "String Parsing"],
     stub: "def pack_tally(tally: str) -> str:\n    pass\n\n\ndef unpack_tally(packed: str) -> str:\n    pass\n",
     story: [
       "Bob spends his mornings at the dock, counting delivery crates. Each crate is stamped with a letter, and the crates come off the boat in long runs of the same stamp: 'mmmaa', 'tttt', and so on.",
@@ -103,6 +105,7 @@ export const EXERCISES = [
     tagline: "How many barns does Bob need for the village workshops?",
     icon: "warehouse",
     funcName: "plan_barn_days",
+    topics: ["Meeting Rooms", "Greedy / Intervals"],
     stub: "def plan_barn_days(bookings: list[tuple[int, int]]) -> tuple[int, list]:\n    pass\n",
     story: [
       "The village fair is coming and every club wants to run a workshop in Bob's barns. Each request is a (start, end) time slot. Two workshops can't share a barn at the same time, but back-to-back is fine — if one ends at 5, the next can start at 5.",
@@ -165,6 +168,7 @@ export const EXERCISES = [
     tagline: "Bob plants his seedlings in a spiral. Don't ask why.",
     icon: "cyclone",
     funcName: "spiral_beds",
+    topics: ["Spiral Matrix", "Matrix Simulation"],
     stub: "def spiral_beds(n: int) -> list[list[int]]:\n    pass\n",
     story: [
       "Bob read in a gardening magazine that plants grow happier in a spiral. So he divided his square garden into n by n beds and started numbering them with a stick in the mud: bed 1 in the top-left corner, then walking right until the edge, down, left, up... coiling tighter and tighter until every bed has a number.",
@@ -220,6 +224,7 @@ export const EXERCISES = [
     tagline: "Find where grandma stitched her motto into the quilt.",
     icon: "texture",
     funcName: "find_motto",
+    topics: ["Word Search", "2D Grid Traversal"],
     stub: "def find_motto(quilt: list[str], motto: str) -> list[tuple[int, int, str]]:\n    pass\n",
     story: [
       "Grandma Bob stitched a quilt made of little lettered squares — a grid of characters. Family legend says she hid her favorite motto in it, embroidered in a straight line: across, down, or along one of the diagonals, in either direction.",
@@ -293,6 +298,7 @@ export const EXERCISES = [
     tagline: "Turn one village sign into another, one letter at a time.",
     icon: "signpost",
     funcName: "repaint_steps",
+    topics: ["Word Ladder", "BFS"],
     stub: "def repaint_steps(start: str, end: str, wordbook: list[str]) -> int:\n    pass\n",
     story: [
       "The village renamed its main street, and Bob must repaint the old signpost into the new one. Paint is expensive and the mayor is strict: Bob may only change ONE letter per day, and every intermediate word on the sign must be a real word from the village wordbook — no gibberish allowed, even overnight.",
@@ -355,6 +361,7 @@ export const EXERCISES = [
     tagline: "Bob's chore chart loops back on itself. Again.",
     icon: "autorenew",
     funcName: "has_chore_loop",
+    topics: ["Graph Cycle Detection", "DFS"],
     stub: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:\n    pass\n",
     story: [
       "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",

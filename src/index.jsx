@@ -20,6 +20,7 @@ import { initBob, grade } from "./grader.js";
 
 const LS_SOLVED_KEY = "bob_solved_chores";
 const LS_CODE_PREFIX = "bob_chore_code_";
+const REPO_URL = "https://github.com/italoalmeida0/call-me-bob-05";
 
 // ==========================================
 // ICON SYSTEM (iconify)
@@ -204,47 +205,50 @@ function PracticeScreen(props) {
 
   return (
     <div class="flex-1 flex flex-col overflow-hidden min-h-0">
-      {/* Practice header */}
-      <div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 flex items-center gap-2 shrink-0 flex-wrap">
-        <button
-          onClick={props.onBack}
-          class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors"
-        >
-          <Icon name="arrow-back" color="a8a29e" size={14} />
-          <span>Chores</span>
-        </button>
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center">
-            <Icon name={ex().icon} color="fbbf24" size={16} />
+      {/* Practice header — two rows on mobile, one row on sm+ */}
+      <div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+          <button
+            onClick={props.onBack}
+            class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0"
+          >
+            <Icon name="arrow-back" color="a8a29e" size={14} />
+            <span>Chores</span>
+          </button>
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center">
+              <Icon name={ex().icon} color="fbbf24" size={16} />
+            </div>
+            <span class="text-sm font-bold text-[#e7e5e4] truncate">
+              {ex().title}
+            </span>
+            <Show when={props.solved().has(ex().id)}>
+              <Icon name="star" color="fbbf24" size={16} />
+            </Show>
           </div>
-          <span class="text-sm font-bold text-[#e7e5e4] truncate">
-            {ex().title}
-          </span>
-          <Show when={props.solved().has(ex().id)}>
-            <Icon name="star" color="fbbf24" size={16} />
-          </Show>
         </div>
-        <span class="flex-1"></span>
-        <button
-          onClick={resetCode}
-          class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex"
-          title="Reset code to stub"
-        >
-          <Icon name="restart-alt" size={16} />
-        </button>
-        <button
-          onClick={runGrader}
-          disabled={gradeDisabled()}
-          class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
-          title={
-            props.pyodideState() !== "ready"
-              ? "Robot helper still waking up..."
-              : "Grade me! (Ctrl+Enter)"
-          }
-        >
-          <Icon name="smart-toy" color="1c1917" size={16} />
-          <span>{grading() ? "Grading..." : "Grade me!"}</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            onClick={resetCode}
+            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0"
+            title="Reset code to stub"
+          >
+            <Icon name="restart-alt" size={16} />
+          </button>
+          <button
+            onClick={runGrader}
+            disabled={gradeDisabled()}
+            class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
+            title={
+              props.pyodideState() !== "ready"
+                ? "Robot helper still waking up..."
+                : "Grade me! (Ctrl+Enter)"
+            }
+          >
+            <Icon name="smart-toy" color="1c1917" size={16} />
+            <span>{grading() ? "Grading..." : "Grade me!"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Body */}
@@ -353,9 +357,20 @@ function PracticeScreen(props) {
                     {TIERS[ex().tier - 1].subtitle}
                   </span>
                 </div>
-                <h2 class="text-xl font-black text-amber-400 mb-3">
+                <h2 class="text-xl font-black text-amber-400 mb-2">
                   {ex().title}
                 </h2>
+                <Show when={ex().topics}>
+                  <div class="flex flex-wrap gap-1.5 mb-3">
+                    <For each={ex().topics}>
+                      {(topic) => (
+                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">
+                          {topic}
+                        </span>
+                      )}
+                    </For>
+                  </div>
+                </Show>
 
                 <For each={ex().story}>
                   {(p) => (
@@ -499,6 +514,15 @@ function HomeScreen(props) {
             book the barns, plant the coil garden and untangle his chore wheel
             — one chore at a time, right in your browser.
           </p>
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"
+          >
+            <Icon name="star" color="fbbf24" size={14} />
+            <span>Liked it? Give Bob a star on GitHub</span>
+          </a>
           <div class="mt-5 flex items-center justify-center gap-3">
             <div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden">
               <div
@@ -550,6 +574,17 @@ function HomeScreen(props) {
                             <p class="text-sm text-[#a8a29e] mt-1">
                               {ex.tagline}
                             </p>
+                            <Show when={ex.topics}>
+                              <div class="flex flex-wrap gap-1.5 mt-2">
+                                <For each={ex.topics}>
+                                  {(topic) => (
+                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">
+                                      {topic}
+                                    </span>
+                                  )}
+                                </For>
+                              </div>
+                            </Show>
                           </div>
                           <div class="shrink-0 mt-1 text-[#57534e]">
                             <Icon
