@@ -18505,12 +18505,6 @@ var toggleTabFocusMode = (view) => {
   view.setTabFocusMode();
   return true;
 };
-var insertTab = ({ state, dispatch }) => {
-  if (state.selection.ranges.some((r) => !r.empty))
-    return indentMore({ state, dispatch });
-  dispatch(state.update(state.replaceSelection("\t"), { scrollIntoView: true, userEvent: "input" }));
-  return true;
-};
 var emacsStyleKeymap = [
   { key: "Ctrl-b", run: cursorCharLeft, shift: selectCharLeft, preventDefault: true },
   { key: "Ctrl-f", run: cursorCharRight, shift: selectCharRight },
@@ -25365,6 +25359,42 @@ function saveCode(ex, code2) {
     localStorage.setItem(LS_CODE_PREFIX + ex.id, code2);
   } catch (e) {}
 }
+var TWO_SPACES = "  ";
+function insertTwoSpaces(view) {
+  view.dispatch(view.state.replaceSelection(TWO_SPACES));
+  return true;
+}
+function removeTwoSpaces(view) {
+  const {
+    state
+  } = view;
+  const changes = [];
+  for (const range of state.selection.ranges) {
+    const first = state.doc.lineAt(range.from).number;
+    let last = state.doc.lineAt(range.to).number;
+    if (range.from !== range.to && range.to === state.doc.line(last).from) {
+      last -= 1;
+    }
+    for (let n = first;n <= last; n++) {
+      const line = state.doc.line(n);
+      let count = 0;
+      while (count < 2 && line.text[count] === " ")
+        count++;
+      if (count > 0)
+        changes.push({
+          from: line.from,
+          to: line.from + count
+        });
+    }
+  }
+  if (!changes.length)
+    return true;
+  view.dispatch({
+    changes,
+    userEvent: "delete"
+  });
+  return true;
+}
 function PracticeScreen(props) {
   const ex = () => props.exercise;
   const [grading, setGrading] = createSignal(false);
@@ -25379,10 +25409,10 @@ function PracticeScreen(props) {
       doc: loadCode(ex()),
       extensions: [basicSetup, keymap.of([{
         key: "Tab",
-        run: insertTab
+        run: insertTwoSpaces
       }, {
         key: "Shift-Tab",
-        run: indentLess
+        run: removeTwoSpaces
       }]), indentationMarkers(), python(), vscodeDark, Prec.highest(keymap.of([{
         key: "Mod-s",
         run: () => true

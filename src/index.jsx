@@ -12,7 +12,6 @@ import { basicSetup } from "codemirror";
 import { python } from "@codemirror/lang-python";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
-import { insertTab, indentLess } from "@codemirror/commands";
 import { Prec } from "@codemirror/state";
 
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
@@ -110,6 +109,38 @@ function saveCode(ex, code) {
 }
 
 // ==========================================
+// TAB = 2 SPACES (Bob's robot hates \t)
+// ==========================================
+const TWO_SPACES = "  ";
+
+function insertTwoSpaces(view) {
+  view.dispatch(view.state.replaceSelection(TWO_SPACES));
+  return true;
+}
+
+function removeTwoSpaces(view) {
+  const { state } = view;
+  const changes = [];
+  for (const range of state.selection.ranges) {
+    const first = state.doc.lineAt(range.from).number;
+    let last = state.doc.lineAt(range.to).number;
+    // A selection ending exactly at a line start doesn't include that line
+    if (range.from !== range.to && range.to === state.doc.line(last).from) {
+      last -= 1;
+    }
+    for (let n = first; n <= last; n++) {
+      const line = state.doc.line(n);
+      let count = 0;
+      while (count < 2 && line.text[count] === " ") count++;
+      if (count > 0) changes.push({ from: line.from, to: line.from + count });
+    }
+  }
+  if (!changes.length) return true;
+  view.dispatch({ changes, userEvent: "delete" });
+  return true;
+}
+
+// ==========================================
 // PRACTICE SCREEN
 // ==========================================
 function PracticeScreen(props) {
@@ -130,8 +161,8 @@ function PracticeScreen(props) {
       extensions: [
         basicSetup,
         keymap.of([
-          { key: "Tab", run: insertTab },
-          { key: "Shift-Tab", run: indentLess },
+          { key: "Tab", run: insertTwoSpaces },
+          { key: "Shift-Tab", run: removeTwoSpaces },
         ]),
         indentationMarkers(),
         python(),
