@@ -22,15 +22,15 @@ after) solving it.
 | Day | Chore | What Bob needs | Topics to study |
 |-----|-------|----------------|-----------------|
 | 1 | The Crate Ledger | Run-length encode a tally (`aabccca` → `a2bc3a`) and decode it back — two functions | Run-Length Encoding, String Parsing |
+| 1 | The Coil Garden | Fill an n×n matrix with 1..n² in a clockwise spiral | Spiral Matrix, Matrix Simulation |
+| 2 | The Chore Wheel | Detect a directed cycle in a chore graph | Graph Cycle Detection, DFS |
 | 2 | Barn Bookings | Minimum rooms for overlapping intervals, with the exact first-fit assignment | Meeting Rooms, Greedy / Intervals |
-| 2 | The Coil Garden | Fill an n×n matrix with 1..n² in a clockwise spiral | Spiral Matrix, Matrix Simulation |
-| 3 | Grandma's Quilt | Find a word in a letter grid across 8 directions, reporting position and direction | Word Search, 2D Grid Traversal |
-| 4 | Signpost Repaint | Shortest word chain changing one letter at a time through a dictionary | Word Ladder, BFS |
-| 4 | The Chore Wheel | Detect a directed cycle in a chore graph | Graph Cycle Detection, DFS |
+| 2 | Grandma's Quilt | Find a word in a letter grid across 8 directions, reporting position and direction | Word Search, 2D Grid Traversal |
+| 3 | Signpost Repaint | Shortest word chain changing one letter at a time through a dictionary | Word Ladder, BFS |
 
 ## How it works
 
-- 📝 **6 chores** across 4 days of Bob's week, each with a story-driven subject
+- 📝 **6 chores** across 3 days of Bob's week, each with a story-driven subject
 - 🐍 **Python editor** powered by CodeMirror 6 (syntax highlighting, indent guides)
 - 🤖 **In-browser grading** — tests run locally via [Pyodide](https://pyodide.org)
   (WebAssembly CPython), nothing ever leaves your machine

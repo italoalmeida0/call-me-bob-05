@@ -24763,10 +24763,9 @@ function indentationMarkers(config2 = {}) {
 
 // src/exercises.js
 var TIERS = [
-  { tier: 1, label: "Day 1", subtitle: "Dock Duty" },
-  { tier: 2, label: "Day 2", subtitle: "Village Logistics" },
-  { tier: 3, label: "Day 3", subtitle: "Craft Corner" },
-  { tier: 4, label: "Day 4", subtitle: "Big Brain Chores" }
+  { tier: 1, label: "Day 1", subtitle: "Dock & Garden" },
+  { tier: 2, label: "Day 2", subtitle: "Around the Village" },
+  { tier: 3, label: "Day 3", subtitle: "Big Brain Chores" }
 ];
 var EXERCISES = [
   {
@@ -24840,6 +24839,127 @@ def unpack_tally(packed: str) -> str:`,
     ]
   },
   {
+    id: "coil-garden",
+    tier: 1,
+    title: "The Coil Garden",
+    tagline: "Bob plants his seedlings in a spiral. Don't ask why.",
+    icon: "cyclone",
+    funcName: "spiral_beds",
+    topics: ["Spiral Matrix", "Matrix Simulation"],
+    stub: `def spiral_beds(n: int) -> list[list[int]]:
+    pass
+`,
+    story: [
+      "Bob read in a gardening magazine that plants grow happier in a spiral. So he divided his square garden into n by n beds and started numbering them with a stick in the mud: bed 1 in the top-left corner, then walking right until the edge, down, left, up... coiling tighter and tighter until every bed has a number.",
+      "Given the garden size n, return the map of bed numbers as a list of rows (each row a list of integers), so Bob can check his work from the porch."
+    ],
+    signature: "def spiral_beds(n: int) -> list[list[int]]:",
+    rules: [
+      "Return an n x n matrix filled with numbers 1 to n*n",
+      "Start at the top-left corner and spiral clockwise: right, down, left, up, repeat",
+      "The matrix is a list of n rows, each row a list of n integers",
+      "If n is 0 or negative, there is no garden — return an empty list"
+    ],
+    examples: [
+      {
+        input: "spiral_beds(3)",
+        output: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]",
+        note: "1 in the corner, coiling clockwise"
+      },
+      {
+        input: "spiral_beds(2)",
+        output: "[[1, 2], [4, 3]]"
+      },
+      {
+        input: "spiral_beds(1)",
+        output: "[[1]]"
+      },
+      {
+        input: "spiral_beds(0)",
+        output: "[]",
+        note: "no garden"
+      }
+    ],
+    tests: [
+      { call: "spiral_beds(0)", args: "(0,)", expected: "[]" },
+      { call: "spiral_beds(1)", args: "(1,)", expected: "[[1]]" },
+      { call: "spiral_beds(2)", args: "(2,)", expected: "[[1, 2], [4, 3]]" },
+      { call: "spiral_beds(3)", args: "(3,)", expected: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]" },
+      { call: "spiral_beds(4)", args: "(4,)", expected: "[[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]]" },
+      { call: "spiral_beds(5)", args: "(5,)", expected: "[[1, 2, 3, 4, 5], [16, 17, 18, 19, 6], [15, 24, 25, 20, 7], [14, 23, 22, 21, 8], [13, 12, 11, 10, 9]]" },
+      { call: "spiral_beds(6)", args: "(6,)", expected: "[[1, 2, 3, 4, 5, 6], [20, 21, 22, 23, 24, 7], [19, 32, 33, 34, 25, 8], [18, 31, 36, 35, 26, 9], [17, 30, 29, 28, 27, 10], [16, 15, 14, 13, 12, 11]]" },
+      { call: "spiral_beds(-3)", args: "(-3,)", expected: "[]" },
+      { call: "spiral_beds(7)", args: "(7,)", expected: "[[1, 2, 3, 4, 5, 6, 7], [24, 25, 26, 27, 28, 29, 8], [23, 40, 41, 42, 43, 30, 9], [22, 39, 48, 49, 44, 31, 10], [21, 38, 47, 46, 45, 32, 11], [20, 37, 36, 35, 34, 33, 12], [19, 18, 17, 16, 15, 14, 13]]" }
+    ]
+  },
+  {
+    id: "chore-wheel",
+    tier: 2,
+    title: "The Chore Wheel",
+    tagline: "Bob's chore chart loops back on itself. Again.",
+    icon: "autorenew",
+    funcName: "has_chore_loop",
+    topics: ["Graph Cycle Detection", "DFS"],
+    stub: `def has_chore_loop(chores: dict[int, list[int]]) -> bool:
+    pass
+`,
+    story: [
+      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
+      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends."
+    ],
+    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
+    rules: [
+      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
+      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
+      "A chore pointing to itself is a loop",
+      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
+      "The chart may have disconnected parts; a loop anywhere counts",
+      "An empty chart has no loop (return False)"
+    ],
+    examples: [
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
+        output: "False",
+        note: "a straight line: 1 -> 2 -> 3 -> done"
+      },
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
+        output: "True",
+        note: "1 -> 2 -> 3 -> 1 -> ..."
+      },
+      {
+        input: "has_chore_loop({1: [1]})",
+        output: "True",
+        note: "chore 1 points to itself"
+      },
+      {
+        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
+        output: "False",
+        note: "arrows may merge — only loops matter"
+      },
+      {
+        input: "has_chore_loop({})",
+        output: "False"
+      }
+    ],
+    tests: [
+      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
+      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
+      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
+      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" }
+    ]
+  },
+  {
     id: "barn-bookings",
     tier: 2,
     title: "Barn Bookings",
@@ -24905,62 +25025,8 @@ def unpack_tally(packed: str) -> str:`,
     ]
   },
   {
-    id: "coil-garden",
-    tier: 2,
-    title: "The Coil Garden",
-    tagline: "Bob plants his seedlings in a spiral. Don't ask why.",
-    icon: "cyclone",
-    funcName: "spiral_beds",
-    topics: ["Spiral Matrix", "Matrix Simulation"],
-    stub: `def spiral_beds(n: int) -> list[list[int]]:
-    pass
-`,
-    story: [
-      "Bob read in a gardening magazine that plants grow happier in a spiral. So he divided his square garden into n by n beds and started numbering them with a stick in the mud: bed 1 in the top-left corner, then walking right until the edge, down, left, up... coiling tighter and tighter until every bed has a number.",
-      "Given the garden size n, return the map of bed numbers as a list of rows (each row a list of integers), so Bob can check his work from the porch."
-    ],
-    signature: "def spiral_beds(n: int) -> list[list[int]]:",
-    rules: [
-      "Return an n x n matrix filled with numbers 1 to n*n",
-      "Start at the top-left corner and spiral clockwise: right, down, left, up, repeat",
-      "The matrix is a list of n rows, each row a list of n integers",
-      "If n is 0 or negative, there is no garden — return an empty list"
-    ],
-    examples: [
-      {
-        input: "spiral_beds(3)",
-        output: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]",
-        note: "1 in the corner, coiling clockwise"
-      },
-      {
-        input: "spiral_beds(2)",
-        output: "[[1, 2], [4, 3]]"
-      },
-      {
-        input: "spiral_beds(1)",
-        output: "[[1]]"
-      },
-      {
-        input: "spiral_beds(0)",
-        output: "[]",
-        note: "no garden"
-      }
-    ],
-    tests: [
-      { call: "spiral_beds(0)", args: "(0,)", expected: "[]" },
-      { call: "spiral_beds(1)", args: "(1,)", expected: "[[1]]" },
-      { call: "spiral_beds(2)", args: "(2,)", expected: "[[1, 2], [4, 3]]" },
-      { call: "spiral_beds(3)", args: "(3,)", expected: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]" },
-      { call: "spiral_beds(4)", args: "(4,)", expected: "[[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]]" },
-      { call: "spiral_beds(5)", args: "(5,)", expected: "[[1, 2, 3, 4, 5], [16, 17, 18, 19, 6], [15, 24, 25, 20, 7], [14, 23, 22, 21, 8], [13, 12, 11, 10, 9]]" },
-      { call: "spiral_beds(6)", args: "(6,)", expected: "[[1, 2, 3, 4, 5, 6], [20, 21, 22, 23, 24, 7], [19, 32, 33, 34, 25, 8], [18, 31, 36, 35, 26, 9], [17, 30, 29, 28, 27, 10], [16, 15, 14, 13, 12, 11]]" },
-      { call: "spiral_beds(-3)", args: "(-3,)", expected: "[]" },
-      { call: "spiral_beds(7)", args: "(7,)", expected: "[[1, 2, 3, 4, 5, 6, 7], [24, 25, 26, 27, 28, 29, 8], [23, 40, 41, 42, 43, 30, 9], [22, 39, 48, 49, 44, 31, 10], [21, 38, 47, 46, 45, 32, 11], [20, 37, 36, 35, 34, 33, 12], [19, 18, 17, 16, 15, 14, 13]]" }
-    ]
-  },
-  {
     id: "quilt-motto",
-    tier: 3,
+    tier: 2,
     title: "Grandma's Quilt",
     tagline: "Find where grandma stitched her motto into the quilt.",
     icon: "texture",
@@ -25032,7 +25098,7 @@ def unpack_tally(packed: str) -> str:`,
   },
   {
     id: "signpost-repaint",
-    tier: 4,
+    tier: 3,
     title: "Signpost Repaint",
     tagline: "Turn one village sign into another, one letter at a time.",
     icon: "signpost",
@@ -25093,73 +25159,6 @@ def unpack_tally(packed: str) -> str:`,
       { call: 'repaint_steps("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', args: '("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', expected: "5" },
       { call: 'repaint_steps("abc", "abc", [])', args: '("abc", "abc", [])', expected: "1" },
       { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" }
-    ]
-  },
-  {
-    id: "chore-wheel",
-    tier: 4,
-    title: "The Chore Wheel",
-    tagline: "Bob's chore chart loops back on itself. Again.",
-    icon: "autorenew",
-    funcName: "has_chore_loop",
-    topics: ["Graph Cycle Detection", "DFS"],
-    stub: `def has_chore_loop(chores: dict[int, list[int]]) -> bool:
-    pass
-`,
-    story: [
-      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
-      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends."
-    ],
-    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
-    rules: [
-      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
-      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
-      "A chore pointing to itself is a loop",
-      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
-      "The chart may have disconnected parts; a loop anywhere counts",
-      "An empty chart has no loop (return False)"
-    ],
-    examples: [
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
-        output: "False",
-        note: "a straight line: 1 -> 2 -> 3 -> done"
-      },
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
-        output: "True",
-        note: "1 -> 2 -> 3 -> 1 -> ..."
-      },
-      {
-        input: "has_chore_loop({1: [1]})",
-        output: "True",
-        note: "chore 1 points to itself"
-      },
-      {
-        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
-        output: "False",
-        note: "arrows may merge — only loops matter"
-      },
-      {
-        input: "has_chore_loop({})",
-        output: "False"
-      }
-    ],
-    tests: [
-      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
-      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
-      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
-      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" }
     ]
   }
 ];
