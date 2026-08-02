@@ -1,0 +1,181 @@
+:root {
+  --color-base-100: #131110;
+  --color-base-200: #1c1917;
+  --color-base-300: #292524;
+  --color-text-main: #e7e5e4;
+  --color-text-muted: #a8a29e;
+  --color-text-disabled: #57534e;
+  --color-primary: #d97706;
+  --color-primary-hover: #f59e0b;
+  --color-border-subtle: #292524;
+  --fullh: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --fullh: 100dvh;
+  }
+}
+
+body {
+  background-color: var(--color-base-100);
+  color: var(--color-text-main);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  overscroll-behavior: none;
+}
+
+body,
+html {
+  height: var(--fullh);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #44403c;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #57534e;
+}
+
+button {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* CodeMirror 6 Custom Overrides */
+.cm-editor {
+  height: 100%;
+  width: 100%;
+  position: absolute !important;
+  border-radius: 0 0 12px 12px;
+}
+.cm-scroller {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  overflow: auto;
+}
+
+@media (max-width: 768px) {
+  .cm-scroller {
+    font-size: 13px;
+  }
+}
+
+/* Trace console */
+.trace-console {
+  background: #0c0a09;
+  border-top: 2px solid #292524;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  overflow-y: auto;
+}
+.trace-line-call {
+  color: #a8a29e;
+}
+.trace-line-call .test-num {
+  color: #57534e;
+  display: inline-block;
+  min-width: 52px;
+}
+.trace-line-result {
+  padding-left: 60px;
+  color: #78716c;
+}
+.trace-ok {
+  color: #4ade80;
+  font-weight: 700;
+}
+.trace-ko {
+  color: #f87171;
+  font-weight: 700;
+}
+.trace-error {
+  color: #fbbf24;
+  padding-left: 60px;
+}
+.trace-header {
+  color: #f59e0b;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.trace-pass {
+  color: #4ade80;
+  font-weight: 700;
+}
+.trace-fail {
+  color: #f87171;
+  font-weight: 700;
+}
+
+/* Status bar */
+.status-bar {
+  background: #1c1917;
+  border-top: 1px solid #292524;
+  font-size: 11px;
+  padding: 3px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.loading {
+  background-color: #fbbf24;
+  animation: bobpulse 1s infinite;
+}
+.status-dot.ready {
+  background-color: #4ade80;
+}
+.status-dot.error {
+  background-color: #f87171;
+}
+@keyframes bobpulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Playful card hover */
+.chore-card {
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.chore-card:hover {
+  transform: translateY(-3px) rotate(-0.5deg);
+}
+
+/* Success banner pop */
+@keyframes bobpop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.success-banner {
+  animation: bobpop 0.25s ease-out;
+}

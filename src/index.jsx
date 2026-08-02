@@ -1,0 +1,661 @@
+import {
+  createSignal,
+  createMemo,
+  Show,
+  For,
+  onMount,
+  onCleanup,
+} from "solid-js";
+import { render } from "solid-js/web";
+import { EditorView, keymap } from "@codemirror/view";
+import { basicSetup } from "codemirror";
+import { python } from "@codemirror/lang-python";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { indentationMarkers } from "@replit/codemirror-indentation-markers";
+import { insertTab, indentLess } from "@codemirror/commands";
+import { Prec } from "@codemirror/state";
+
+import { EXERCISES, TIERS, getExercise } from "./exercises.js";
+import { initBob, grade } from "./grader.js";
+
+const LS_SOLVED_KEY = "bob_solved_chores";
+const LS_CODE_PREFIX = "bob_chore_code_";
+
+// ==========================================
+// ICON SYSTEM (iconify)
+// ==========================================
+const svgCache = new Map();
+const svgSignals = new Map();
+
+function getIconUrl(name, color = "e7e5e4", size = 24) {
+  return `https://api.iconify.design/material-symbols/${name}.svg?color=%23${color}&height=${size}`;
+}
+
+function fetchIcon(name, color, size) {
+  const key = `${name}|${color}|${size}`;
+  if (svgCache.has(key)) return svgCache.get(key);
+  if (svgSignals.has(key)) return svgSignals.get(key);
+
+  const [svg, setSvg] = createSignal("");
+  svgSignals.set(key, svg);
+
+  fetch(getIconUrl(name, color, size))
+    .then((r) => r.text())
+    .then((text) => {
+      svgCache.set(key, text);
+      setSvg(text);
+      svgSignals.delete(key);
+    })
+    .catch(() => {});
+
+  return svg();
+}
+
+const Icon = (props) => {
+  const name = () => props.name;
+  const color = () => props.color || "e7e5e4";
+  const size = () => props.size || 24;
+  const key = () => `${name()}|${color()}|${size()}`;
+
+  const svgContent = createMemo(() => {
+    const k = key();
+    if (svgCache.has(k)) return svgCache.get(k);
+    fetchIcon(name(), color(), size());
+    const sig = svgSignals.get(k);
+    return sig ? sig() : "";
+  });
+
+  return (
+    <Show when={svgContent()}>
+      <div
+        innerHTML={svgContent()}
+        class={`inline-flex items-center justify-center ${props.class || ""}`}
+        style={{ width: `${size()}px`, height: `${size()}px` }}
+      />
+    </Show>
+  );
+};
+
+// ==========================================
+// PERSISTENCE
+// ==========================================
+function loadSolved() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(LS_SOLVED_KEY) || "[]"));
+  } catch (e) {
+    return new Set();
+  }
+}
+
+function saveSolved(solved) {
+  try {
+    localStorage.setItem(LS_SOLVED_KEY, JSON.stringify([...solved]));
+  } catch (e) {}
+}
+
+function loadCode(ex) {
+  try {
+    const saved = localStorage.getItem(LS_CODE_PREFIX + ex.id);
+    return saved !== null ? saved : ex.stub;
+  } catch (e) {
+    return ex.stub;
+  }
+}
+
+function saveCode(ex, code) {
+  try {
+    localStorage.setItem(LS_CODE_PREFIX + ex.id, code);
+  } catch (e) {}
+}
+
+// ==========================================
+// PRACTICE SCREEN
+// ==========================================
+function PracticeScreen(props) {
+  const ex = () => props.exercise;
+
+  const [grading, setGrading] = createSignal(false);
+  const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed }
+  const [leftTab, setLeftTab] = createSignal("note"); // "note" | "log"
+
+  let editorContainerRef;
+  let traceRef;
+  let cmView = null;
+  let saveTimeout = null;
+
+  onMount(() => {
+    cmView = new EditorView({
+      doc: loadCode(ex()),
+      extensions: [
+        basicSetup,
+        keymap.of([
+          { key: "Tab", run: insertTab },
+          { key: "Shift-Tab", run: indentLess },
+        ]),
+        indentationMarkers(),
+        python(),
+        vscodeDark,
+        Prec.highest(
+          keymap.of([
+            { key: "Mod-s", run: () => true },
+            {
+              key: "Mod-Enter",
+              run: () => {
+                runGrader();
+                return true;
+              },
+            },
+          ]),
+        ),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            const code = update.state.doc.toString();
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => saveCode(ex(), code), 2000);
+          }
+        }),
+      ],
+      parent: editorContainerRef,
+    });
+  });
+
+  onCleanup(() => {
+    if (cmView) cmView.destroy();
+    if (saveTimeout) clearTimeout(saveTimeout);
+  });
+
+  const runGrader = async () => {
+    if (grading() || props.pyodideState() !== "ready") return;
+    setGrading(true);
+    setTrace(null);
+    try {
+      const code = cmView.state.doc.toString();
+      const result = await grade(code, ex());
+      setTrace(result);
+      setLeftTab("log");
+      if (result.passed) {
+        props.onSolved(ex().id);
+      }
+    } catch (err) {
+      setTrace({ fatal: String(err && err.message ? err.message : err) });
+      setLeftTab("log");
+    } finally {
+      setGrading(false);
+      setTimeout(() => {
+        if (traceRef) traceRef.scrollTop = traceRef.scrollHeight;
+      }, 50);
+    }
+  };
+
+  const resetCode = () => {
+    if (
+      !confirm(
+        "Start this chore over? Your current code will be replaced by the stub.",
+      )
+    )
+      return;
+    cmView.dispatch({
+      changes: { from: 0, to: cmView.state.doc.length, insert: ex().stub },
+    });
+    setTrace(null);
+  };
+
+  const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
+
+  return (
+    <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+      {/* Practice header */}
+      <div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 flex items-center gap-2 shrink-0 flex-wrap">
+        <button
+          onClick={props.onBack}
+          class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors"
+        >
+          <Icon name="arrow-back" color="a8a29e" size={14} />
+          <span>Chores</span>
+        </button>
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center">
+            <Icon name={ex().icon} color="fbbf24" size={16} />
+          </div>
+          <span class="text-sm font-bold text-[#e7e5e4] truncate">
+            {ex().title}
+          </span>
+          <Show when={props.solved().has(ex().id)}>
+            <Icon name="star" color="fbbf24" size={16} />
+          </Show>
+        </div>
+        <span class="flex-1"></span>
+        <button
+          onClick={resetCode}
+          class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex"
+          title="Reset code to stub"
+        >
+          <Icon name="restart-alt" size={16} />
+        </button>
+        <button
+          onClick={runGrader}
+          disabled={gradeDisabled()}
+          class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
+          title={
+            props.pyodideState() !== "ready"
+              ? "Robot helper still waking up..."
+              : "Grade me! (Ctrl+Enter)"
+          }
+        >
+          <Icon name="smart-toy" color="1c1917" size={16} />
+          <span>{grading() ? "Grading..." : "Grade me!"}</span>
+        </button>
+      </div>
+
+      {/* Body */}
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+        {/* Left panel: subject / robot log tabs */}
+        <div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none">
+          {/* Tab content */}
+          <div class="flex-1 overflow-y-auto min-h-0">
+            <Show
+              when={leftTab() === "note"}
+              fallback={
+                <div ref={traceRef} class="px-4 py-3 font-mono text-[12px]">
+                  <Show
+                    when={trace()}
+                    fallback={
+                      <div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center">
+                        <div class="flex justify-center mb-2 opacity-50">
+                          <Icon name="smart-toy" color="57534e" size={32} />
+                        </div>
+                        No runs yet. Hit{" "}
+                        <span class="font-bold text-amber-500">Grade me!</span>{" "}
+                        and Bob's robot will check your code here.
+                      </div>
+                    }
+                  >
+                    {(t) => (
+                      <div>
+                        <Show when={t().fatal}>
+                          <div class="trace-header mb-1">===== oops =====</div>
+                          <div class="trace-fail">{t().fatal}</div>
+                          <div class="text-[#78716c] mt-1">
+                            Bob's robot couldn't even read your code. Fix it and
+                            hit Grade me! again.
+                          </div>
+                        </Show>
+                        <Show when={t().results}>
+                          <div class="trace-header mb-1">===== trace =====</div>
+                          <For each={t().results}>
+                            {(r, i) => (
+                              <div class="mb-1.5">
+                                <div class="trace-line-call">
+                                  <span class="test-num">Test {i() + 1}:</span>
+                                  {r.call}
+                                </div>
+                                <div class="trace-line-result">
+                                  expected: {r.expected} | got:{" "}
+                                  {r.got === null ? "—" : r.got} →{" "}
+                                  <span class={r.ok ? "trace-ok" : "trace-ko"}>
+                                    {r.ok ? "OK" : "KO"}
+                                  </span>
+                                </div>
+                                <Show when={r.error}>
+                                  <div class="trace-error">{r.error}</div>
+                                </Show>
+                              </div>
+                            )}
+                          </For>
+                          <div class="trace-header mt-2">=================</div>
+                          <Show
+                            when={t().passed}
+                            fallback={
+                              <div class="trace-fail mt-1">
+                                Not yet. Some tests failed — tweak your code and
+                                try again!
+                              </div>
+                            }
+                          >
+                            <div class="success-banner mt-3 mb-1 bg-emerald-900/40 border border-emerald-700 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap font-sans">
+                              <Icon
+                                name="celebration"
+                                color="4ade80"
+                                size={24}
+                              />
+                              <div class="flex-1 min-w-[180px]">
+                                <div class="text-emerald-300 font-extrabold text-sm">
+                                  Chore complete! Bob owes you one.
+                                </div>
+                                <div class="text-emerald-500/80 text-xs">
+                                  All {t().results.length} tests passed.
+                                </div>
+                              </div>
+                              <button
+                                onClick={props.onNext}
+                                class="flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"
+                              >
+                                <span>Next chore</span>
+                                <Icon
+                                  name="arrow-forward"
+                                  color="ffffff"
+                                  size={14}
+                                />
+                              </button>
+                            </div>
+                          </Show>
+                        </Show>
+                      </div>
+                    )}
+                  </Show>
+                </div>
+              }
+            >
+              <div class="px-5 py-4">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-[#57534e]">
+                    {TIERS[ex().tier - 1].label} ·{" "}
+                    {TIERS[ex().tier - 1].subtitle}
+                  </span>
+                </div>
+                <h2 class="text-xl font-black text-amber-400 mb-3">
+                  {ex().title}
+                </h2>
+
+                <For each={ex().story}>
+                  {(p) => (
+                    <p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">
+                      {p}
+                    </p>
+                  )}
+                </For>
+
+                <div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2 mb-4">
+                  <code class="text-[13px] text-emerald-400 font-mono break-all">
+                    {ex().signature}
+                  </code>
+                </div>
+
+                <h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">
+                  The rules
+                </h3>
+                <ul class="mb-5 space-y-1.5">
+                  <For each={ex().rules}>
+                    {(rule) => (
+                      <li class="flex items-start gap-2 text-sm text-[#d6d3d1]">
+                        <span class="text-amber-500 mt-0.5 shrink-0">
+                          <Icon name="check-small" color="f59e0b" size={16} />
+                        </span>
+                        <span>{rule}</span>
+                      </li>
+                    )}
+                  </For>
+                </ul>
+
+                <h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">
+                  Examples
+                </h3>
+                <div class="space-y-2 pb-2">
+                  <For each={ex().examples}>
+                    {(example) => (
+                      <div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2">
+                        <div class="text-[12px] font-mono text-sky-300 break-all">
+                          {example.input}
+                        </div>
+                        <div class="text-[12px] font-mono text-[#a8a29e] break-all">
+                          <span class="text-[#57534e]">→ </span>
+                          {example.output}
+                        </div>
+                        <Show when={example.note}>
+                          <div class="text-[11px] text-[#78716c] mt-1 italic">
+                            {example.note}
+                          </div>
+                        </Show>
+                      </div>
+                    )}
+                  </For>
+                </div>
+              </div>
+            </Show>
+          </div>
+
+          {/* Tab bar */}
+          <div class="shrink-0 flex border-t border-[#292524]">
+            <button
+              onClick={() => setLeftTab("note")}
+              class={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${
+                leftTab() === "note"
+                  ? "bg-[#0c0a09] text-amber-400 border-amber-500"
+                  : "text-[#78716c] hover:text-[#a8a29e] border-transparent"
+              }`}
+            >
+              <Icon
+                name="menu-book"
+                color={leftTab() === "note" ? "fbbf24" : "78716c"}
+                size={14}
+              />
+              <span>Bob's note</span>
+            </button>
+            <button
+              onClick={() => setLeftTab("log")}
+              class={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${
+                leftTab() === "log"
+                  ? "bg-[#0c0a09] text-amber-400 border-amber-500"
+                  : "text-[#78716c] hover:text-[#a8a29e] border-transparent"
+              }`}
+            >
+              <Icon
+                name="smart-toy"
+                color={leftTab() === "log" ? "fbbf24" : "78716c"}
+                size={14}
+              />
+              <span>Robot log</span>
+              <Show when={trace() && trace().results}>
+                <span
+                  class={`ml-1 px-1.5 py-0.5 rounded text-[10px] font-black ${
+                    trace().passed
+                      ? "bg-emerald-900/60 text-emerald-300"
+                      : "bg-red-900/60 text-red-300"
+                  }`}
+                >
+                  {trace().results.filter((r) => r.ok).length}/
+                  {trace().results.length}
+                </span>
+              </Show>
+            </button>
+          </div>
+        </div>
+
+        {/* Editor */}
+        <div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]">
+          <div ref={editorContainerRef} class="absolute inset-0"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// HOME SCREEN (chore list)
+// ==========================================
+function HomeScreen(props) {
+  const solvedCount = () =>
+    EXERCISES.filter((e) => props.solved().has(e.id)).length;
+
+  return (
+    <div class="flex-1 overflow-y-auto min-h-0">
+      <div class="max-w-4xl mx-auto px-5 py-8 md:py-12">
+        {/* Hero */}
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]">
+            <Icon name="smart-toy" color="fbbf24" size={44} />
+          </div>
+          <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">
+            call-me-<span class="text-amber-400">bob</span>
+          </h1>
+          <div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4">
+            <Icon name="checklist" color="f59e0b" size={14} />
+            <span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">
+              To-Do List #05
+            </span>
+          </div>
+          <p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Bob has a to-do list. You have Python. Help Bob tally his crates,
+            book the barns, plant the coil garden and untangle his chore wheel
+            — one chore at a time, right in your browser.
+          </p>
+          <div class="mt-5 flex items-center justify-center gap-3">
+            <div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden">
+              <div
+                class="h-full bg-amber-500 rounded-full transition-all duration-500"
+                style={{
+                  width: `${(solvedCount() / EXERCISES.length) * 100}%`,
+                }}
+              ></div>
+            </div>
+            <span class="text-xs font-bold text-[#78716c]">
+              {solvedCount()}/{EXERCISES.length} chores done
+            </span>
+          </div>
+        </div>
+
+        {/* Tiers */}
+        <For each={TIERS}>
+          {(tier) => {
+            const tierExercises = () =>
+              EXERCISES.filter((e) => e.tier === tier.tier);
+            return (
+              <Show when={tierExercises().length > 0}>
+                <div class="mb-8">
+                  <div class="flex items-baseline gap-2 mb-3">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-amber-500">
+                      {tier.label}
+                    </h2>
+                    <span class="text-xs text-[#57534e] font-semibold">
+                      {tier.subtitle}
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <For each={tierExercises()}>
+                      {(ex) => (
+                        <button
+                          onClick={() => props.onPick(ex.id)}
+                          class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"
+                        >
+                          <div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center">
+                            <Icon name={ex.icon} color="fbbf24" size={26} />
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                              <h3 class="font-bold text-white">{ex.title}</h3>
+                              <Show when={props.solved().has(ex.id)}>
+                                <Icon name="star" color="fbbf24" size={16} />
+                              </Show>
+                            </div>
+                            <p class="text-sm text-[#a8a29e] mt-1">
+                              {ex.tagline}
+                            </p>
+                          </div>
+                          <div class="shrink-0 mt-1 text-[#57534e]">
+                            <Icon
+                              name="chevron-right"
+                              color="57534e"
+                              size={20}
+                            />
+                          </div>
+                        </button>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              </Show>
+            );
+          }}
+        </For>
+
+        <p class="text-center text-xs text-[#57534e] pb-6">
+          No timers, no pressure. Bob grades with his little robot helper — it
+          runs entirely in your browser.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// APP
+// ==========================================
+function App() {
+  const [screen, setScreen] = createSignal("home");
+  const [currentId, setCurrentId] = createSignal(null);
+  const [solved, setSolved] = createSignal(loadSolved());
+  const [pyodideState, setPyodideState] = createSignal("loading");
+  const [pyodideText, setPyodideText] = createSignal(
+    "Waking up Bob's robot helper...",
+  );
+
+  const currentExercise = createMemo(() => getExercise(currentId()));
+
+  onMount(async () => {
+    try {
+      await initBob((state, text) => {
+        setPyodideState(state);
+        setPyodideText(text);
+      });
+    } catch (err) {
+      setPyodideState("error");
+      setPyodideText("Robot helper failed to load: " + err.message);
+      console.error("Pyodide loading error:", err);
+    }
+  });
+
+  const pickExercise = (id) => {
+    setCurrentId(id);
+    setScreen("practice");
+  };
+
+  const markSolved = (id) => {
+    const next = new Set(solved());
+    next.add(id);
+    setSolved(next);
+    saveSolved(next);
+  };
+
+  const nextChore = () => {
+    const idx = EXERCISES.findIndex((e) => e.id === currentId());
+    const unsolved = EXERCISES.slice(idx + 1).find((e) => !solved().has(e.id));
+    const fallback = EXERCISES.find((e) => !solved().has(e.id));
+    const next = unsolved || fallback;
+    if (next) {
+      pickExercise(next.id);
+    } else {
+      setScreen("home");
+    }
+  };
+
+  return (
+    <div class="h-full flex flex-col overflow-hidden">
+      <Show
+        when={screen() === "practice" ? currentExercise() : null}
+        keyed
+        fallback={<HomeScreen solved={solved} onPick={pickExercise} />}
+      >
+        {(ex) => (
+          <PracticeScreen
+            exercise={ex}
+            solved={solved}
+            pyodideState={pyodideState}
+            onBack={() => setScreen("home")}
+            onSolved={markSolved}
+            onNext={nextChore}
+          />
+        )}
+      </Show>
+
+      {/* Status bar */}
+      <div class="status-bar">
+        <span class={`status-dot ${pyodideState()}`}></span>
+        <span class="text-[#57534e]">{pyodideText()}</span>
+        <span class="flex-1"></span>
+        <span class="text-[#44403c]">call-me-bob 05</span>
+      </div>
+    </div>
+  );
+}
+
+render(() => <App />, document.getElementById("root"));
