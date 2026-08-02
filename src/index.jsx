@@ -15,7 +15,7 @@ import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { Prec } from "@codemirror/state";
 
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
-import { initBob, grade } from "./grader.js";
+import { initBob, grade, formatPython } from "./grader.js";
 
 const LS_SOLVED_KEY = "bob_solved_chores";
 const LS_CODE_PREFIX = "bob_chore_code_";
@@ -171,6 +171,7 @@ function PracticeScreen(props) {
   const ex = () => props.exercise;
 
   const [grading, setGrading] = createSignal(false);
+  const [formatting, setFormatting] = createSignal(false);
   const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed }
   const [leftTab, setLeftTab] = createSignal("note"); // "note" | "log"
 
@@ -256,6 +257,28 @@ function PracticeScreen(props) {
     setTrace(null);
   };
 
+  const formatCode = async () => {
+    if (formatting() || grading() || props.pyodideState() !== "ready") return;
+    setFormatting(true);
+    try {
+      const code = cmView.state.doc.toString();
+      const formatted = await formatPython(code);
+      if (formatted !== code) {
+        cmView.dispatch({
+          changes: { from: 0, to: cmView.state.doc.length, insert: formatted },
+          userEvent: "input",
+        });
+      }
+    } catch (err) {
+      setLeftTab("log");
+      setTrace({
+        fatal: "Black couldn't format this code: " + err.message,
+      });
+    } finally {
+      setFormatting(false);
+    }
+  };
+
   const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
 
   return (
@@ -289,6 +312,17 @@ function PracticeScreen(props) {
             title="Reset code to stub"
           >
             <Icon name="restart-alt" size={16} />
+          </button>
+          <button
+            onClick={formatCode}
+            disabled={formatting() || props.pyodideState() !== "ready"}
+            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0"
+            title="Format code with Black (downloads Black on first use)"
+          >
+            <Icon
+              name={formatting() ? "hourglass-top" : "auto-fix-high"}
+              size={16}
+            />
           </button>
           <button
             onClick={runGrader}

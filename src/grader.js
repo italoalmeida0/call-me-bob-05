@@ -110,3 +110,47 @@ export async function grade(code, exercise) {
   }));
   return { results, passed: results.every((r) => r.ok) };
 }
+// ==========================================
+// BLACK FORMATTER (via micropip, lazy-loaded)
+// ==========================================
+let blackPromise = null;
+
+async function ensureBlack(pyodide) {
+  if (!blackPromise) {
+    blackPromise = (async () => {
+      await pyodide.loadPackage("micropip");
+      await pyodide.runPythonAsync(
+        "import micropip\nawait micropip.install('black')",
+      );
+    })();
+    // If the download/install fails, allow a retry on the next click
+    blackPromise.catch(() => {
+      blackPromise = null;
+    });
+  }
+  return blackPromise;
+}
+
+/**
+ * Formats `code` with Black (installed on first use via micropip).
+ * Returns the formatted source, or the original text if nothing changed.
+ * Throws if Black can't parse the code or fails to install.
+ */
+export async function formatPython(code) {
+  const pyodide = pyodideInstance;
+  if (!pyodide) throw new Error("Grader not initialized");
+
+  await ensureBlack(pyodide);
+  pyodide.globals.set("__bob_fmt_src", code);
+  return pyodide.runPythonAsync(`
+import black as _bob_black
+
+def _bob_black_format(src):
+    try:
+        return _bob_black.format_str(src, mode=_bob_black.Mode())
+    except _bob_black.report.NothingChanged:
+        return src
+
+_bob_black_format(__bob_fmt_src)
+`);
+}
