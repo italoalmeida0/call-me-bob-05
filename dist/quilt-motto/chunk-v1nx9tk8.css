@@ -794,8 +794,12 @@
     white-space: pre-wrap;
   }
 
-  .text-\[\#1c1917\] {
-    color: #1c1917;
+  .text-\[\#022c22\] {
+    color: #022c22;
+  }
+
+  .text-\[\#451a03\] {
+    color: #451a03;
   }
 
   .text-\[\#44403c\] {
@@ -884,6 +888,16 @@
 
   .opacity-50 {
     opacity: .5;
+  }
+
+  .shadow-\[0_3px_0_\#0c0a09\] {
+    --tw-shadow: 0 3px 0 var(--tw-shadow-color, #0c0a09);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
+  .shadow-\[0_3px_0_\#065f46\] {
+    --tw-shadow: 0 3px 0 var(--tw-shadow-color, #065f46);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 
   .shadow-\[0_3px_0_\#92400e\] {

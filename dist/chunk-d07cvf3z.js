@@ -25426,7 +25426,7 @@ var _tmpl$ = /* @__PURE__ */ template(`<div>`);
 var _tmpl$2 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mb-3">`);
 var _tmpl$3 = /* @__PURE__ */ template(`<div class="px-5 py-4"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-[#57534e]"> · </span></div><h2 class="text-xl font-black text-amber-400 mb-2"></h2><div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2 mb-4"><code class="text-[13px] text-emerald-400 font-mono break-all"></code></div><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">The rules</h3><ul class="mb-5 space-y-1.5"></ul><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">Examples</h3><div class="space-y-2 pb-2">`);
 var _tmpl$4 = /* @__PURE__ */ template(`<span>/`);
-var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] transition-colors flex shrink-0"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
+var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
 var _tmpl$6 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
 var _tmpl$7 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
 var _tmpl$8 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
@@ -25786,6 +25786,7 @@ function PracticeScreen(props) {
     _el$1.$$click = resetCode;
     insert(_el$1, createComponent(Icon, {
       name: "restart-alt",
+      color: "a8a29e",
       size: 16
     }));
     _el$10.$$click = formatCode;
@@ -25793,6 +25794,7 @@ function PracticeScreen(props) {
       get name() {
         return formatting() ? "hourglass-top" : "auto-fix-high";
       },
+      color: "a8a29e",
       size: 16
     }));
     _el$11.$$click = runCode;
@@ -25800,13 +25802,13 @@ function PracticeScreen(props) {
       get name() {
         return running() ? "hourglass-top" : "play-arrow";
       },
-      color: "1c1917",
+      color: "022c22",
       size: 16
     }));
     _el$12.$$click = runGrader;
     insert(_el$12, createComponent(Icon, {
       name: "smart-toy",
-      color: "1c1917",
+      color: "451a03",
       size: 16
     }), _el$13);
     insert(_el$13, () => grading() ? "Grading..." : "Grade me!");

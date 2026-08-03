@@ -338,7 +338,7 @@ function PracticeScreen(props) {
         <div class="flex items-center gap-2 min-w-0 sm:flex-1">
           <button
             onClick={props.onBack}
-            class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0"
+            class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
           >
             <Icon name="arrow-back" color="a8a29e" size={14} />
             <span>Chores</span>
@@ -358,19 +358,20 @@ function PracticeScreen(props) {
         <div class="flex items-center gap-2">
           <button
             onClick={resetCode}
-            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0"
+            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
             title="Reset code to stub"
           >
-            <Icon name="restart-alt" size={16} />
+            <Icon name="restart-alt" color="a8a29e" size={16} />
           </button>
           <button
             onClick={formatCode}
             disabled={formatting() || props.pyodideState() !== "ready"}
-            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0"
+            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
             title="Format code with Black (downloads Black on first use)"
           >
             <Icon
               name={formatting() ? "hourglass-top" : "auto-fix-high"}
+              color="a8a29e"
               size={16}
             />
           </button>
@@ -379,26 +380,26 @@ function PracticeScreen(props) {
             disabled={
               running() || grading() || props.pyodideState() !== "ready"
             }
-            class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] transition-colors flex shrink-0"
+            class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"
             title="Run the script — print() output shows up in the robot log (15s limit)"
           >
             <Icon
               name={running() ? "hourglass-top" : "play-arrow"}
-              color="1c1917"
+              color="022c22"
               size={16}
             />
           </button>
           <button
             onClick={runGrader}
             disabled={gradeDisabled()}
-            class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
+            class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
             title={
               props.pyodideState() !== "ready"
                 ? "Robot helper still waking up..."
                 : "Grade me! (Ctrl+Enter)"
             }
           >
-            <Icon name="smart-toy" color="1c1917" size={16} />
+            <Icon name="smart-toy" color="451a03" size={16} />
             <span>{grading() ? "Grading..." : "Grade me!"}</span>
           </button>
         </div>
