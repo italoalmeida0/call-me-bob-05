@@ -24763,138 +24763,14 @@ function indentationMarkers(config2 = {}) {
 
 // src/exercises.js
 var TIERS = [
-  { tier: 1, label: "Day 1", subtitle: "Dock & Garden" },
-  { tier: 2, label: "Day 2", subtitle: "Around the Village" },
-  { tier: 3, label: "Day 3", subtitle: "Loose Ends" }
+  { tier: 1, label: "Day 1", subtitle: "Barns & Crates" },
+  { tier: 2, label: "Day 2", subtitle: "Wheels & Ledgers" },
+  { tier: 3, label: "Day 3", subtitle: "Gardens & Signs" }
 ];
 var EXERCISES = [
   {
-    id: "crate-ledger",
-    tier: 1,
-    title: "The Crate Ledger",
-    tagline: "Bob tallies crates on the dock with a lazy shorthand.",
-    icon: "inventory-2",
-    funcName: "pack_tally",
-    topics: ["Run-Length Encoding", "String Parsing"],
-    stub: `def pack_tally(tally: str) -> str:
-    pass
-
-
-def unpack_tally(packed: str) -> str:
-    pass
-`,
-    story: [
-      "Bob spends his mornings at the dock, counting delivery crates. Each crate is stamped with a letter, and the crates come off the boat in long runs of the same stamp: 'mmmaa', 'tttt', and so on.",
-      "Writing every letter by hand is killing him, so Bob invented a shorthand: a run of identical letters becomes the letter followed by how many times it repeats — but if the letter shows up only once, he skips the number (laziness above all). So 'mmmaa' turns into 'm3a2', and 'abc' stays 'abc'.",
-      "Now Bob needs two functions: one that packs his longhand tally into shorthand, and one that unpacks a shorthand string back into the full tally (the number after a letter can have several digits — a really big boat showed up once)."
-    ],
-    signature: `def pack_tally(tally: str) -> str:
-def unpack_tally(packed: str) -> str:`,
-    rules: [
-      "pack_tally replaces each run of identical letters with the letter plus the run length",
-      "The count is written only when the run has 2 or more letters",
-      "unpack_tally reads a letter followed by an optional number and repeats the letter that many times",
-      "A letter with no number after it unpacks to a single letter",
-      "Counts can be multi-digit ('m12' unpacks to twelve m's)",
-      "Tally strings given to pack_tally contain letters only, no digits",
-      "An empty string packs to an empty string, and vice versa",
-      "Letter case matters ('A' and 'a' are different stamps)"
-    ],
-    examples: [
-      { input: 'pack_tally("aabccca")', output: '"a2bc3a"' },
-      { input: 'pack_tally("abc")', output: '"abc"', note: "no runs longer than 1" },
-      { input: 'pack_tally("aaaaaaaaaa")', output: '"a10"', note: "ten a's — multi-digit count" },
-      { input: 'pack_tally("")', output: '""' },
-      { input: 'unpack_tally("a2bc3a")', output: '"aabccca"' },
-      { input: 'unpack_tally("a10b")', output: '"aaaaaaaaaab"' },
-      { input: 'unpack_tally("abc")', output: '"abc"' }
-    ],
-    tests: [
-      { call: 'pack_tally("aabccca")', args: '("aabccca",)', expected: '"a2bc3a"' },
-      { call: 'pack_tally("abc")', args: '("abc",)', expected: '"abc"' },
-      { call: 'pack_tally("")', args: '("",)', expected: '""' },
-      { call: 'pack_tally("aaaaaaaaaa")', args: '("aaaaaaaaaa",)', expected: '"a10"' },
-      { call: 'pack_tally("a")', args: '("a",)', expected: '"a"' },
-      { call: 'pack_tally("zzzzyyyyyx")', args: '("zzzzyyyyyx",)', expected: '"z4y5x"' },
-      { call: 'pack_tally("aaabaaa")', args: '("aaabaaa",)', expected: '"a3ba3"' },
-      { call: 'pack_tally("abbbbbc")', args: '("abbbbbc",)', expected: '"ab5c"' },
-      { call: 'pack_tally("mmmmmmmmmmmm")', args: '("mmmmmmmmmmmm",)', expected: '"m12"' },
-      { call: 'pack_tally("ababab")', args: '("ababab",)', expected: '"ababab"' },
-      { call: 'pack_tally("AaA")', args: '("AaA",)', expected: '"AaA"' },
-      { call: 'pack_tally("aabb")', args: '("aabb",)', expected: '"a2b2"' },
-      { call: 'pack_tally("aaabbc")', args: '("aaabbc",)', expected: '"a3b2c"' },
-      { call: 'pack_tally("aaaa")', args: '("aaaa",)', expected: '"a4"' },
-      { call: 'unpack_tally("a2bc3a")', args: '("a2bc3a",)', expected: '"aabccca"', func: "unpack_tally" },
-      { call: 'unpack_tally("abc")', args: '("abc",)', expected: '"abc"', func: "unpack_tally" },
-      { call: 'unpack_tally("")', args: '("",)', expected: '""', func: "unpack_tally" },
-      { call: 'unpack_tally("a10b")', args: '("a10b",)', expected: '"aaaaaaaaaab"', func: "unpack_tally" },
-      { call: 'unpack_tally("z4y5x")', args: '("z4y5x",)', expected: '"zzzzyyyyyx"', func: "unpack_tally" },
-      { call: 'unpack_tally("m12")', args: '("m12",)', expected: '"mmmmmmmmmmmm"', func: "unpack_tally" },
-      { call: 'unpack_tally("a1b1")', args: '("a1b1",)', expected: '"ab"', func: "unpack_tally" },
-      { call: 'unpack_tally("x2y")', args: '("x2y",)', expected: '"xxy"', func: "unpack_tally" },
-      { call: 'unpack_tally("a3ba3")', args: '("a3ba3",)', expected: '"aaabaaa"', func: "unpack_tally" },
-      { call: 'unpack_tally("q9")', args: '("q9",)', expected: '"qqqqqqqqq"', func: "unpack_tally" },
-      { call: 'unpack_tally("a3b2c")', args: '("a3b2c",)', expected: '"aaabbc"', func: "unpack_tally" },
-      { call: 'unpack_tally("a4")', args: '("a4",)', expected: '"aaaa"', func: "unpack_tally" }
-    ]
-  },
-  {
-    id: "coil-garden",
-    tier: 1,
-    title: "The Coil Garden",
-    tagline: "Bob plants his seedlings in a spiral. Don't ask why.",
-    icon: "cyclone",
-    funcName: "spiral_beds",
-    topics: ["Spiral Matrix", "Matrix Simulation"],
-    stub: `def spiral_beds(n: int) -> list[list[int]]:
-    pass
-`,
-    story: [
-      "Bob read in a gardening magazine that plants grow happier in a spiral. So he divided his square garden into n by n beds and started numbering them with a stick in the mud: bed 1 in the top-left corner, then walking right until the edge, down, left, up... coiling tighter and tighter until every bed has a number.",
-      "Given the garden size n, return the map of bed numbers as a list of rows (each row a list of integers), so Bob can check his work from the porch."
-    ],
-    signature: "def spiral_beds(n: int) -> list[list[int]]:",
-    rules: [
-      "Return an n x n matrix filled with numbers 1 to n*n",
-      "Start at the top-left corner and spiral clockwise: right, down, left, up, repeat",
-      "The matrix is a list of n rows, each row a list of n integers",
-      "If n is 0 or negative, there is no garden — return an empty list"
-    ],
-    examples: [
-      {
-        input: "spiral_beds(3)",
-        output: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]",
-        note: "1 in the corner, coiling clockwise"
-      },
-      {
-        input: "spiral_beds(2)",
-        output: "[[1, 2], [4, 3]]"
-      },
-      {
-        input: "spiral_beds(1)",
-        output: "[[1]]"
-      },
-      {
-        input: "spiral_beds(0)",
-        output: "[]",
-        note: "no garden"
-      }
-    ],
-    tests: [
-      { call: "spiral_beds(0)", args: "(0,)", expected: "[]" },
-      { call: "spiral_beds(1)", args: "(1,)", expected: "[[1]]" },
-      { call: "spiral_beds(2)", args: "(2,)", expected: "[[1, 2], [4, 3]]" },
-      { call: "spiral_beds(3)", args: "(3,)", expected: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]" },
-      { call: "spiral_beds(4)", args: "(4,)", expected: "[[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]]" },
-      { call: "spiral_beds(5)", args: "(5,)", expected: "[[1, 2, 3, 4, 5], [16, 17, 18, 19, 6], [15, 24, 25, 20, 7], [14, 23, 22, 21, 8], [13, 12, 11, 10, 9]]" },
-      { call: "spiral_beds(6)", args: "(6,)", expected: "[[1, 2, 3, 4, 5, 6], [20, 21, 22, 23, 24, 7], [19, 32, 33, 34, 25, 8], [18, 31, 36, 35, 26, 9], [17, 30, 29, 28, 27, 10], [16, 15, 14, 13, 12, 11]]" },
-      { call: "spiral_beds(-3)", args: "(-3,)", expected: "[]" },
-      { call: "spiral_beds(7)", args: "(7,)", expected: "[[1, 2, 3, 4, 5, 6, 7], [24, 25, 26, 27, 28, 29, 8], [23, 40, 41, 42, 43, 30, 9], [22, 39, 48, 49, 44, 31, 10], [21, 38, 47, 46, 45, 32, 11], [20, 37, 36, 35, 34, 33, 12], [19, 18, 17, 16, 15, 14, 13]]" }
-    ]
-  },
-  {
     id: "barn-bookings",
-    tier: 2,
+    tier: 1,
     title: "Barn Bookings",
     tagline: "How many barns does Bob need for the village workshops?",
     icon: "warehouse",
@@ -24958,8 +24834,261 @@ def unpack_tally(packed: str) -> str:`,
     ]
   },
   {
-    id: "quilt-motto",
+    id: "crate-rows",
+    tier: 1,
+    title: "The Crate Rows",
+    tagline: "Bob lines up the delivery crates in neat rows of n.",
+    icon: "table-rows",
+    funcName: "crate_rows",
+    topics: ["List Chunking", "Matrix Building"],
+    stub: `def crate_rows(items: list, n: int) -> list[list]:
+    pass
+`,
+    story: [
+      "Back at the dock, Bob unloads crates one by one and lines them up on the pier in rows of exactly n. When the boat runs out of crates in the middle of a row, he chalks the leftover slots as None so the row still counts n positions.",
+      "Given the crates in the order they come off the boat and the row size n, return the pier as a list of rows. And if n is zero or negative, Bob refuses to work — return an empty list."
+    ],
+    signature: "def crate_rows(items: list, n: int) -> list[list]:",
+    rules: [
+      "Split the items into rows of exactly n, keeping their original order",
+      "If the last row is short, fill the missing slots with None",
+      "If n is 0 or negative, return an empty list",
+      "An empty item list returns an empty list",
+      "The input list must not be modified"
+    ],
+    examples: [
+      {
+        input: "crate_rows([1, 2, 4, 5], 2)",
+        output: "[[1, 2], [4, 5]]"
+      },
+      {
+        input: 'crate_rows(["piscine", "42", "python", "code", "ai"], 3)',
+        output: "[['piscine', '42', 'python'], ['code', 'ai', None]]",
+        note: "the last row is padded with None"
+      },
+      {
+        input: "crate_rows([1, 2, 3], 0)",
+        output: "[]",
+        note: "no row size, no rows"
+      },
+      {
+        input: "crate_rows([], 4)",
+        output: "[]"
+      }
+    ],
+    tests: [
+      { call: "crate_rows([1, 2, 4, 5], 2)", args: "([1, 2, 4, 5], 2)", expected: "[[1, 2], [4, 5]]" },
+      { call: 'crate_rows(["piscine", "42", "python", "code", "ai"], 3)', args: "(['piscine', '42', 'python', 'code', 'ai'], 3)", expected: "[['piscine', '42', 'python'], ['code', 'ai', None]]" },
+      { call: "crate_rows([1, 2, 3], 0)", args: "([1, 2, 3], 0)", expected: "[]" },
+      { call: "crate_rows([7, 8, 9], -2)", args: "([7, 8, 9], -2)", expected: "[]" },
+      { call: "crate_rows([], 3)", args: "([], 3)", expected: "[]" },
+      { call: "crate_rows([1, 2, 3, 4], 4)", args: "([1, 2, 3, 4], 4)", expected: "[[1, 2, 3, 4]]" },
+      { call: "crate_rows([1, 2, 3, 4, 5], 1)", args: "([1, 2, 3, 4, 5], 1)", expected: "[[1], [2], [3], [4], [5]]" },
+      { call: 'crate_rows(["a", "b"], 5)', args: "(['a', 'b'], 5)", expected: "[['a', 'b', None, None, None]]" },
+      { call: "crate_rows([1, 2, 3, 4, 5, 6, 7], 3)", args: "([1, 2, 3, 4, 5, 6, 7], 3)", expected: "[[1, 2, 3], [4, 5, 6], [7, None, None]]" },
+      { call: 'crate_rows([1, "two", 3.5, True], 2)', args: "([1, 'two', 3.5, True], 2)", expected: "[[1, 'two'], [3.5, True]]" }
+    ]
+  },
+  {
+    id: "chore-wheel",
     tier: 2,
+    title: "The Chore Wheel",
+    tagline: "Bob's chore chart loops back on itself. Again.",
+    icon: "autorenew",
+    funcName: "has_chore_loop",
+    topics: ["Graph Cycle Detection", "DFS"],
+    stub: `def has_chore_loop(chores: dict[int, list[int]]) -> bool:
+    pass
+`,
+    story: [
+      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
+      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends."
+    ],
+    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
+    rules: [
+      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
+      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
+      "A chore pointing to itself is a loop",
+      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
+      "The chart may have disconnected parts; a loop anywhere counts",
+      "An empty chart has no loop (return False)"
+    ],
+    examples: [
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
+        output: "False",
+        note: "a straight line: 1 -> 2 -> 3 -> done"
+      },
+      {
+        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
+        output: "True",
+        note: "1 -> 2 -> 3 -> 1 -> ..."
+      },
+      {
+        input: "has_chore_loop({1: [1]})",
+        output: "True",
+        note: "chore 1 points to itself"
+      },
+      {
+        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
+        output: "False",
+        note: "arrows may merge — only loops matter"
+      },
+      {
+        input: "has_chore_loop({})",
+        output: "False"
+      }
+    ],
+    tests: [
+      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
+      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
+      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
+      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
+      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
+      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
+      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" }
+    ]
+  },
+  {
+    id: "crate-ledger",
+    tier: 2,
+    title: "The Crate Ledger",
+    tagline: "Bob tallies crates on the dock with a lazy shorthand.",
+    icon: "inventory-2",
+    funcName: "pack_tally",
+    topics: ["Run-Length Encoding", "String Parsing"],
+    stub: `def pack_tally(tally: str) -> str:
+    pass
+
+
+def unpack_tally(packed: str) -> str:
+    pass
+`,
+    story: [
+      "Bob spends his mornings at the dock, counting delivery crates. Each crate is stamped with a letter, and the crates come off the boat in long runs of the same stamp: 'mmmaa', 'tttt', and so on.",
+      "Writing every letter by hand is killing him, so Bob invented a shorthand: a run of identical letters becomes the letter followed by how many times it repeats — but if the letter shows up only once, he skips the number (laziness above all). So 'mmmaa' turns into 'm3a2', and 'abc' stays 'abc'.",
+      "One quirk: Bob's shorthand only knows single digits and he REFUSES to write a count bigger than 9 — a longer run is split into blocks of at most nine letters. So ten a's become 'a9a', and twenty become 'a9a9a2'.",
+      "Now Bob needs two functions: one that packs his longhand tally into shorthand, and one that unpacks a shorthand string back into the full tally."
+    ],
+    signature: `def pack_tally(tally: str) -> str:
+def unpack_tally(packed: str) -> str:`,
+    rules: [
+      "pack_tally replaces each run of identical letters with the letter plus the run length",
+      "The count is written only when the run has 2 or more letters",
+      "A count never goes above 9: longer runs are written as several blocks ('aaaaaaaaaa' packs to 'a9a')",
+      "unpack_tally reads a letter followed by an optional single digit and repeats the letter that many times",
+      "A letter with no number after it unpacks to a single letter",
+      "Tally strings given to pack_tally contain letters only, no digits",
+      "An empty string packs to an empty string, and vice versa",
+      "Letter case matters ('A' and 'a' are different stamps)"
+    ],
+    examples: [
+      { input: 'pack_tally("aabccca")', output: '"a2bc3a"' },
+      { input: 'pack_tally("abc")', output: '"abc"', note: "no runs longer than 1" },
+      { input: 'pack_tally("aaaaaaaaaa")', output: '"a9a"', note: "ten a's — blocks never go past 9" },
+      { input: 'pack_tally("aaaaaaaaaaaaaaaaaaaa")', output: '"a9a9a2"', note: "twenty a's: 9 + 9 + 2" },
+      { input: 'pack_tally("")', output: '""' },
+      { input: 'unpack_tally("a2bc3a")', output: '"aabccca"' },
+      { input: 'unpack_tally("a9ab")', output: '"aaaaaaaaaab"', note: "a9 plus a single a" },
+      { input: 'unpack_tally("abc")', output: '"abc"' }
+    ],
+    tests: [
+      { call: 'pack_tally("aabccca")', args: '("aabccca",)', expected: '"a2bc3a"' },
+      { call: 'pack_tally("abc")', args: '("abc",)', expected: '"abc"' },
+      { call: 'pack_tally("")', args: '("",)', expected: '""' },
+      { call: 'pack_tally("aaaaaaaaaa")', args: '("aaaaaaaaaa",)', expected: '"a9a"' },
+      { call: 'pack_tally("aaaaaaaaa")', args: '("aaaaaaaaa",)', expected: '"a9"' },
+      { call: 'pack_tally("aaaaaaaaaaaaaaaaaa")', args: '("aaaaaaaaaaaaaaaaaa",)', expected: '"a9a9"' },
+      { call: 'pack_tally("aaaaaaaaaaaaaaaaaaaa")', args: '("aaaaaaaaaaaaaaaaaaaa",)', expected: '"a9a9a2"' },
+      { call: 'pack_tally("a")', args: '("a",)', expected: '"a"' },
+      { call: 'pack_tally("zzzzyyyyyx")', args: '("zzzzyyyyyx",)', expected: '"z4y5x"' },
+      { call: 'pack_tally("aaabaaa")', args: '("aaabaaa",)', expected: '"a3ba3"' },
+      { call: 'pack_tally("abbbbbc")', args: '("abbbbbc",)', expected: '"ab5c"' },
+      { call: 'pack_tally("mmmmmmmmmmmm")', args: '("mmmmmmmmmmmm",)', expected: '"m9m3"' },
+      { call: 'pack_tally("ababab")', args: '("ababab",)', expected: '"ababab"' },
+      { call: 'pack_tally("AaA")', args: '("AaA",)', expected: '"AaA"' },
+      { call: 'pack_tally("aabb")', args: '("aabb",)', expected: '"a2b2"' },
+      { call: 'pack_tally("aaabbc")', args: '("aaabbc",)', expected: '"a3b2c"' },
+      { call: 'pack_tally("aaaa")', args: '("aaaa",)', expected: '"a4"' },
+      { call: 'unpack_tally("a2bc3a")', args: '("a2bc3a",)', expected: '"aabccca"', func: "unpack_tally" },
+      { call: 'unpack_tally("abc")', args: '("abc",)', expected: '"abc"', func: "unpack_tally" },
+      { call: 'unpack_tally("")', args: '("",)', expected: '""', func: "unpack_tally" },
+      { call: 'unpack_tally("a9ab")', args: '("a9ab",)', expected: '"aaaaaaaaaab"', func: "unpack_tally" },
+      { call: 'unpack_tally("a9a9a2")', args: '("a9a9a2",)', expected: '"aaaaaaaaaaaaaaaaaaaa"', func: "unpack_tally" },
+      { call: 'unpack_tally("z4y5x")', args: '("z4y5x",)', expected: '"zzzzyyyyyx"', func: "unpack_tally" },
+      { call: 'unpack_tally("m9m3")', args: '("m9m3",)', expected: '"mmmmmmmmmmmm"', func: "unpack_tally" },
+      { call: 'unpack_tally("a1b1")', args: '("a1b1",)', expected: '"ab"', func: "unpack_tally" },
+      { call: 'unpack_tally("x2y")', args: '("x2y",)', expected: '"xxy"', func: "unpack_tally" },
+      { call: 'unpack_tally("a3ba3")', args: '("a3ba3",)', expected: '"aaabaaa"', func: "unpack_tally" },
+      { call: 'unpack_tally("q9")', args: '("q9",)', expected: '"qqqqqqqqq"', func: "unpack_tally" },
+      { call: 'unpack_tally("a3b2c")', args: '("a3b2c",)', expected: '"aaabbc"', func: "unpack_tally" },
+      { call: 'unpack_tally("a4")', args: '("a4",)', expected: '"aaaa"', func: "unpack_tally" }
+    ]
+  },
+  {
+    id: "coil-garden",
+    tier: 3,
+    title: "The Coil Garden",
+    tagline: "Bob plants his seedlings in a spiral. Don't ask why.",
+    icon: "cyclone",
+    funcName: "spiral_beds",
+    topics: ["Spiral Matrix", "Matrix Simulation"],
+    stub: `def spiral_beds(n: int) -> list[list[int]]:
+    pass
+`,
+    story: [
+      "Bob read in a gardening magazine that plants grow happier in a spiral. So he divided his square garden into n by n beds and started numbering them with a stick in the mud: bed 1 in the top-left corner, then walking right until the edge, down, left, up... coiling tighter and tighter until every bed has a number.",
+      "Given the garden size n, return the map of bed numbers as a list of rows (each row a list of integers), so Bob can check his work from the porch."
+    ],
+    signature: "def spiral_beds(n: int) -> list[list[int]]:",
+    rules: [
+      "Return an n x n matrix filled with numbers 1 to n*n",
+      "Start at the top-left corner and spiral clockwise: right, down, left, up, repeat",
+      "The matrix is a list of n rows, each row a list of n integers",
+      "If n is 0 or negative, there is no garden — return an empty list"
+    ],
+    examples: [
+      {
+        input: "spiral_beds(3)",
+        output: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]",
+        note: "1 in the corner, coiling clockwise"
+      },
+      {
+        input: "spiral_beds(2)",
+        output: "[[1, 2], [4, 3]]"
+      },
+      {
+        input: "spiral_beds(1)",
+        output: "[[1]]"
+      },
+      {
+        input: "spiral_beds(0)",
+        output: "[]",
+        note: "no garden"
+      }
+    ],
+    tests: [
+      { call: "spiral_beds(0)", args: "(0,)", expected: "[]" },
+      { call: "spiral_beds(1)", args: "(1,)", expected: "[[1]]" },
+      { call: "spiral_beds(2)", args: "(2,)", expected: "[[1, 2], [4, 3]]" },
+      { call: "spiral_beds(3)", args: "(3,)", expected: "[[1, 2, 3], [8, 9, 4], [7, 6, 5]]" },
+      { call: "spiral_beds(4)", args: "(4,)", expected: "[[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]]" },
+      { call: "spiral_beds(5)", args: "(5,)", expected: "[[1, 2, 3, 4, 5], [16, 17, 18, 19, 6], [15, 24, 25, 20, 7], [14, 23, 22, 21, 8], [13, 12, 11, 10, 9]]" },
+      { call: "spiral_beds(6)", args: "(6,)", expected: "[[1, 2, 3, 4, 5, 6], [20, 21, 22, 23, 24, 7], [19, 32, 33, 34, 25, 8], [18, 31, 36, 35, 26, 9], [17, 30, 29, 28, 27, 10], [16, 15, 14, 13, 12, 11]]" },
+      { call: "spiral_beds(-3)", args: "(-3,)", expected: "[]" },
+      { call: "spiral_beds(7)", args: "(7,)", expected: "[[1, 2, 3, 4, 5, 6, 7], [24, 25, 26, 27, 28, 29, 8], [23, 40, 41, 42, 43, 30, 9], [22, 39, 48, 49, 44, 31, 10], [21, 38, 47, 46, 45, 32, 11], [20, 37, 36, 35, 34, 33, 12], [19, 18, 17, 16, 15, 14, 13]]" }
+    ]
+  },
+  {
+    id: "quilt-motto",
+    tier: 3,
     title: "Grandma's Quilt",
     tagline: "Find where grandma stitched her motto into the quilt.",
     icon: "texture",
@@ -25031,7 +25160,7 @@ def unpack_tally(packed: str) -> str:`,
   },
   {
     id: "signpost-repaint",
-    tier: 2,
+    tier: 3,
     title: "Signpost Repaint",
     tagline: "Turn one village sign into another, one letter at a time.",
     icon: "signpost",
@@ -25093,73 +25222,6 @@ def unpack_tally(packed: str) -> str:`,
       { call: 'repaint_steps("abc", "abc", [])', args: '("abc", "abc", [])', expected: "1" },
       { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" }
     ]
-  },
-  {
-    id: "chore-wheel",
-    tier: 3,
-    title: "The Chore Wheel",
-    tagline: "Bob's chore chart loops back on itself. Again.",
-    icon: "autorenew",
-    funcName: "has_chore_loop",
-    topics: ["Graph Cycle Detection", "DFS"],
-    stub: `def has_chore_loop(chores: dict[int, list[int]]) -> bool:
-    pass
-`,
-    story: [
-      "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
-      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends."
-    ],
-    signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
-    rules: [
-      "The chart is a dictionary: each key is a chore number, each value the list of chores it points to",
-      "Return True if any directed cycle exists (following arrows can revisit a chore already on the current path)",
-      "A chore pointing to itself is a loop",
-      "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
-      "The chart may have disconnected parts; a loop anywhere counts",
-      "An empty chart has no loop (return False)"
-    ],
-    examples: [
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: []})",
-        output: "False",
-        note: "a straight line: 1 -> 2 -> 3 -> done"
-      },
-      {
-        input: "has_chore_loop({1: [2], 2: [3], 3: [1]})",
-        output: "True",
-        note: "1 -> 2 -> 3 -> 1 -> ..."
-      },
-      {
-        input: "has_chore_loop({1: [1]})",
-        output: "True",
-        note: "chore 1 points to itself"
-      },
-      {
-        input: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})",
-        output: "False",
-        note: "arrows may merge — only loops matter"
-      },
-      {
-        input: "has_chore_loop({})",
-        output: "False"
-      }
-    ],
-    tests: [
-      { call: "has_chore_loop({})", args: "({},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: []})", args: "({1: [2], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({1: [2], 2: [3], 3: [1]})", args: "({1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [1]})", args: "({1: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2], 2: [], 3: [2]})", args: "({1: [2], 2: [], 3: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [0], 3: [4], 4: []})", args: "({0: [1], 1: [2], 2: [0], 3: [4], 4: []},)", expected: "True" },
-      { call: "has_chore_loop({0: [], 1: [], 2: []})", args: "({0: [], 1: [], 2: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1, 2], 1: [3], 2: [3], 3: []})", args: "({0: [1, 2], 1: [3], 2: [3], 3: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [1]})", args: "({0: [1], 1: [2], 2: [3], 3: [1]},)", expected: "True" },
-      { call: "has_chore_loop({1: [2]})", args: "({1: [2]},)", expected: "False" },
-      { call: "has_chore_loop({0: [], 1: [2], 2: [1]})", args: "({0: [], 1: [2], 2: [1]},)", expected: "True" },
-      { call: "has_chore_loop({5: [5, 6], 6: []})", args: "({5: [5, 6], 6: []},)", expected: "True" },
-      { call: "has_chore_loop({10: [20], 20: [30], 30: [], 40: [50], 50: []})", args: "({10: [20], 20: [30], 30: [], 40: [50], 50: []},)", expected: "False" },
-      { call: "has_chore_loop({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]})", args: "({0: [1], 1: [2], 2: [3], 3: [4], 4: [2]},)", expected: "True" }
-    ]
   }
 ];
 function getExercise(id2) {
@@ -25170,13 +25232,55 @@ function getExercise(id2) {
 var HARNESS = `
 import copy as _bob_copy
 import json as _bob_json
+import sys as _bob_sys
+import time as _bob_time
+import io as _bob_io
+from contextlib import redirect_stdout as _bob_redirect_stdout
 
-def bob_grade(user_src, func_name, tests_literal):
+# ---------------------------------------------------------------------
+# Time guard: a sys.settrace hook that raises _BobTimeout after
+# 'limit_seconds' of user code — catches infinite loops even though
+# browser Python can't be killed mid-run. It inherits BaseException so
+# a bare 'except Exception' in player code can't swallow it.
+# ---------------------------------------------------------------------
+class _BobTimeout(BaseException):
+    pass
+
+class _BobLimitedStdout(_bob_io.StringIO):
+    _LIMIT = 200000
+    def write(self, s):
+        room = self._LIMIT - self.tell()
+        if len(s) > room:
+            super().write(s[: max(0, room)])
+            raise _BobTimeout("output_limit")
+        return super().write(s)
+
+def _bob_time_guard(limit_seconds):
+    deadline = _bob_time.monotonic() + limit_seconds
+    ticks = [0]
+    def _tracer(frame, event, arg):
+        if event == "line":
+            ticks[0] += 1
+            if ticks[0] >= 200:
+                ticks[0] = 0
+                if _bob_time.monotonic() > deadline:
+                    raise _BobTimeout("time")
+        return _tracer
+    return _tracer
+
+_TIMEOUT_MSG = "TimeLimit: your code ran for more than 15s — looks like an infinite loop!"
+
+def bob_grade(user_src, func_name, tests_literal, timeout_seconds=15):
     ns = {}
+    _bob_sys.settrace(_bob_time_guard(timeout_seconds))
     try:
         exec(user_src, ns)
+    except _BobTimeout:
+        return _bob_json.dumps({"fatal": _TIMEOUT_MSG})
     except Exception as e:
         return _bob_json.dumps({"fatal": f"{type(e).__name__}: {e}"})
+    finally:
+        _bob_sys.settrace(None)
 
     func = ns.get(func_name)
     if not callable(func):
@@ -25196,6 +25300,7 @@ def bob_grade(user_src, func_name, tests_literal):
                 "error": f"Function '{fname}' not found. Check the 'def' line in the subject.",
             })
             continue
+        _bob_sys.settrace(_bob_time_guard(timeout_seconds))
         try:
             got = test_func(*_bob_copy.deepcopy(args))
             results.append({
@@ -25204,6 +25309,13 @@ def bob_grade(user_src, func_name, tests_literal):
                 "got": repr(got),
                 "error": None,
             })
+        except _BobTimeout:
+            results.append({
+                "ok": False,
+                "expected": repr(expected),
+                "got": None,
+                "error": _TIMEOUT_MSG,
+            })
         except Exception as e:
             results.append({
                 "ok": False,
@@ -25211,9 +25323,28 @@ def bob_grade(user_src, func_name, tests_literal):
                 "got": None,
                 "error": f"{type(e).__name__}: {e}",
             })
+        finally:
+            _bob_sys.settrace(None)
     return _bob_json.dumps({"results": results})
+
+def bob_run(user_src, timeout_seconds):
+    buf = _BobLimitedStdout()
+    error = None
+    _bob_sys.settrace(_bob_time_guard(timeout_seconds))
+    try:
+        with _bob_redirect_stdout(buf):
+            exec(user_src, {"__name__": "__main__"})
+    except _BobTimeout as t:
+        error = "output_limit" if str(t) == "output_limit" else "timeout"
+    except Exception as e:
+        error = f"{type(e).__name__}: {e}"
+    finally:
+        _bob_sys.settrace(None)
+    return _bob_json.dumps({"stdout": buf.getvalue(), "error": error})
 `;
 var pyodideInstance = null;
+var GRADE_TIMEOUT_SECONDS = 15;
+var RUN_TIMEOUT_SECONDS = 15;
 async function initBob(onStatus) {
   if (pyodideInstance)
     return pyodideInstance;
@@ -25237,7 +25368,8 @@ async function grade(code2, exercise) {
   pyodide.globals.set("__bob_src", code2);
   pyodide.globals.set("__bob_func", exercise.funcName);
   pyodide.globals.set("__bob_tests", testsLiteral(exercise));
-  const out = await pyodide.runPythonAsync("bob_grade(__bob_src, __bob_func, __bob_tests)");
+  pyodide.globals.set("__bob_timeout", GRADE_TIMEOUT_SECONDS);
+  const out = await pyodide.runPythonAsync("bob_grade(__bob_src, __bob_func, __bob_tests, __bob_timeout)");
   const data = JSON.parse(out);
   if (data.fatal)
     return data;
@@ -25246,6 +25378,15 @@ async function grade(code2, exercise) {
     call: exercise.tests[i2].call
   }));
   return { results, passed: results.every((r) => r.ok) };
+}
+async function runScript(code2) {
+  const pyodide = pyodideInstance;
+  if (!pyodide)
+    throw new Error("Grader not initialized");
+  pyodide.globals.set("__bob_run_src", code2);
+  pyodide.globals.set("__bob_run_timeout", RUN_TIMEOUT_SECONDS);
+  const out = await pyodide.runPythonAsync("bob_run(__bob_run_src, __bob_run_timeout)");
+  return JSON.parse(out);
 }
 var blackPromise = null;
 async function ensureBlack(pyodide) {
@@ -25285,7 +25426,7 @@ var _tmpl$ = /* @__PURE__ */ template(`<div>`);
 var _tmpl$2 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mb-3">`);
 var _tmpl$3 = /* @__PURE__ */ template(`<div class="px-5 py-4"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-[#57534e]"> · </span></div><h2 class="text-xl font-black text-amber-400 mb-2"></h2><div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2 mb-4"><code class="text-[13px] text-emerald-400 font-mono break-all"></code></div><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">The rules</h3><ul class="mb-5 space-y-1.5"></ul><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">Examples</h3><div class="space-y-2 pb-2">`);
 var _tmpl$4 = /* @__PURE__ */ template(`<span>/`);
-var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0"title="Format code with Black (downloads Black on first use)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
+var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] transition-colors flex shrink-0"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
 var _tmpl$6 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
 var _tmpl$7 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
 var _tmpl$8 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
@@ -25294,20 +25435,26 @@ var _tmpl$0 = /* @__PURE__ */ template(`<div class="text-[#78716c] mt-1">Bob's r
 var _tmpl$1 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== trace =====`);
 var _tmpl$10 = /* @__PURE__ */ template(`<div class="trace-header mt-2">=================`);
 var _tmpl$11 = /* @__PURE__ */ template(`<div class="success-banner mt-3 mb-1 bg-emerald-900/40 border border-emerald-700 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap font-sans"><div class="flex-1 min-w-[180px]"><div class="text-emerald-300 font-extrabold text-sm">Chore complete! Bob owes you one.</div><div class="text-emerald-500/80 text-xs">All <!> tests passed.</div></div><button class="flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"><span>Next chore`);
-var _tmpl$12 = /* @__PURE__ */ template(`<div class=trace-error>`);
-var _tmpl$13 = /* @__PURE__ */ template(`<div class=mb-1.5><div class=trace-line-call><span class=test-num>Test <!>:</span></div><div class=trace-line-result>expected: <!> | got: <!> → <span>`);
-var _tmpl$14 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
-var _tmpl$15 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
-var _tmpl$16 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
-var _tmpl$17 = /* @__PURE__ */ template(`<li class="flex items-start gap-2 text-sm text-[#d6d3d1]"><span class="text-amber-500 mt-0.5 shrink-0"></span><span>`);
-var _tmpl$18 = /* @__PURE__ */ template(`<div class="text-[11px] text-[#78716c] mt-1 italic">`);
-var _tmpl$19 = /* @__PURE__ */ template(`<div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2"><div class="text-[12px] font-mono text-sky-300 break-all"></div><div class="text-[12px] font-mono text-[#a8a29e] break-all"><span class=text-[#57534e]>→ `);
-var _tmpl$20 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.</p><div class="flex items-center justify-center gap-2 pb-8">`);
-var _tmpl$21 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-baseline gap-2 mb-3"><h2 class="text-sm font-black uppercase tracking-widest text-amber-500"></h2><span class="text-xs text-[#57534e] font-semibold"></span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`);
-var _tmpl$22 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
-var _tmpl$23 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
-var _tmpl$24 = /* @__PURE__ */ template(`<a class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>`);
-var _tmpl$25 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
+var _tmpl$12 = /* @__PURE__ */ template(`<div class="whitespace-pre-wrap text-[#d6d3d1]">`);
+var _tmpl$13 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Stopped after 15 seconds — looks like an infinite loop!`);
+var _tmpl$14 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Output limit reached — your script prints WAY too much.`);
+var _tmpl$15 = /* @__PURE__ */ template(`<div class="trace-error mt-1">`);
+var _tmpl$16 = /* @__PURE__ */ template(`<div><div class="trace-header mb-1">===== run =====`);
+var _tmpl$17 = /* @__PURE__ */ template(`<div class=text-[#78716c]>(no output — try a print() in there)`);
+var _tmpl$18 = /* @__PURE__ */ template(`<div class=trace-error>`);
+var _tmpl$19 = /* @__PURE__ */ template(`<div class=mb-1.5><div class=trace-line-call><span class=test-num>Test <!>:</span></div><div class=trace-line-result>expected: <!> | got: <!> → <span>`);
+var _tmpl$20 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
+var _tmpl$21 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
+var _tmpl$22 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
+var _tmpl$23 = /* @__PURE__ */ template(`<li class="flex items-start gap-2 text-sm text-[#d6d3d1]"><span class="text-amber-500 mt-0.5 shrink-0"></span><span>`);
+var _tmpl$24 = /* @__PURE__ */ template(`<div class="text-[11px] text-[#78716c] mt-1 italic">`);
+var _tmpl$25 = /* @__PURE__ */ template(`<div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2"><div class="text-[12px] font-mono text-sky-300 break-all"></div><div class="text-[12px] font-mono text-[#a8a29e] break-all"><span class=text-[#57534e]>→ `);
+var _tmpl$26 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.</p><div class="flex items-center justify-center gap-2 pb-8">`);
+var _tmpl$27 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-baseline gap-2 mb-3"><h2 class="text-sm font-black uppercase tracking-widest text-amber-500"></h2><span class="text-xs text-[#57534e] font-semibold"></span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`);
+var _tmpl$28 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
+var _tmpl$29 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
+var _tmpl$30 = /* @__PURE__ */ template(`<a class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>`);
+var _tmpl$31 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
 var LS_SOLVED_KEY = "bob05_solved_chores";
 var LS_CODE_PREFIX = "bob05_chore_code_";
 var PREV_SITE = {
@@ -25478,6 +25625,7 @@ function PracticeScreen(props) {
   const ex = () => props.exercise;
   const [grading, setGrading] = createSignal(false);
   const [formatting, setFormatting] = createSignal(false);
+  const [running, setRunning] = createSignal(false);
   const [trace, setTrace] = createSignal(null);
   const [leftTab, setLeftTab] = createSignal("note");
   let editorContainerRef;
@@ -25545,6 +25693,29 @@ function PracticeScreen(props) {
       }, 50);
     }
   };
+  const runCode = async () => {
+    if (running() || grading() || formatting() || props.pyodideState() !== "ready")
+      return;
+    setRunning(true);
+    setLeftTab("log");
+    try {
+      const code2 = cmView.state.doc.toString();
+      const out = await runScript(code2);
+      setTrace({
+        run: out
+      });
+    } catch (err) {
+      setTrace({
+        fatal: String(err && err.message ? err.message : err)
+      });
+    } finally {
+      setRunning(false);
+      setTimeout(() => {
+        if (traceRef)
+          traceRef.scrollTop = traceRef.scrollHeight;
+      }, 50);
+    }
+  };
   const resetCode = () => {
     if (!confirm("Start this chore over? Your current code will be replaced by the stub."))
       return;
@@ -25585,7 +25756,7 @@ function PracticeScreen(props) {
   };
   const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
   return (() => {
-    var _el$2 = _tmpl$5(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.firstChild, _el$13 = _el$3.nextSibling, _el$14 = _el$13.firstChild, _el$15 = _el$14.firstChild, _el$29 = _el$15.nextSibling, _el$30 = _el$29.firstChild, _el$31 = _el$30.firstChild, _el$32 = _el$30.nextSibling, _el$33 = _el$32.firstChild, _el$36 = _el$14.nextSibling, _el$37 = _el$36.firstChild;
+    var _el$2 = _tmpl$5(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.firstChild, _el$14 = _el$3.nextSibling, _el$15 = _el$14.firstChild, _el$16 = _el$15.firstChild, _el$30 = _el$16.nextSibling, _el$31 = _el$30.firstChild, _el$32 = _el$31.firstChild, _el$33 = _el$31.nextSibling, _el$34 = _el$33.firstChild, _el$37 = _el$15.nextSibling, _el$38 = _el$37.firstChild;
     addEventListener(_el$5, "click", props.onBack, true);
     insert(_el$5, createComponent(Icon, {
       name: "arrow-back",
@@ -25624,52 +25795,108 @@ function PracticeScreen(props) {
       },
       size: 16
     }));
-    _el$11.$$click = runGrader;
+    _el$11.$$click = runCode;
     insert(_el$11, createComponent(Icon, {
+      get name() {
+        return running() ? "hourglass-top" : "play-arrow";
+      },
+      color: "1c1917",
+      size: 16
+    }));
+    _el$12.$$click = runGrader;
+    insert(_el$12, createComponent(Icon, {
       name: "smart-toy",
       color: "1c1917",
       size: 16
-    }), _el$12);
-    insert(_el$12, () => grading() ? "Grading..." : "Grade me!");
-    insert(_el$15, createComponent(Show, {
+    }), _el$13);
+    insert(_el$13, () => grading() ? "Grading..." : "Grade me!");
+    insert(_el$16, createComponent(Show, {
       get when() {
         return leftTab() === "note";
       },
       get fallback() {
         return (() => {
-          var _el$38 = _tmpl$6();
+          var _el$39 = _tmpl$6();
           var _ref$2 = traceRef;
-          typeof _ref$2 === "function" ? use(_ref$2, _el$38) : traceRef = _el$38;
-          insert(_el$38, createComponent(Show, {
+          typeof _ref$2 === "function" ? use(_ref$2, _el$39) : traceRef = _el$39;
+          insert(_el$39, createComponent(Show, {
             get when() {
               return trace();
             },
             get fallback() {
               return (() => {
-                var _el$39 = _tmpl$7(), _el$40 = _el$39.firstChild;
-                insert(_el$40, createComponent(Icon, {
+                var _el$40 = _tmpl$7(), _el$41 = _el$40.firstChild;
+                insert(_el$41, createComponent(Icon, {
                   name: "smart-toy",
                   color: "57534e",
                   size: 32
                 }));
-                return _el$39;
+                return _el$40;
               })();
             },
             children: (t2) => (() => {
-              var _el$41 = _tmpl$();
-              insert(_el$41, createComponent(Show, {
+              var _el$42 = _tmpl$();
+              insert(_el$42, createComponent(Show, {
+                get when() {
+                  return t2().run;
+                },
+                children: (r) => (() => {
+                  var _el$57 = _tmpl$16(), _el$58 = _el$57.firstChild;
+                  insert(_el$57, createComponent(Show, {
+                    get when() {
+                      return r().stdout;
+                    },
+                    get fallback() {
+                      return _tmpl$17();
+                    },
+                    get children() {
+                      var _el$59 = _tmpl$12();
+                      insert(_el$59, () => r().stdout);
+                      return _el$59;
+                    }
+                  }), null);
+                  insert(_el$57, createComponent(Show, {
+                    get when() {
+                      return r().error === "timeout";
+                    },
+                    get children() {
+                      return _tmpl$13();
+                    }
+                  }), null);
+                  insert(_el$57, createComponent(Show, {
+                    get when() {
+                      return r().error === "output_limit";
+                    },
+                    get children() {
+                      return _tmpl$14();
+                    }
+                  }), null);
+                  insert(_el$57, createComponent(Show, {
+                    get when() {
+                      return memo(() => !!(r().error && r().error !== "timeout"))() && r().error !== "output_limit";
+                    },
+                    get children() {
+                      var _el$62 = _tmpl$15();
+                      insert(_el$62, () => r().error);
+                      return _el$62;
+                    }
+                  }), null);
+                  return _el$57;
+                })()
+              }), null);
+              insert(_el$42, createComponent(Show, {
                 get when() {
                   return t2().fatal;
                 },
                 get children() {
                   return [_tmpl$8(), (() => {
-                    var _el$43 = _tmpl$9();
-                    insert(_el$43, () => t2().fatal);
-                    return _el$43;
+                    var _el$44 = _tmpl$9();
+                    insert(_el$44, () => t2().fatal);
+                    return _el$44;
                   })(), _tmpl$0()];
                 }
               }), null);
-              insert(_el$41, createComponent(Show, {
+              insert(_el$42, createComponent(Show, {
                 get when() {
                   return t2().results;
                 },
@@ -25679,178 +25906,180 @@ function PracticeScreen(props) {
                       return t2().results;
                     },
                     children: (r, i2) => (() => {
-                      var _el$56 = _tmpl$13(), _el$57 = _el$56.firstChild, _el$58 = _el$57.firstChild, _el$59 = _el$58.firstChild, _el$61 = _el$59.nextSibling, _el$60 = _el$61.nextSibling, _el$62 = _el$57.nextSibling, _el$63 = _el$62.firstChild, _el$69 = _el$63.nextSibling, _el$64 = _el$69.nextSibling, _el$70 = _el$64.nextSibling, _el$66 = _el$70.nextSibling, _el$68 = _el$66.nextSibling;
-                      insert(_el$58, () => i2() + 1, _el$61);
-                      insert(_el$57, () => r.call, null);
-                      insert(_el$62, () => r.expected, _el$69);
-                      insert(_el$62, (() => {
+                      var _el$64 = _tmpl$19(), _el$65 = _el$64.firstChild, _el$66 = _el$65.firstChild, _el$67 = _el$66.firstChild, _el$69 = _el$67.nextSibling, _el$68 = _el$69.nextSibling, _el$70 = _el$65.nextSibling, _el$71 = _el$70.firstChild, _el$77 = _el$71.nextSibling, _el$72 = _el$77.nextSibling, _el$78 = _el$72.nextSibling, _el$74 = _el$78.nextSibling, _el$76 = _el$74.nextSibling;
+                      insert(_el$66, () => i2() + 1, _el$69);
+                      insert(_el$65, () => r.call, null);
+                      insert(_el$70, () => r.expected, _el$77);
+                      insert(_el$70, (() => {
                         var _c$ = memo(() => r.got === null);
                         return () => _c$() ? "—" : r.got;
-                      })(), _el$70);
-                      insert(_el$68, () => r.ok ? "OK" : "KO");
-                      insert(_el$56, createComponent(Show, {
+                      })(), _el$78);
+                      insert(_el$76, () => r.ok ? "OK" : "KO");
+                      insert(_el$64, createComponent(Show, {
                         get when() {
                           return r.error;
                         },
                         get children() {
-                          var _el$71 = _tmpl$12();
-                          insert(_el$71, () => r.error);
-                          return _el$71;
+                          var _el$79 = _tmpl$18();
+                          insert(_el$79, () => r.error);
+                          return _el$79;
                         }
                       }), null);
-                      createRenderEffect(() => className(_el$68, r.ok ? "trace-ok" : "trace-ko"));
-                      return _el$56;
+                      createRenderEffect(() => className(_el$76, r.ok ? "trace-ok" : "trace-ko"));
+                      return _el$64;
                     })()
                   }), _tmpl$10(), createComponent(Show, {
                     get when() {
                       return t2().passed;
                     },
                     get fallback() {
-                      return _tmpl$14();
+                      return _tmpl$20();
                     },
                     get children() {
-                      var _el$47 = _tmpl$11(), _el$48 = _el$47.firstChild, _el$49 = _el$48.firstChild, _el$50 = _el$49.nextSibling, _el$51 = _el$50.firstChild, _el$53 = _el$51.nextSibling, _el$52 = _el$53.nextSibling, _el$54 = _el$48.nextSibling, _el$55 = _el$54.firstChild;
-                      insert(_el$47, createComponent(Icon, {
+                      var _el$48 = _tmpl$11(), _el$49 = _el$48.firstChild, _el$50 = _el$49.firstChild, _el$51 = _el$50.nextSibling, _el$52 = _el$51.firstChild, _el$54 = _el$52.nextSibling, _el$53 = _el$54.nextSibling, _el$55 = _el$49.nextSibling, _el$56 = _el$55.firstChild;
+                      insert(_el$48, createComponent(Icon, {
                         name: "celebration",
                         color: "4ade80",
                         size: 24
-                      }), _el$48);
-                      insert(_el$50, () => t2().results.length, _el$53);
-                      addEventListener(_el$54, "click", props.onNext, true);
-                      insert(_el$54, createComponent(Icon, {
+                      }), _el$49);
+                      insert(_el$51, () => t2().results.length, _el$54);
+                      addEventListener(_el$55, "click", props.onNext, true);
+                      insert(_el$55, createComponent(Icon, {
                         name: "arrow-forward",
                         color: "ffffff",
                         size: 14
                       }), null);
-                      return _el$47;
+                      return _el$48;
                     }
                   })];
                 }
               }), null);
-              return _el$41;
+              return _el$42;
             })()
           }));
-          return _el$38;
+          return _el$39;
         })();
       },
       get children() {
-        var _el$16 = _tmpl$3(), _el$17 = _el$16.firstChild, _el$18 = _el$17.firstChild, _el$19 = _el$18.firstChild, _el$21 = _el$17.nextSibling, _el$23 = _el$21.nextSibling, _el$24 = _el$23.firstChild, _el$25 = _el$23.nextSibling, _el$26 = _el$25.nextSibling, _el$27 = _el$26.nextSibling, _el$28 = _el$27.nextSibling;
-        insert(_el$18, () => TIERS[ex().tier - 1].label, _el$19);
-        insert(_el$18, () => TIERS[ex().tier - 1].subtitle, null);
-        insert(_el$21, () => ex().title);
-        insert(_el$16, createComponent(Show, {
+        var _el$17 = _tmpl$3(), _el$18 = _el$17.firstChild, _el$19 = _el$18.firstChild, _el$20 = _el$19.firstChild, _el$22 = _el$18.nextSibling, _el$24 = _el$22.nextSibling, _el$25 = _el$24.firstChild, _el$26 = _el$24.nextSibling, _el$27 = _el$26.nextSibling, _el$28 = _el$27.nextSibling, _el$29 = _el$28.nextSibling;
+        insert(_el$19, () => TIERS[ex().tier - 1].label, _el$20);
+        insert(_el$19, () => TIERS[ex().tier - 1].subtitle, null);
+        insert(_el$22, () => ex().title);
+        insert(_el$17, createComponent(Show, {
           get when() {
             return ex().topics;
           },
           get children() {
-            var _el$22 = _tmpl$2();
-            insert(_el$22, createComponent(For, {
+            var _el$23 = _tmpl$2();
+            insert(_el$23, createComponent(For, {
               get each() {
                 return ex().topics;
               },
               children: (topic) => (() => {
-                var _el$73 = _tmpl$15();
-                insert(_el$73, topic);
-                return _el$73;
+                var _el$81 = _tmpl$21();
+                insert(_el$81, topic);
+                return _el$81;
               })()
             }));
-            return _el$22;
+            return _el$23;
           }
-        }), _el$23);
-        insert(_el$16, createComponent(For, {
+        }), _el$24);
+        insert(_el$17, createComponent(For, {
           get each() {
             return ex().story;
           },
           children: (p) => (() => {
-            var _el$74 = _tmpl$16();
-            insert(_el$74, p);
-            return _el$74;
+            var _el$82 = _tmpl$22();
+            insert(_el$82, p);
+            return _el$82;
           })()
-        }), _el$23);
-        insert(_el$24, () => ex().signature);
-        insert(_el$26, createComponent(For, {
+        }), _el$24);
+        insert(_el$25, () => ex().signature);
+        insert(_el$27, createComponent(For, {
           get each() {
             return ex().rules;
           },
           children: (rule) => (() => {
-            var _el$75 = _tmpl$17(), _el$76 = _el$75.firstChild, _el$77 = _el$76.nextSibling;
-            insert(_el$76, createComponent(Icon, {
+            var _el$83 = _tmpl$23(), _el$84 = _el$83.firstChild, _el$85 = _el$84.nextSibling;
+            insert(_el$84, createComponent(Icon, {
               name: "check-small",
               color: "f59e0b",
               size: 16
             }));
-            insert(_el$77, rule);
-            return _el$75;
+            insert(_el$85, rule);
+            return _el$83;
           })()
         }));
-        insert(_el$28, createComponent(For, {
+        insert(_el$29, createComponent(For, {
           get each() {
             return ex().examples;
           },
           children: (example) => (() => {
-            var _el$78 = _tmpl$19(), _el$79 = _el$78.firstChild, _el$80 = _el$79.nextSibling, _el$81 = _el$80.firstChild;
-            insert(_el$79, () => example.input);
-            insert(_el$80, () => example.output, null);
-            insert(_el$78, createComponent(Show, {
+            var _el$86 = _tmpl$25(), _el$87 = _el$86.firstChild, _el$88 = _el$87.nextSibling, _el$89 = _el$88.firstChild;
+            insert(_el$87, () => example.input);
+            insert(_el$88, () => example.output, null);
+            insert(_el$86, createComponent(Show, {
               get when() {
                 return example.note;
               },
               get children() {
-                var _el$82 = _tmpl$18();
-                insert(_el$82, () => example.note);
-                return _el$82;
+                var _el$90 = _tmpl$24();
+                insert(_el$90, () => example.note);
+                return _el$90;
               }
             }), null);
-            return _el$78;
+            return _el$86;
           })()
         }));
-        return _el$16;
+        return _el$17;
       }
     }));
-    _el$30.$$click = () => setLeftTab("note");
-    insert(_el$30, createComponent(Icon, {
+    _el$31.$$click = () => setLeftTab("note");
+    insert(_el$31, createComponent(Icon, {
       name: "menu-book",
       get color() {
         return leftTab() === "note" ? "fbbf24" : "78716c";
       },
       size: 14
-    }), _el$31);
-    _el$32.$$click = () => setLeftTab("log");
-    insert(_el$32, createComponent(Icon, {
+    }), _el$32);
+    _el$33.$$click = () => setLeftTab("log");
+    insert(_el$33, createComponent(Icon, {
       name: "smart-toy",
       get color() {
         return leftTab() === "log" ? "fbbf24" : "78716c";
       },
       size: 14
-    }), _el$33);
-    insert(_el$32, createComponent(Show, {
+    }), _el$34);
+    insert(_el$33, createComponent(Show, {
       get when() {
         return memo(() => !!trace())() && trace().results;
       },
       get children() {
-        var _el$34 = _tmpl$4(), _el$35 = _el$34.firstChild;
-        insert(_el$34, () => trace().results.filter((r) => r.ok).length, _el$35);
-        insert(_el$34, () => trace().results.length, null);
-        createRenderEffect(() => className(_el$34, `ml-1 px-1.5 py-0.5 rounded text-[10px] font-black ${trace().passed ? "bg-emerald-900/60 text-emerald-300" : "bg-red-900/60 text-red-300"}`));
-        return _el$34;
+        var _el$35 = _tmpl$4(), _el$36 = _el$35.firstChild;
+        insert(_el$35, () => trace().results.filter((r) => r.ok).length, _el$36);
+        insert(_el$35, () => trace().results.length, null);
+        createRenderEffect(() => className(_el$35, `ml-1 px-1.5 py-0.5 rounded text-[10px] font-black ${trace().passed ? "bg-emerald-900/60 text-emerald-300" : "bg-red-900/60 text-red-300"}`));
+        return _el$35;
       }
     }), null);
     var _ref$ = editorContainerRef;
-    typeof _ref$ === "function" ? use(_ref$, _el$37) : editorContainerRef = _el$37;
+    typeof _ref$ === "function" ? use(_ref$, _el$38) : editorContainerRef = _el$38;
     createRenderEffect((_p$) => {
-      var _v$5 = formatting() || props.pyodideState() !== "ready", _v$6 = gradeDisabled(), _v$7 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$8 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$9 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
+      var _v$5 = formatting() || props.pyodideState() !== "ready", _v$6 = running() || grading() || props.pyodideState() !== "ready", _v$7 = gradeDisabled(), _v$8 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$9 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
       _v$5 !== _p$.e && (_el$10.disabled = _p$.e = _v$5);
       _v$6 !== _p$.t && (_el$11.disabled = _p$.t = _v$6);
-      _v$7 !== _p$.a && setAttribute(_el$11, "title", _p$.a = _v$7);
-      _v$8 !== _p$.o && className(_el$30, _p$.o = _v$8);
-      _v$9 !== _p$.i && className(_el$32, _p$.i = _v$9);
+      _v$7 !== _p$.a && (_el$12.disabled = _p$.a = _v$7);
+      _v$8 !== _p$.o && setAttribute(_el$12, "title", _p$.o = _v$8);
+      _v$9 !== _p$.i && className(_el$31, _p$.i = _v$9);
+      _v$0 !== _p$.n && className(_el$33, _p$.n = _v$0);
       return _p$;
     }, {
       e: undefined,
       t: undefined,
       a: undefined,
       o: undefined,
-      i: undefined
+      i: undefined,
+      n: undefined
     });
     return _el$2;
   })();
@@ -25858,25 +26087,25 @@ function PracticeScreen(props) {
 function HomeScreen(props) {
   const solvedCount = () => EXERCISES.filter((e) => props.solved().has(e.id)).length;
   return (() => {
-    var _el$83 = _tmpl$20(), _el$84 = _el$83.firstChild, _el$85 = _el$84.firstChild, _el$86 = _el$85.firstChild, _el$87 = _el$86.nextSibling, _el$88 = _el$87.nextSibling, _el$89 = _el$88.firstChild, _el$90 = _el$88.nextSibling, _el$91 = _el$90.nextSibling, _el$92 = _el$91.firstChild, _el$93 = _el$91.nextSibling, _el$94 = _el$93.firstChild, _el$95 = _el$94.firstChild, _el$96 = _el$94.nextSibling, _el$97 = _el$96.firstChild, _el$99 = _el$97.nextSibling, _el$98 = _el$99.nextSibling, _el$100 = _el$85.nextSibling, _el$101 = _el$100.nextSibling;
-    insert(_el$86, createComponent(Icon, {
+    var _el$91 = _tmpl$26(), _el$92 = _el$91.firstChild, _el$93 = _el$92.firstChild, _el$94 = _el$93.firstChild, _el$95 = _el$94.nextSibling, _el$96 = _el$95.nextSibling, _el$97 = _el$96.firstChild, _el$98 = _el$96.nextSibling, _el$99 = _el$98.nextSibling, _el$100 = _el$99.firstChild, _el$101 = _el$99.nextSibling, _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$102.nextSibling, _el$105 = _el$104.firstChild, _el$107 = _el$105.nextSibling, _el$106 = _el$107.nextSibling, _el$108 = _el$93.nextSibling, _el$109 = _el$108.nextSibling;
+    insert(_el$94, createComponent(Icon, {
       name: "smart-toy",
       color: "fbbf24",
       size: 44
     }));
-    insert(_el$88, createComponent(Icon, {
+    insert(_el$96, createComponent(Icon, {
       name: "checklist",
       color: "f59e0b",
       size: 14
-    }), _el$89);
-    insert(_el$91, createComponent(Icon, {
+    }), _el$97);
+    insert(_el$99, createComponent(Icon, {
       name: "star",
       color: "fbbf24",
       size: 14
-    }), _el$92);
-    insert(_el$96, solvedCount, _el$97);
-    insert(_el$96, () => EXERCISES.length, _el$99);
-    insert(_el$84, createComponent(For, {
+    }), _el$100);
+    insert(_el$104, solvedCount, _el$105);
+    insert(_el$104, () => EXERCISES.length, _el$107);
+    insert(_el$92, createComponent(For, {
       each: TIERS,
       children: (tier) => {
         const tierExercises = () => EXERCISES.filter((e) => e.tier === tier.tier);
@@ -25885,25 +26114,25 @@ function HomeScreen(props) {
             return tierExercises().length > 0;
           },
           get children() {
-            var _el$102 = _tmpl$21(), _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.nextSibling, _el$106 = _el$103.nextSibling;
-            insert(_el$104, () => tier.label);
-            insert(_el$105, () => tier.subtitle);
-            insert(_el$106, createComponent(For, {
+            var _el$110 = _tmpl$27(), _el$111 = _el$110.firstChild, _el$112 = _el$111.firstChild, _el$113 = _el$112.nextSibling, _el$114 = _el$111.nextSibling;
+            insert(_el$112, () => tier.label);
+            insert(_el$113, () => tier.subtitle);
+            insert(_el$114, createComponent(For, {
               get each() {
                 return tierExercises();
               },
               children: (ex) => (() => {
-                var _el$107 = _tmpl$23(), _el$108 = _el$107.firstChild, _el$109 = _el$108.nextSibling, _el$110 = _el$109.firstChild, _el$111 = _el$110.firstChild, _el$112 = _el$110.nextSibling, _el$114 = _el$109.nextSibling;
-                _el$107.$$click = () => props.onPick(ex.id);
-                insert(_el$108, createComponent(Icon, {
+                var _el$115 = _tmpl$29(), _el$116 = _el$115.firstChild, _el$117 = _el$116.nextSibling, _el$118 = _el$117.firstChild, _el$119 = _el$118.firstChild, _el$120 = _el$118.nextSibling, _el$122 = _el$117.nextSibling;
+                _el$115.$$click = () => props.onPick(ex.id);
+                insert(_el$116, createComponent(Icon, {
                   get name() {
                     return ex.icon;
                   },
                   color: "fbbf24",
                   size: 26
                 }));
-                insert(_el$111, () => ex.title);
-                insert(_el$110, createComponent(Show, {
+                insert(_el$119, () => ex.title);
+                insert(_el$118, createComponent(Show, {
                   get when() {
                     return props.solved().has(ex.id);
                   },
@@ -25915,69 +26144,69 @@ function HomeScreen(props) {
                     });
                   }
                 }), null);
-                insert(_el$112, () => ex.tagline);
-                insert(_el$109, createComponent(Show, {
+                insert(_el$120, () => ex.tagline);
+                insert(_el$117, createComponent(Show, {
                   get when() {
                     return ex.topics;
                   },
                   get children() {
-                    var _el$113 = _tmpl$22();
-                    insert(_el$113, createComponent(For, {
+                    var _el$121 = _tmpl$28();
+                    insert(_el$121, createComponent(For, {
                       get each() {
                         return ex.topics;
                       },
                       children: (topic) => (() => {
-                        var _el$115 = _tmpl$15();
-                        insert(_el$115, topic);
-                        return _el$115;
+                        var _el$123 = _tmpl$21();
+                        insert(_el$123, topic);
+                        return _el$123;
                       })()
                     }));
-                    return _el$113;
+                    return _el$121;
                   }
                 }), null);
-                insert(_el$114, createComponent(Icon, {
+                insert(_el$122, createComponent(Icon, {
                   name: "chevron-right",
                   color: "57534e",
                   size: 20
                 }));
-                return _el$107;
+                return _el$115;
               })()
             }));
-            return _el$102;
+            return _el$110;
           }
         });
       }
-    }), _el$100);
-    insert(_el$101, createComponent(Show, {
+    }), _el$108);
+    insert(_el$109, createComponent(Show, {
       when: PREV_SITE,
       children: (s) => (() => {
-        var _el$116 = _tmpl$24(), _el$117 = _el$116.firstChild;
-        insert(_el$116, createComponent(Icon, {
+        var _el$124 = _tmpl$30(), _el$125 = _el$124.firstChild;
+        insert(_el$124, createComponent(Icon, {
           name: "arrow-back",
           color: "a8a29e",
           size: 14
-        }), _el$117);
-        insert(_el$117, () => s().label);
-        createRenderEffect(() => setAttribute(_el$116, "href", s().url));
-        return _el$116;
+        }), _el$125);
+        insert(_el$125, () => s().label);
+        createRenderEffect(() => setAttribute(_el$124, "href", s().url));
+        return _el$124;
       })()
     }), null);
-    insert(_el$101, createComponent(Show, {
+    insert(_el$109, createComponent(Show, {
       when: NEXT_SITE,
       children: (s) => (() => {
-        var _el$118 = _tmpl$24(), _el$119 = _el$118.firstChild;
-        insert(_el$119, () => s().label);
-        insert(_el$118, createComponent(Icon, {
+        var _el$126 = _tmpl$30(), _el$127 = _el$126.firstChild;
+        insert(_el$127, () => s().label);
+        insert(_el$126, createComponent(Icon, {
           name: "arrow-forward",
           color: "a8a29e",
           size: 14
         }), null);
-        createRenderEffect(() => setAttribute(_el$118, "href", s().url));
-        return _el$118;
+        createRenderEffect(() => setAttribute(_el$126, "href", s().url));
+        return _el$126;
       })()
     }), null);
-    createRenderEffect((_$p) => setStyleProperty(_el$95, "width", `${solvedCount() / EXERCISES.length * 100}%`));
-    return _el$83;
+    createRenderEffect((_$p) => setStyleProperty(_el$103, "width", `${solvedCount() / EXERCISES.length * 100}%`));
+    return _el$91;
   })();
 }
 function App() {
@@ -26033,8 +26262,8 @@ function App() {
     }
   };
   return (() => {
-    var _el$120 = _tmpl$25(), _el$121 = _el$120.firstChild, _el$122 = _el$121.firstChild, _el$123 = _el$122.nextSibling;
-    insert(_el$120, createComponent(Show, {
+    var _el$128 = _tmpl$31(), _el$129 = _el$128.firstChild, _el$130 = _el$129.firstChild, _el$131 = _el$130.nextSibling;
+    insert(_el$128, createComponent(Show, {
       get when() {
         return currentExercise();
       },
@@ -26053,10 +26282,10 @@ function App() {
         onSolved: markSolved,
         onNext: nextChore
       })
-    }), _el$121);
-    insert(_el$123, pyodideText);
-    createRenderEffect(() => className(_el$122, `status-dot ${pyodideState()}`));
-    return _el$120;
+    }), _el$129);
+    insert(_el$131, pyodideText);
+    createRenderEffect(() => className(_el$130, `status-dot ${pyodideState()}`));
+    return _el$128;
   })();
 }
 render(() => createComponent(App, {}), document.getElementById("root"));

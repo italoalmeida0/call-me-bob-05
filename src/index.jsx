@@ -15,7 +15,7 @@ import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { Prec } from "@codemirror/state";
 
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
-import { initBob, grade, formatPython } from "./grader.js";
+import { initBob, grade, formatPython, runScript } from "./grader.js";
 
 const LS_SOLVED_KEY = "bob05_solved_chores";
 const LS_CODE_PREFIX = "bob05_chore_code_";
@@ -197,7 +197,8 @@ function PracticeScreen(props) {
 
   const [grading, setGrading] = createSignal(false);
   const [formatting, setFormatting] = createSignal(false);
-  const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed }
+  const [running, setRunning] = createSignal(false);
+  const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed } | { run }
   const [leftTab, setLeftTab] = createSignal("note"); // "note" | "log"
 
   let editorContainerRef;
@@ -263,6 +264,30 @@ function PracticeScreen(props) {
       setLeftTab("log");
     } finally {
       setGrading(false);
+      setTimeout(() => {
+        if (traceRef) traceRef.scrollTop = traceRef.scrollHeight;
+      }, 50);
+    }
+  };
+
+  const runCode = async () => {
+    if (
+      running() ||
+      grading() ||
+      formatting() ||
+      props.pyodideState() !== "ready"
+    )
+      return;
+    setRunning(true);
+    setLeftTab("log");
+    try {
+      const code = cmView.state.doc.toString();
+      const out = await runScript(code);
+      setTrace({ run: out });
+    } catch (err) {
+      setTrace({ fatal: String(err && err.message ? err.message : err) });
+    } finally {
+      setRunning(false);
       setTimeout(() => {
         if (traceRef) traceRef.scrollTop = traceRef.scrollHeight;
       }, 50);
@@ -350,6 +375,20 @@ function PracticeScreen(props) {
             />
           </button>
           <button
+            onClick={runCode}
+            disabled={
+              running() || grading() || props.pyodideState() !== "ready"
+            }
+            class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] transition-colors flex shrink-0"
+            title="Run the script — print() output shows up in the robot log (15s limit)"
+          >
+            <Icon
+              name={running() ? "hourglass-top" : "play-arrow"}
+              color="1c1917"
+              size={16}
+            />
+          </button>
+          <button
             onClick={runGrader}
             disabled={gradeDisabled()}
             class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#1c1917] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
@@ -390,6 +429,48 @@ function PracticeScreen(props) {
                   >
                     {(t) => (
                       <div>
+                        <Show when={t().run}>
+                          {(r) => (
+                            <div>
+                              <div class="trace-header mb-1">
+                                ===== run =====
+                              </div>
+                              <Show
+                                when={r().stdout}
+                                fallback={
+                                  <div class="text-[#78716c]">
+                                    (no output — try a print() in there)
+                                  </div>
+                                }
+                              >
+                                <div class="whitespace-pre-wrap text-[#d6d3d1]">
+                                  {r().stdout}
+                                </div>
+                              </Show>
+                              <Show when={r().error === "timeout"}>
+                                <div class="trace-fail mt-1">
+                                  Stopped after 15 seconds — looks like an
+                                  infinite loop!
+                                </div>
+                              </Show>
+                              <Show when={r().error === "output_limit"}>
+                                <div class="trace-fail mt-1">
+                                  Output limit reached — your script prints WAY
+                                  too much.
+                                </div>
+                              </Show>
+                              <Show
+                                when={
+                                  r().error &&
+                                  r().error !== "timeout" &&
+                                  r().error !== "output_limit"
+                                }
+                              >
+                                <div class="trace-error mt-1">{r().error}</div>
+                              </Show>
+                            </div>
+                          )}
+                        </Show>
                         <Show when={t().fatal}>
                           <div class="trace-header mb-1">===== oops =====</div>
                           <div class="trace-fail">{t().fatal}</div>
