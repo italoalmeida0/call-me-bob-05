@@ -24862,8 +24862,8 @@ var EXERCISES = [
         output: "[[1, 2], [4, 5]]"
       },
       {
-        input: 'crate_rows(["piscine", "42", "python", "code", "ai"], 3)',
-        output: "[['piscine', '42', 'python'], ['code', 'ai', None]]",
+        input: 'crate_rows(["seeds", "pots", "soil", "tools", "rope"], 3)',
+        output: "[['seeds', 'pots', 'soil'], ['tools', 'rope', None]]",
         note: "the last row is padded with None"
       },
       {
@@ -24878,7 +24878,7 @@ var EXERCISES = [
     ],
     tests: [
       { call: "crate_rows([1, 2, 4, 5], 2)", args: "([1, 2, 4, 5], 2)", expected: "[[1, 2], [4, 5]]" },
-      { call: 'crate_rows(["piscine", "42", "python", "code", "ai"], 3)', args: "(['piscine', '42', 'python', 'code', 'ai'], 3)", expected: "[['piscine', '42', 'python'], ['code', 'ai', None]]" },
+      { call: 'crate_rows(["seeds", "pots", "soil", "tools", "rope"], 3)', args: "(['seeds', 'pots', 'soil', 'tools', 'rope'], 3)", expected: "[['seeds', 'pots', 'soil'], ['tools', 'rope', None]]" },
       { call: "crate_rows([1, 2, 3], 0)", args: "([1, 2, 3], 0)", expected: "[]" },
       { call: "crate_rows([7, 8, 9], -2)", args: "([7, 8, 9], -2)", expected: "[]" },
       { call: "crate_rows([], 3)", args: "([], 3)", expected: "[]" },
