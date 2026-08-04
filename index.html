@@ -38,6 +38,11 @@
   <body class="bg-[#131110] text-[#e7e5e4] flex flex-col overflow-hidden">
     <div id="root" class="h-full flex flex-col overflow-hidden"></div>
 
+    <!-- Shim so process.env.* reads don't crash in dev mode
+         (build.ts inlines SHORT_URL_API on production builds) -->
+    <script>
+      window.process = window.process || { env: {} };
+    </script>
     <script type="module" src="./src/index.jsx"></script>
   </body>
 </html>

@@ -26,6 +26,9 @@ const PREV_SITE = {
 };
 const NEXT_SITE = null;
 
+// Short-url service — inlined by build.ts from env SHORT_URL_API
+const SHARE_API = process.env.SHORT_URL_API || "https://url.hezz.it";
+
 // ==========================================
 // ROUTING (history-aware SPA on GitHub Pages)
 // The build clones dist/ into dist/<exercise-id>/ so every chore has a real
@@ -134,6 +137,29 @@ function saveCode(ex, code) {
 }
 
 // ==========================================
+// SHARE LINKS (#base64-encoded code in the URL hash)
+// ==========================================
+function encodeCodeHash(code) {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(code)));
+}
+
+// If the URL carries a shared-code hash, it wins over localStorage.
+// The hash is left in place so F5 keeps showing the shared code; the
+// visitor's own saved code is only replaced once they start editing
+// (the usual debounced save then kicks in).
+function decodeSharedCode() {
+  try {
+    const h = location.hash.slice(1);
+    if (!h || !/^[A-Za-z0-9+/=]+$/.test(h)) return null;
+    const bytes = Uint8Array.from(atob(h), (c) => c.charCodeAt(0));
+    if (!bytes.length || bytes.length > 200_000) return null; // sanity cap
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+// ==========================================
 // TAB = 2 SPACES (Bob's robot hates \t)
 // ==========================================
 const TWO_SPACES = "  ";
@@ -201,6 +227,8 @@ function PracticeScreen(props) {
   const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed } | { run }
   const [leftTab, setLeftTab] = createSignal("note"); // "note" | "log"
   const [confirmReset, setConfirmReset] = createSignal(false);
+  const [sharing, setSharing] = createSignal(false);
+  const [sharedOk, setSharedOk] = createSignal(false);
 
   let editorContainerRef;
   let traceRef;
@@ -209,7 +237,7 @@ function PracticeScreen(props) {
 
   onMount(() => {
     cmView = new EditorView({
-      doc: loadCode(ex()),
+      doc: decodeSharedCode() ?? loadCode(ex()),
       extensions: [
         basicSetup,
         keymap.of([
@@ -303,6 +331,34 @@ function PracticeScreen(props) {
     }
   };
 
+  const shareCode = async () => {
+    if (sharing()) return;
+    setSharing(true);
+    try {
+      const code = cmView.state.doc.toString();
+      const longUrl = `${location.origin}${exerciseUrl(ex().id)}#${encodeCodeHash(code)}`;
+      const res = await fetch(`${SHARE_API}/${encodeURIComponent(longUrl)}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data && data.error ? data.error : `HTTP ${res.status}`);
+      }
+      try {
+        await navigator.clipboard.writeText(data.short);
+      } catch {
+        window.prompt("Copy your share link:", data.short);
+      }
+      setSharedOk(true);
+      setTimeout(() => setSharedOk(false), 2500);
+    } catch (err) {
+      setLeftTab("log");
+      setTrace({
+        fatal: `Couldn't create a share link: ${err.message || err}`,
+      });
+    } finally {
+      setSharing(false);
+    }
+  };
+
   const resetCode = () => setConfirmReset(true);
 
   const doReset = (clearStatus) => {
@@ -370,6 +426,20 @@ function PracticeScreen(props) {
           </div>
         </div>
         <div class="flex items-center gap-2">
+          <button
+            onClick={shareCode}
+            disabled={sharing()}
+            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
+            title="Share this code — copies a short link"
+          >
+            <Icon
+              name={
+                sharing() ? "hourglass-top" : sharedOk() ? "check" : "share"
+              }
+              color={sharedOk() ? "34d399" : "a8a29e"}
+              size={16}
+            />
+          </button>
           <button
             onClick={resetCode}
             class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"

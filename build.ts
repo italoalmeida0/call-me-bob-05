@@ -22,6 +22,12 @@ async function build() {
       outdir: distDir,
       target: "browser",
       plugins: [tailwindPlugin, solidPlugin],
+      define: {
+        // Short-url API used by the Share button (build-time env)
+        "process.env.SHORT_URL_API": JSON.stringify(
+          process.env.SHORT_URL_API || "https://url.hezz.it",
+        ),
+      },
     });
 
     if (!result.success) {

@@ -25429,7 +25429,7 @@ var _tmpl$4 = /* @__PURE__ */ template(`<span>/`);
 var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex items-start gap-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2"><span class="shrink-0 mt-px flex"></span><span>You already earned the star on this chore. Pick <span class=font-bold>Reset Code and Status</span> to wipe that too, as if you never solved it.`);
 var _tmpl$6 = /* @__PURE__ */ template(`<button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors shadow-[0_3px_0_#7f1d1d] active:translate-y-[2px] active:shadow-none"title="Reset the code and remove the star for this chore">Reset Code and Status`);
 var _tmpl$7 = /* @__PURE__ */ template(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"><div role=dialog aria-modal=true class="w-full max-w-sm bg-[#1c1917] border-2 border-[#292524] rounded-2xl p-5 flex flex-col gap-4 shadow-[0_8px_0_#0c0a09]"><div class="flex items-start gap-3"><div class="bg-[#78350f] p-2 rounded-lg shrink-0 flex items-center justify-center"></div><div class=min-w-0><div class="text-sm font-bold text-[#e7e5e4]">Start this chore over?</div><p class="text-xs text-[#a8a29e] leading-relaxed mt-1">Your current code will be replaced by the original stub. This can't be undone.</p></div></div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button class="px-4 py-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-sm font-semibold transition-colors shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none">Cancel</button><button class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none">Reset Code`);
-var _tmpl$8 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
+var _tmpl$8 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Share this code — copies a short link"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
 var _tmpl$9 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
 var _tmpl$0 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
 var _tmpl$1 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
@@ -25465,6 +25465,7 @@ var PREV_SITE = {
   url: "https://italoalmeida0.github.io/call-me-bob-04/"
 };
 var NEXT_SITE = null;
+var SHARE_API = "https://url.hezz.it";
 function routeExerciseId() {
   const segments = location.pathname.replace(/\/+$/, "").split("/");
   const slug = segments[segments.length - 1];
@@ -25559,6 +25560,22 @@ function saveCode(ex, code2) {
     localStorage.setItem(LS_CODE_PREFIX + ex.id, code2);
   } catch (e) {}
 }
+function encodeCodeHash(code2) {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(code2)));
+}
+function decodeSharedCode() {
+  try {
+    const h = location.hash.slice(1);
+    if (!h || !/^[A-Za-z0-9+/=]+$/.test(h))
+      return null;
+    const bytes = Uint8Array.from(atob(h), (c) => c.charCodeAt(0));
+    if (!bytes.length || bytes.length > 200000)
+      return null;
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
 var TWO_SPACES = "  ";
 function insertTwoSpaces(view) {
   const {
@@ -25632,13 +25649,15 @@ function PracticeScreen(props) {
   const [trace, setTrace] = createSignal(null);
   const [leftTab, setLeftTab] = createSignal("note");
   const [confirmReset, setConfirmReset] = createSignal(false);
+  const [sharing, setSharing] = createSignal(false);
+  const [sharedOk, setSharedOk] = createSignal(false);
   let editorContainerRef;
   let traceRef;
   let cmView = null;
   let saveTimeout = null;
   onMount(() => {
     cmView = new EditorView({
-      doc: loadCode(ex()),
+      doc: decodeSharedCode() ?? loadCode(ex()),
       extensions: [basicSetup, keymap.of([{
         key: "Tab",
         run: insertTwoSpaces
@@ -25728,6 +25747,34 @@ function PracticeScreen(props) {
       }, 50);
     }
   };
+  const shareCode = async () => {
+    if (sharing())
+      return;
+    setSharing(true);
+    try {
+      const code2 = cmView.state.doc.toString();
+      const longUrl = `${location.origin}${exerciseUrl(ex().id)}#${encodeCodeHash(code2)}`;
+      const res = await fetch(`${SHARE_API}/${encodeURIComponent(longUrl)}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data && data.error ? data.error : `HTTP ${res.status}`);
+      }
+      try {
+        await navigator.clipboard.writeText(data.short);
+      } catch {
+        window.prompt("Copy your share link:", data.short);
+      }
+      setSharedOk(true);
+      setTimeout(() => setSharedOk(false), 2500);
+    } catch (err) {
+      setLeftTab("log");
+      setTrace({
+        fatal: `Couldn't create a share link: ${err.message || err}`
+      });
+    } finally {
+      setSharing(false);
+    }
+  };
   const resetCode = () => setConfirmReset(true);
   const doReset = (clearStatus) => {
     setConfirmReset(false);
@@ -25775,7 +25822,7 @@ function PracticeScreen(props) {
   };
   const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
   return (() => {
-    var _el$2 = _tmpl$8(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.firstChild, _el$14 = _el$3.nextSibling, _el$15 = _el$14.firstChild, _el$16 = _el$15.firstChild, _el$30 = _el$16.nextSibling, _el$31 = _el$30.firstChild, _el$32 = _el$31.firstChild, _el$33 = _el$31.nextSibling, _el$34 = _el$33.firstChild, _el$37 = _el$15.nextSibling, _el$38 = _el$37.firstChild;
+    var _el$2 = _tmpl$8(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.nextSibling, _el$14 = _el$13.firstChild, _el$15 = _el$3.nextSibling, _el$16 = _el$15.firstChild, _el$17 = _el$16.firstChild, _el$31 = _el$17.nextSibling, _el$32 = _el$31.firstChild, _el$33 = _el$32.firstChild, _el$34 = _el$32.nextSibling, _el$35 = _el$34.firstChild, _el$38 = _el$16.nextSibling, _el$39 = _el$38.firstChild;
     addEventListener(_el$5, "click", props.onBack, true);
     insert(_el$5, createComponent(Icon, {
       name: "arrow-back",
@@ -25802,68 +25849,78 @@ function PracticeScreen(props) {
         });
       }
     }), null);
-    _el$1.$$click = resetCode;
+    _el$1.$$click = shareCode;
     insert(_el$1, createComponent(Icon, {
+      get name() {
+        return memo(() => !!sharing())() ? "hourglass-top" : sharedOk() ? "check" : "share";
+      },
+      get color() {
+        return sharedOk() ? "34d399" : "a8a29e";
+      },
+      size: 16
+    }));
+    _el$10.$$click = resetCode;
+    insert(_el$10, createComponent(Icon, {
       name: "restart-alt",
       color: "a8a29e",
       size: 16
     }));
-    _el$10.$$click = formatCode;
-    insert(_el$10, createComponent(Icon, {
+    _el$11.$$click = formatCode;
+    insert(_el$11, createComponent(Icon, {
       get name() {
         return formatting() ? "hourglass-top" : "format-align-left";
       },
       color: "a8a29e",
       size: 16
     }));
-    _el$11.$$click = runCode;
-    insert(_el$11, createComponent(Icon, {
+    _el$12.$$click = runCode;
+    insert(_el$12, createComponent(Icon, {
       get name() {
         return running() ? "hourglass-top" : "play-arrow";
       },
       color: "022c22",
       size: 16
     }));
-    _el$12.$$click = runGrader;
-    insert(_el$12, createComponent(Icon, {
+    _el$13.$$click = runGrader;
+    insert(_el$13, createComponent(Icon, {
       name: "smart-toy",
       color: "451a03",
       size: 16
-    }), _el$13);
-    insert(_el$13, () => grading() ? "Grading..." : "Grade me!");
-    insert(_el$16, createComponent(Show, {
+    }), _el$14);
+    insert(_el$14, () => grading() ? "Grading..." : "Grade me!");
+    insert(_el$17, createComponent(Show, {
       get when() {
         return leftTab() === "note";
       },
       get fallback() {
         return (() => {
-          var _el$49 = _tmpl$9();
+          var _el$50 = _tmpl$9();
           var _ref$2 = traceRef;
-          typeof _ref$2 === "function" ? use(_ref$2, _el$49) : traceRef = _el$49;
-          insert(_el$49, createComponent(Show, {
+          typeof _ref$2 === "function" ? use(_ref$2, _el$50) : traceRef = _el$50;
+          insert(_el$50, createComponent(Show, {
             get when() {
               return trace();
             },
             get fallback() {
               return (() => {
-                var _el$50 = _tmpl$0(), _el$51 = _el$50.firstChild;
-                insert(_el$51, createComponent(Icon, {
+                var _el$51 = _tmpl$0(), _el$52 = _el$51.firstChild;
+                insert(_el$52, createComponent(Icon, {
                   name: "smart-toy",
                   color: "57534e",
                   size: 32
                 }));
-                return _el$50;
+                return _el$51;
               })();
             },
             children: (t2) => (() => {
-              var _el$52 = _tmpl$();
-              insert(_el$52, createComponent(Show, {
+              var _el$53 = _tmpl$();
+              insert(_el$53, createComponent(Show, {
                 get when() {
                   return t2().run;
                 },
                 children: (r) => (() => {
-                  var _el$67 = _tmpl$19(), _el$68 = _el$67.firstChild;
-                  insert(_el$67, createComponent(Show, {
+                  var _el$68 = _tmpl$19(), _el$69 = _el$68.firstChild;
+                  insert(_el$68, createComponent(Show, {
                     get when() {
                       return r().stdout;
                     },
@@ -25871,12 +25928,12 @@ function PracticeScreen(props) {
                       return _tmpl$20();
                     },
                     get children() {
-                      var _el$69 = _tmpl$15();
-                      insert(_el$69, () => r().stdout);
-                      return _el$69;
+                      var _el$70 = _tmpl$15();
+                      insert(_el$70, () => r().stdout);
+                      return _el$70;
                     }
                   }), null);
-                  insert(_el$67, createComponent(Show, {
+                  insert(_el$68, createComponent(Show, {
                     get when() {
                       return r().error === "timeout";
                     },
@@ -25884,7 +25941,7 @@ function PracticeScreen(props) {
                       return _tmpl$16();
                     }
                   }), null);
-                  insert(_el$67, createComponent(Show, {
+                  insert(_el$68, createComponent(Show, {
                     get when() {
                       return r().error === "output_limit";
                     },
@@ -25892,32 +25949,32 @@ function PracticeScreen(props) {
                       return _tmpl$17();
                     }
                   }), null);
-                  insert(_el$67, createComponent(Show, {
+                  insert(_el$68, createComponent(Show, {
                     get when() {
                       return memo(() => !!(r().error && r().error !== "timeout"))() && r().error !== "output_limit";
                     },
                     get children() {
-                      var _el$72 = _tmpl$18();
-                      insert(_el$72, () => r().error);
-                      return _el$72;
+                      var _el$73 = _tmpl$18();
+                      insert(_el$73, () => r().error);
+                      return _el$73;
                     }
                   }), null);
-                  return _el$67;
+                  return _el$68;
                 })()
               }), null);
-              insert(_el$52, createComponent(Show, {
+              insert(_el$53, createComponent(Show, {
                 get when() {
                   return t2().fatal;
                 },
                 get children() {
                   return [_tmpl$1(), (() => {
-                    var _el$54 = _tmpl$10();
-                    insert(_el$54, () => t2().fatal);
-                    return _el$54;
+                    var _el$55 = _tmpl$10();
+                    insert(_el$55, () => t2().fatal);
+                    return _el$55;
                   })(), _tmpl$11()];
                 }
               }), null);
-              insert(_el$52, createComponent(Show, {
+              insert(_el$53, createComponent(Show, {
                 get when() {
                   return t2().results;
                 },
@@ -25927,27 +25984,27 @@ function PracticeScreen(props) {
                       return t2().results;
                     },
                     children: (r, i2) => (() => {
-                      var _el$74 = _tmpl$22(), _el$75 = _el$74.firstChild, _el$76 = _el$75.firstChild, _el$77 = _el$76.firstChild, _el$79 = _el$77.nextSibling, _el$78 = _el$79.nextSibling, _el$80 = _el$75.nextSibling, _el$81 = _el$80.firstChild, _el$87 = _el$81.nextSibling, _el$82 = _el$87.nextSibling, _el$88 = _el$82.nextSibling, _el$84 = _el$88.nextSibling, _el$86 = _el$84.nextSibling;
-                      insert(_el$76, () => i2() + 1, _el$79);
-                      insert(_el$75, () => r.call, null);
-                      insert(_el$80, () => r.expected, _el$87);
-                      insert(_el$80, (() => {
+                      var _el$75 = _tmpl$22(), _el$76 = _el$75.firstChild, _el$77 = _el$76.firstChild, _el$78 = _el$77.firstChild, _el$80 = _el$78.nextSibling, _el$79 = _el$80.nextSibling, _el$81 = _el$76.nextSibling, _el$82 = _el$81.firstChild, _el$88 = _el$82.nextSibling, _el$83 = _el$88.nextSibling, _el$89 = _el$83.nextSibling, _el$85 = _el$89.nextSibling, _el$87 = _el$85.nextSibling;
+                      insert(_el$77, () => i2() + 1, _el$80);
+                      insert(_el$76, () => r.call, null);
+                      insert(_el$81, () => r.expected, _el$88);
+                      insert(_el$81, (() => {
                         var _c$ = memo(() => r.got === null);
                         return () => _c$() ? "—" : r.got;
-                      })(), _el$88);
-                      insert(_el$86, () => r.ok ? "OK" : "KO");
-                      insert(_el$74, createComponent(Show, {
+                      })(), _el$89);
+                      insert(_el$87, () => r.ok ? "OK" : "KO");
+                      insert(_el$75, createComponent(Show, {
                         get when() {
                           return r.error;
                         },
                         get children() {
-                          var _el$89 = _tmpl$21();
-                          insert(_el$89, () => r.error);
-                          return _el$89;
+                          var _el$90 = _tmpl$21();
+                          insert(_el$90, () => r.error);
+                          return _el$90;
                         }
                       }), null);
-                      createRenderEffect(() => className(_el$86, r.ok ? "trace-ok" : "trace-ko"));
-                      return _el$74;
+                      createRenderEffect(() => className(_el$87, r.ok ? "trace-ok" : "trace-ko"));
+                      return _el$75;
                     })()
                   }), _tmpl$13(), createComponent(Show, {
                     get when() {
@@ -25957,184 +26014,185 @@ function PracticeScreen(props) {
                       return _tmpl$23();
                     },
                     get children() {
-                      var _el$58 = _tmpl$14(), _el$59 = _el$58.firstChild, _el$60 = _el$59.firstChild, _el$61 = _el$60.nextSibling, _el$62 = _el$61.firstChild, _el$64 = _el$62.nextSibling, _el$63 = _el$64.nextSibling, _el$65 = _el$59.nextSibling, _el$66 = _el$65.firstChild;
-                      insert(_el$58, createComponent(Icon, {
+                      var _el$59 = _tmpl$14(), _el$60 = _el$59.firstChild, _el$61 = _el$60.firstChild, _el$62 = _el$61.nextSibling, _el$63 = _el$62.firstChild, _el$65 = _el$63.nextSibling, _el$64 = _el$65.nextSibling, _el$66 = _el$60.nextSibling, _el$67 = _el$66.firstChild;
+                      insert(_el$59, createComponent(Icon, {
                         name: "celebration",
                         color: "4ade80",
                         size: 24
-                      }), _el$59);
-                      insert(_el$61, () => t2().results.length, _el$64);
-                      addEventListener(_el$65, "click", props.onNext, true);
-                      insert(_el$65, createComponent(Icon, {
+                      }), _el$60);
+                      insert(_el$62, () => t2().results.length, _el$65);
+                      addEventListener(_el$66, "click", props.onNext, true);
+                      insert(_el$66, createComponent(Icon, {
                         name: "arrow-forward",
                         color: "ffffff",
                         size: 14
                       }), null);
-                      return _el$58;
+                      return _el$59;
                     }
                   })];
                 }
               }), null);
-              return _el$52;
+              return _el$53;
             })()
           }));
-          return _el$49;
+          return _el$50;
         })();
       },
       get children() {
-        var _el$17 = _tmpl$3(), _el$18 = _el$17.firstChild, _el$19 = _el$18.firstChild, _el$20 = _el$19.firstChild, _el$22 = _el$18.nextSibling, _el$24 = _el$22.nextSibling, _el$25 = _el$24.firstChild, _el$26 = _el$24.nextSibling, _el$27 = _el$26.nextSibling, _el$28 = _el$27.nextSibling, _el$29 = _el$28.nextSibling;
-        insert(_el$19, () => TIERS[ex().tier - 1].label, _el$20);
-        insert(_el$19, () => TIERS[ex().tier - 1].subtitle, null);
-        insert(_el$22, () => ex().title);
-        insert(_el$17, createComponent(Show, {
+        var _el$18 = _tmpl$3(), _el$19 = _el$18.firstChild, _el$20 = _el$19.firstChild, _el$21 = _el$20.firstChild, _el$23 = _el$19.nextSibling, _el$25 = _el$23.nextSibling, _el$26 = _el$25.firstChild, _el$27 = _el$25.nextSibling, _el$28 = _el$27.nextSibling, _el$29 = _el$28.nextSibling, _el$30 = _el$29.nextSibling;
+        insert(_el$20, () => TIERS[ex().tier - 1].label, _el$21);
+        insert(_el$20, () => TIERS[ex().tier - 1].subtitle, null);
+        insert(_el$23, () => ex().title);
+        insert(_el$18, createComponent(Show, {
           get when() {
             return ex().topics;
           },
           get children() {
-            var _el$23 = _tmpl$2();
-            insert(_el$23, createComponent(For, {
+            var _el$24 = _tmpl$2();
+            insert(_el$24, createComponent(For, {
               get each() {
                 return ex().topics;
               },
               children: (topic) => (() => {
-                var _el$91 = _tmpl$24();
-                insert(_el$91, topic);
-                return _el$91;
+                var _el$92 = _tmpl$24();
+                insert(_el$92, topic);
+                return _el$92;
               })()
             }));
-            return _el$23;
+            return _el$24;
           }
-        }), _el$24);
-        insert(_el$17, createComponent(For, {
+        }), _el$25);
+        insert(_el$18, createComponent(For, {
           get each() {
             return ex().story;
           },
           children: (p) => (() => {
-            var _el$92 = _tmpl$25();
-            insert(_el$92, p);
-            return _el$92;
+            var _el$93 = _tmpl$25();
+            insert(_el$93, p);
+            return _el$93;
           })()
-        }), _el$24);
-        insert(_el$25, () => ex().signature);
-        insert(_el$27, createComponent(For, {
+        }), _el$25);
+        insert(_el$26, () => ex().signature);
+        insert(_el$28, createComponent(For, {
           get each() {
             return ex().rules;
           },
           children: (rule) => (() => {
-            var _el$93 = _tmpl$26(), _el$94 = _el$93.firstChild, _el$95 = _el$94.nextSibling;
-            insert(_el$94, createComponent(Icon, {
+            var _el$94 = _tmpl$26(), _el$95 = _el$94.firstChild, _el$96 = _el$95.nextSibling;
+            insert(_el$95, createComponent(Icon, {
               name: "check-small",
               color: "f59e0b",
               size: 16
             }));
-            insert(_el$95, rule);
-            return _el$93;
+            insert(_el$96, rule);
+            return _el$94;
           })()
         }));
-        insert(_el$29, createComponent(For, {
+        insert(_el$30, createComponent(For, {
           get each() {
             return ex().examples;
           },
           children: (example) => (() => {
-            var _el$96 = _tmpl$28(), _el$97 = _el$96.firstChild, _el$98 = _el$97.nextSibling, _el$99 = _el$98.firstChild;
-            insert(_el$97, () => example.input);
-            insert(_el$98, () => example.output, null);
-            insert(_el$96, createComponent(Show, {
+            var _el$97 = _tmpl$28(), _el$98 = _el$97.firstChild, _el$99 = _el$98.nextSibling, _el$100 = _el$99.firstChild;
+            insert(_el$98, () => example.input);
+            insert(_el$99, () => example.output, null);
+            insert(_el$97, createComponent(Show, {
               get when() {
                 return example.note;
               },
               get children() {
-                var _el$100 = _tmpl$27();
-                insert(_el$100, () => example.note);
-                return _el$100;
+                var _el$101 = _tmpl$27();
+                insert(_el$101, () => example.note);
+                return _el$101;
               }
             }), null);
-            return _el$96;
+            return _el$97;
           })()
         }));
-        return _el$17;
+        return _el$18;
       }
     }));
-    _el$31.$$click = () => setLeftTab("note");
-    insert(_el$31, createComponent(Icon, {
+    _el$32.$$click = () => setLeftTab("note");
+    insert(_el$32, createComponent(Icon, {
       name: "menu-book",
       get color() {
         return leftTab() === "note" ? "fbbf24" : "78716c";
       },
       size: 14
-    }), _el$32);
-    _el$33.$$click = () => setLeftTab("log");
-    insert(_el$33, createComponent(Icon, {
+    }), _el$33);
+    _el$34.$$click = () => setLeftTab("log");
+    insert(_el$34, createComponent(Icon, {
       name: "smart-toy",
       get color() {
         return leftTab() === "log" ? "fbbf24" : "78716c";
       },
       size: 14
-    }), _el$34);
-    insert(_el$33, createComponent(Show, {
+    }), _el$35);
+    insert(_el$34, createComponent(Show, {
       get when() {
         return memo(() => !!trace())() && trace().results;
       },
       get children() {
-        var _el$35 = _tmpl$4(), _el$36 = _el$35.firstChild;
-        insert(_el$35, () => trace().results.filter((r) => r.ok).length, _el$36);
-        insert(_el$35, () => trace().results.length, null);
-        createRenderEffect(() => className(_el$35, `ml-1 px-1.5 py-0.5 rounded text-[10px] font-black ${trace().passed ? "bg-emerald-900/60 text-emerald-300" : "bg-red-900/60 text-red-300"}`));
-        return _el$35;
+        var _el$36 = _tmpl$4(), _el$37 = _el$36.firstChild;
+        insert(_el$36, () => trace().results.filter((r) => r.ok).length, _el$37);
+        insert(_el$36, () => trace().results.length, null);
+        createRenderEffect(() => className(_el$36, `ml-1 px-1.5 py-0.5 rounded text-[10px] font-black ${trace().passed ? "bg-emerald-900/60 text-emerald-300" : "bg-red-900/60 text-red-300"}`));
+        return _el$36;
       }
     }), null);
     var _ref$ = editorContainerRef;
-    typeof _ref$ === "function" ? use(_ref$, _el$38) : editorContainerRef = _el$38;
+    typeof _ref$ === "function" ? use(_ref$, _el$39) : editorContainerRef = _el$39;
     insert(_el$2, createComponent(Show, {
       get when() {
         return confirmReset();
       },
       get children() {
-        var _el$39 = _tmpl$7(), _el$40 = _el$39.firstChild, _el$41 = _el$40.firstChild, _el$42 = _el$41.firstChild, _el$45 = _el$41.nextSibling, _el$46 = _el$45.firstChild, _el$48 = _el$46.nextSibling;
-        _el$39.$$click = () => setConfirmReset(false);
-        _el$40.$$click = (e) => e.stopPropagation();
-        insert(_el$42, createComponent(Icon, {
+        var _el$40 = _tmpl$7(), _el$41 = _el$40.firstChild, _el$42 = _el$41.firstChild, _el$43 = _el$42.firstChild, _el$46 = _el$42.nextSibling, _el$47 = _el$46.firstChild, _el$49 = _el$47.nextSibling;
+        _el$40.$$click = () => setConfirmReset(false);
+        _el$41.$$click = (e) => e.stopPropagation();
+        insert(_el$43, createComponent(Icon, {
           name: "restart-alt",
           color: "fbbf24",
           size: 20
         }));
-        insert(_el$40, createComponent(Show, {
+        insert(_el$41, createComponent(Show, {
           get when() {
             return props.solved().has(ex().id);
           },
           get children() {
-            var _el$43 = _tmpl$5(), _el$44 = _el$43.firstChild;
-            insert(_el$44, createComponent(Icon, {
+            var _el$44 = _tmpl$5(), _el$45 = _el$44.firstChild;
+            insert(_el$45, createComponent(Icon, {
               name: "star",
               color: "fbbf24",
               size: 14
             }));
-            return _el$43;
+            return _el$44;
           }
-        }), _el$45);
-        _el$46.$$click = () => setConfirmReset(false);
-        insert(_el$45, createComponent(Show, {
+        }), _el$46);
+        _el$47.$$click = () => setConfirmReset(false);
+        insert(_el$46, createComponent(Show, {
           get when() {
             return props.solved().has(ex().id);
           },
           get children() {
-            var _el$47 = _tmpl$6();
-            _el$47.$$click = () => doReset(true);
-            return _el$47;
+            var _el$48 = _tmpl$6();
+            _el$48.$$click = () => doReset(true);
+            return _el$48;
           }
-        }), _el$48);
-        _el$48.$$click = () => doReset(false);
-        return _el$39;
+        }), _el$49);
+        _el$49.$$click = () => doReset(false);
+        return _el$40;
       }
     }), null);
     createRenderEffect((_p$) => {
-      var _v$5 = formatting() || props.pyodideState() !== "ready", _v$6 = running() || grading() || props.pyodideState() !== "ready", _v$7 = gradeDisabled(), _v$8 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$9 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
-      _v$5 !== _p$.e && (_el$10.disabled = _p$.e = _v$5);
+      var _v$5 = sharing(), _v$6 = formatting() || props.pyodideState() !== "ready", _v$7 = running() || grading() || props.pyodideState() !== "ready", _v$8 = gradeDisabled(), _v$9 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$1 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
+      _v$5 !== _p$.e && (_el$1.disabled = _p$.e = _v$5);
       _v$6 !== _p$.t && (_el$11.disabled = _p$.t = _v$6);
       _v$7 !== _p$.a && (_el$12.disabled = _p$.a = _v$7);
-      _v$8 !== _p$.o && setAttribute(_el$12, "title", _p$.o = _v$8);
-      _v$9 !== _p$.i && className(_el$31, _p$.i = _v$9);
-      _v$0 !== _p$.n && className(_el$33, _p$.n = _v$0);
+      _v$8 !== _p$.o && (_el$13.disabled = _p$.o = _v$8);
+      _v$9 !== _p$.i && setAttribute(_el$13, "title", _p$.i = _v$9);
+      _v$0 !== _p$.n && className(_el$32, _p$.n = _v$0);
+      _v$1 !== _p$.s && className(_el$34, _p$.s = _v$1);
       return _p$;
     }, {
       e: undefined,
@@ -26142,7 +26200,8 @@ function PracticeScreen(props) {
       a: undefined,
       o: undefined,
       i: undefined,
-      n: undefined
+      n: undefined,
+      s: undefined
     });
     return _el$2;
   })();
@@ -26150,25 +26209,25 @@ function PracticeScreen(props) {
 function HomeScreen(props) {
   const solvedCount = () => EXERCISES.filter((e) => props.solved().has(e.id)).length;
   return (() => {
-    var _el$101 = _tmpl$29(), _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.nextSibling, _el$106 = _el$105.nextSibling, _el$107 = _el$106.firstChild, _el$108 = _el$106.nextSibling, _el$109 = _el$108.nextSibling, _el$110 = _el$109.firstChild, _el$111 = _el$109.nextSibling, _el$112 = _el$111.firstChild, _el$113 = _el$112.firstChild, _el$114 = _el$112.nextSibling, _el$115 = _el$114.firstChild, _el$117 = _el$115.nextSibling, _el$116 = _el$117.nextSibling, _el$118 = _el$103.nextSibling, _el$119 = _el$118.nextSibling;
-    insert(_el$104, createComponent(Icon, {
+    var _el$102 = _tmpl$29(), _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.firstChild, _el$106 = _el$105.nextSibling, _el$107 = _el$106.nextSibling, _el$108 = _el$107.firstChild, _el$109 = _el$107.nextSibling, _el$110 = _el$109.nextSibling, _el$111 = _el$110.firstChild, _el$112 = _el$110.nextSibling, _el$113 = _el$112.firstChild, _el$114 = _el$113.firstChild, _el$115 = _el$113.nextSibling, _el$116 = _el$115.firstChild, _el$118 = _el$116.nextSibling, _el$117 = _el$118.nextSibling, _el$119 = _el$104.nextSibling, _el$120 = _el$119.nextSibling;
+    insert(_el$105, createComponent(Icon, {
       name: "smart-toy",
       color: "fbbf24",
       size: 44
     }));
-    insert(_el$106, createComponent(Icon, {
+    insert(_el$107, createComponent(Icon, {
       name: "checklist",
       color: "f59e0b",
       size: 14
-    }), _el$107);
-    insert(_el$109, createComponent(Icon, {
+    }), _el$108);
+    insert(_el$110, createComponent(Icon, {
       name: "star",
       color: "fbbf24",
       size: 14
-    }), _el$110);
-    insert(_el$114, solvedCount, _el$115);
-    insert(_el$114, () => EXERCISES.length, _el$117);
-    insert(_el$102, createComponent(For, {
+    }), _el$111);
+    insert(_el$115, solvedCount, _el$116);
+    insert(_el$115, () => EXERCISES.length, _el$118);
+    insert(_el$103, createComponent(For, {
       each: TIERS,
       children: (tier) => {
         const tierExercises = () => EXERCISES.filter((e) => e.tier === tier.tier);
@@ -26177,25 +26236,25 @@ function HomeScreen(props) {
             return tierExercises().length > 0;
           },
           get children() {
-            var _el$120 = _tmpl$30(), _el$121 = _el$120.firstChild, _el$122 = _el$121.firstChild, _el$123 = _el$122.nextSibling, _el$124 = _el$121.nextSibling;
-            insert(_el$122, () => tier.label);
-            insert(_el$123, () => tier.subtitle);
-            insert(_el$124, createComponent(For, {
+            var _el$121 = _tmpl$30(), _el$122 = _el$121.firstChild, _el$123 = _el$122.firstChild, _el$124 = _el$123.nextSibling, _el$125 = _el$122.nextSibling;
+            insert(_el$123, () => tier.label);
+            insert(_el$124, () => tier.subtitle);
+            insert(_el$125, createComponent(For, {
               get each() {
                 return tierExercises();
               },
               children: (ex) => (() => {
-                var _el$125 = _tmpl$32(), _el$126 = _el$125.firstChild, _el$127 = _el$126.nextSibling, _el$128 = _el$127.firstChild, _el$129 = _el$128.firstChild, _el$130 = _el$128.nextSibling, _el$132 = _el$127.nextSibling;
-                _el$125.$$click = () => props.onPick(ex.id);
-                insert(_el$126, createComponent(Icon, {
+                var _el$126 = _tmpl$32(), _el$127 = _el$126.firstChild, _el$128 = _el$127.nextSibling, _el$129 = _el$128.firstChild, _el$130 = _el$129.firstChild, _el$131 = _el$129.nextSibling, _el$133 = _el$128.nextSibling;
+                _el$126.$$click = () => props.onPick(ex.id);
+                insert(_el$127, createComponent(Icon, {
                   get name() {
                     return ex.icon;
                   },
                   color: "fbbf24",
                   size: 26
                 }));
-                insert(_el$129, () => ex.title);
-                insert(_el$128, createComponent(Show, {
+                insert(_el$130, () => ex.title);
+                insert(_el$129, createComponent(Show, {
                   get when() {
                     return props.solved().has(ex.id);
                   },
@@ -26207,69 +26266,69 @@ function HomeScreen(props) {
                     });
                   }
                 }), null);
-                insert(_el$130, () => ex.tagline);
-                insert(_el$127, createComponent(Show, {
+                insert(_el$131, () => ex.tagline);
+                insert(_el$128, createComponent(Show, {
                   get when() {
                     return ex.topics;
                   },
                   get children() {
-                    var _el$131 = _tmpl$31();
-                    insert(_el$131, createComponent(For, {
+                    var _el$132 = _tmpl$31();
+                    insert(_el$132, createComponent(For, {
                       get each() {
                         return ex.topics;
                       },
                       children: (topic) => (() => {
-                        var _el$133 = _tmpl$24();
-                        insert(_el$133, topic);
-                        return _el$133;
+                        var _el$134 = _tmpl$24();
+                        insert(_el$134, topic);
+                        return _el$134;
                       })()
                     }));
-                    return _el$131;
+                    return _el$132;
                   }
                 }), null);
-                insert(_el$132, createComponent(Icon, {
+                insert(_el$133, createComponent(Icon, {
                   name: "chevron-right",
                   color: "57534e",
                   size: 20
                 }));
-                return _el$125;
+                return _el$126;
               })()
             }));
-            return _el$120;
+            return _el$121;
           }
         });
       }
-    }), _el$118);
-    insert(_el$119, createComponent(Show, {
+    }), _el$119);
+    insert(_el$120, createComponent(Show, {
       when: PREV_SITE,
       children: (s) => (() => {
-        var _el$134 = _tmpl$33(), _el$135 = _el$134.firstChild;
-        insert(_el$134, createComponent(Icon, {
+        var _el$135 = _tmpl$33(), _el$136 = _el$135.firstChild;
+        insert(_el$135, createComponent(Icon, {
           name: "arrow-back",
           color: "a8a29e",
           size: 14
-        }), _el$135);
-        insert(_el$135, () => s().label);
-        createRenderEffect(() => setAttribute(_el$134, "href", s().url));
-        return _el$134;
+        }), _el$136);
+        insert(_el$136, () => s().label);
+        createRenderEffect(() => setAttribute(_el$135, "href", s().url));
+        return _el$135;
       })()
     }), null);
-    insert(_el$119, createComponent(Show, {
+    insert(_el$120, createComponent(Show, {
       when: NEXT_SITE,
       children: (s) => (() => {
-        var _el$136 = _tmpl$33(), _el$137 = _el$136.firstChild;
-        insert(_el$137, () => s().label);
-        insert(_el$136, createComponent(Icon, {
+        var _el$137 = _tmpl$33(), _el$138 = _el$137.firstChild;
+        insert(_el$138, () => s().label);
+        insert(_el$137, createComponent(Icon, {
           name: "arrow-forward",
           color: "a8a29e",
           size: 14
         }), null);
-        createRenderEffect(() => setAttribute(_el$136, "href", s().url));
-        return _el$136;
+        createRenderEffect(() => setAttribute(_el$137, "href", s().url));
+        return _el$137;
       })()
     }), null);
-    createRenderEffect((_$p) => setStyleProperty(_el$113, "width", `${solvedCount() / EXERCISES.length * 100}%`));
-    return _el$101;
+    createRenderEffect((_$p) => setStyleProperty(_el$114, "width", `${solvedCount() / EXERCISES.length * 100}%`));
+    return _el$102;
   })();
 }
 function App() {
@@ -26334,8 +26393,8 @@ function App() {
     }
   };
   return (() => {
-    var _el$138 = _tmpl$34(), _el$139 = _el$138.firstChild, _el$140 = _el$139.firstChild, _el$141 = _el$140.nextSibling;
-    insert(_el$138, createComponent(Show, {
+    var _el$139 = _tmpl$34(), _el$140 = _el$139.firstChild, _el$141 = _el$140.firstChild, _el$142 = _el$141.nextSibling;
+    insert(_el$139, createComponent(Show, {
       get when() {
         return currentExercise();
       },
@@ -26355,10 +26414,10 @@ function App() {
         onUnsolved: markUnsolved,
         onNext: nextChore
       })
-    }), _el$139);
-    insert(_el$141, pyodideText);
-    createRenderEffect(() => className(_el$140, `status-dot ${pyodideState()}`));
-    return _el$138;
+    }), _el$140);
+    insert(_el$142, pyodideText);
+    createRenderEffect(() => className(_el$141, `status-dot ${pyodideState()}`));
+    return _el$139;
   })();
 }
 render(() => createComponent(App, {}), document.getElementById("root"));
