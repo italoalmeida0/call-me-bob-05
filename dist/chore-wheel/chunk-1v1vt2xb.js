@@ -25792,7 +25792,7 @@ function PracticeScreen(props) {
     _el$10.$$click = formatCode;
     insert(_el$10, createComponent(Icon, {
       get name() {
-        return formatting() ? "hourglass-top" : "auto-fix-high";
+        return formatting() ? "hourglass-top" : "format-align-left";
       },
       color: "a8a29e",
       size: 16

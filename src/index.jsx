@@ -370,7 +370,7 @@ function PracticeScreen(props) {
             title="Format code with Black (downloads Black on first use)"
           >
             <Icon
-              name={formatting() ? "hourglass-top" : "auto-fix-high"}
+              name={formatting() ? "hourglass-top" : "format-align-left"}
               color="a8a29e"
               size={16}
             />
