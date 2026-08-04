@@ -200,6 +200,7 @@ function PracticeScreen(props) {
   const [running, setRunning] = createSignal(false);
   const [trace, setTrace] = createSignal(null); // { fatal } | { results, passed } | { run }
   const [leftTab, setLeftTab] = createSignal("note"); // "note" | "log"
+  const [confirmReset, setConfirmReset] = createSignal(false);
 
   let editorContainerRef;
   let traceRef;
@@ -240,6 +241,14 @@ function PracticeScreen(props) {
       ],
       parent: editorContainerRef,
     });
+  });
+
+  onMount(() => {
+    const onEsc = (e) => {
+      if (e.key === "Escape") setConfirmReset(false);
+    };
+    window.addEventListener("keydown", onEsc);
+    onCleanup(() => window.removeEventListener("keydown", onEsc));
   });
 
   onCleanup(() => {
@@ -294,17 +303,22 @@ function PracticeScreen(props) {
     }
   };
 
-  const resetCode = () => {
-    if (
-      !confirm(
-        "Start this chore over? Your current code will be replaced by the stub.",
-      )
-    )
-      return;
+  const resetCode = () => setConfirmReset(true);
+
+  const doReset = (clearStatus) => {
+    setConfirmReset(false);
+    // Skip the 2s CodeMirror save debounce: cancel any pending save and
+    // persist the stub right away, so a quick F5 can't resurrect old code.
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+      saveTimeout = null;
+    }
     cmView.dispatch({
       changes: { from: 0, to: cmView.state.doc.length, insert: ex().stub },
     });
+    saveCode(ex(), ex().stub);
     setTrace(null);
+    if (clearStatus) props.onUnsolved(ex().id);
   };
 
   const formatCode = async () => {
@@ -677,6 +691,73 @@ function PracticeScreen(props) {
           <div ref={editorContainerRef} class="absolute inset-0"></div>
         </div>
       </div>
+
+      {/* Reset confirmation modal */}
+      <Show when={confirmReset()}>
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setConfirmReset(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            class="w-full max-w-sm bg-[#1c1917] border-2 border-[#292524] rounded-2xl p-5 flex flex-col gap-4 shadow-[0_8px_0_#0c0a09]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div class="flex items-start gap-3">
+              <div class="bg-[#78350f] p-2 rounded-lg shrink-0 flex items-center justify-center">
+                <Icon name="restart-alt" color="fbbf24" size={20} />
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-bold text-[#e7e5e4]">
+                  Start this chore over?
+                </div>
+                <p class="text-xs text-[#a8a29e] leading-relaxed mt-1">
+                  Your current code will be replaced by the original stub. This
+                  can't be undone.
+                </p>
+              </div>
+            </div>
+
+            <Show when={props.solved().has(ex().id)}>
+              <div class="flex items-start gap-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
+                <span class="shrink-0 mt-px flex">
+                  <Icon name="star" color="fbbf24" size={14} />
+                </span>
+                <span>
+                  You already earned the star on this chore. Pick{" "}
+                  <span class="font-bold">Reset Code and Status</span> to wipe
+                  that too, as if you never solved it.
+                </span>
+              </div>
+            </Show>
+
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+              <button
+                onClick={() => setConfirmReset(false)}
+                class="px-4 py-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-sm font-semibold transition-colors shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
+              >
+                Cancel
+              </button>
+              <Show when={props.solved().has(ex().id)}>
+                <button
+                  onClick={() => doReset(true)}
+                  class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors shadow-[0_3px_0_#7f1d1d] active:translate-y-[2px] active:shadow-none"
+                  title="Reset the code and remove the star for this chore"
+                >
+                  Reset Code and Status
+                </button>
+              </Show>
+              <button
+                onClick={() => doReset(false)}
+                class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
+              >
+                Reset Code
+              </button>
+            </div>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 }
@@ -889,10 +970,26 @@ function App() {
     saveSolved(next);
   };
 
+  const markUnsolved = (id) => {
+    if (!solved().has(id)) return;
+    const next = new Set(solved());
+    next.delete(id);
+    setSolved(next);
+    saveSolved(next);
+  };
+
+  // Next-chore order follows the day tiers (Day 1 → last), matching the
+  // home list — the raw EXERCISES array is NOT sorted by tier.
+  const orderedExercises = TIERS.flatMap((t) =>
+    EXERCISES.filter((e) => e.tier === t.tier),
+  );
+
   const nextChore = () => {
-    const idx = EXERCISES.findIndex((e) => e.id === currentId());
-    const unsolved = EXERCISES.slice(idx + 1).find((e) => !solved().has(e.id));
-    const fallback = EXERCISES.find((e) => !solved().has(e.id));
+    const idx = orderedExercises.findIndex((e) => e.id === currentId());
+    const unsolved = orderedExercises
+      .slice(idx + 1)
+      .find((e) => !solved().has(e.id));
+    const fallback = orderedExercises.find((e) => !solved().has(e.id));
     const next = unsolved || fallback;
     if (next) {
       pickExercise(next.id);
@@ -915,6 +1012,7 @@ function App() {
             pyodideState={pyodideState}
             onBack={goHome}
             onSolved={markSolved}
+            onUnsolved={markUnsolved}
             onNext={nextChore}
           />
         )}

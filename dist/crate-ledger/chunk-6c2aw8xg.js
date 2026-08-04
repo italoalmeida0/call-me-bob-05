@@ -25426,35 +25426,38 @@ var _tmpl$ = /* @__PURE__ */ template(`<div>`);
 var _tmpl$2 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mb-3">`);
 var _tmpl$3 = /* @__PURE__ */ template(`<div class="px-5 py-4"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-[#57534e]"> · </span></div><h2 class="text-xl font-black text-amber-400 mb-2"></h2><div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2 mb-4"><code class="text-[13px] text-emerald-400 font-mono break-all"></code></div><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">The rules</h3><ul class="mb-5 space-y-1.5"></ul><h3 class="text-[11px] font-bold uppercase tracking-widest text-[#78716c] mb-2">Examples</h3><div class="space-y-2 pb-2">`);
 var _tmpl$4 = /* @__PURE__ */ template(`<span>/`);
-var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
-var _tmpl$6 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
-var _tmpl$7 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
-var _tmpl$8 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
-var _tmpl$9 = /* @__PURE__ */ template(`<div class=trace-fail>`);
-var _tmpl$0 = /* @__PURE__ */ template(`<div class="text-[#78716c] mt-1">Bob's robot couldn't even read your code. Fix it and hit Grade me! again.`);
-var _tmpl$1 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== trace =====`);
-var _tmpl$10 = /* @__PURE__ */ template(`<div class="trace-header mt-2">=================`);
-var _tmpl$11 = /* @__PURE__ */ template(`<div class="success-banner mt-3 mb-1 bg-emerald-900/40 border border-emerald-700 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap font-sans"><div class="flex-1 min-w-[180px]"><div class="text-emerald-300 font-extrabold text-sm">Chore complete! Bob owes you one.</div><div class="text-emerald-500/80 text-xs">All <!> tests passed.</div></div><button class="flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"><span>Next chore`);
-var _tmpl$12 = /* @__PURE__ */ template(`<div class="whitespace-pre-wrap text-[#d6d3d1]">`);
-var _tmpl$13 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Stopped after 15 seconds — looks like an infinite loop!`);
-var _tmpl$14 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Output limit reached — your script prints WAY too much.`);
-var _tmpl$15 = /* @__PURE__ */ template(`<div class="trace-error mt-1">`);
-var _tmpl$16 = /* @__PURE__ */ template(`<div><div class="trace-header mb-1">===== run =====`);
-var _tmpl$17 = /* @__PURE__ */ template(`<div class=text-[#78716c]>(no output — try a print() in there)`);
-var _tmpl$18 = /* @__PURE__ */ template(`<div class=trace-error>`);
-var _tmpl$19 = /* @__PURE__ */ template(`<div class=mb-1.5><div class=trace-line-call><span class=test-num>Test <!>:</span></div><div class=trace-line-result>expected: <!> | got: <!> → <span>`);
-var _tmpl$20 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
-var _tmpl$21 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
-var _tmpl$22 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
-var _tmpl$23 = /* @__PURE__ */ template(`<li class="flex items-start gap-2 text-sm text-[#d6d3d1]"><span class="text-amber-500 mt-0.5 shrink-0"></span><span>`);
-var _tmpl$24 = /* @__PURE__ */ template(`<div class="text-[11px] text-[#78716c] mt-1 italic">`);
-var _tmpl$25 = /* @__PURE__ */ template(`<div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2"><div class="text-[12px] font-mono text-sky-300 break-all"></div><div class="text-[12px] font-mono text-[#a8a29e] break-all"><span class=text-[#57534e]>→ `);
-var _tmpl$26 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.</p><div class="flex items-center justify-center gap-2 pb-8">`);
-var _tmpl$27 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-baseline gap-2 mb-3"><h2 class="text-sm font-black uppercase tracking-widest text-amber-500"></h2><span class="text-xs text-[#57534e] font-semibold"></span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`);
-var _tmpl$28 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
-var _tmpl$29 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
-var _tmpl$30 = /* @__PURE__ */ template(`<a class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>`);
-var _tmpl$31 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
+var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex items-start gap-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2"><span class="shrink-0 mt-px flex"></span><span>You already earned the star on this chore. Pick <span class=font-bold>Reset Code and Status</span> to wipe that too, as if you never solved it.`);
+var _tmpl$6 = /* @__PURE__ */ template(`<button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors shadow-[0_3px_0_#7f1d1d] active:translate-y-[2px] active:shadow-none"title="Reset the code and remove the star for this chore">Reset Code and Status`);
+var _tmpl$7 = /* @__PURE__ */ template(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"><div role=dialog aria-modal=true class="w-full max-w-sm bg-[#1c1917] border-2 border-[#292524] rounded-2xl p-5 flex flex-col gap-4 shadow-[0_8px_0_#0c0a09]"><div class="flex items-start gap-3"><div class="bg-[#78350f] p-2 rounded-lg shrink-0 flex items-center justify-center"></div><div class=min-w-0><div class="text-sm font-bold text-[#e7e5e4]">Start this chore over?</div><p class="text-xs text-[#a8a29e] leading-relaxed mt-1">Your current code will be replaced by the original stub. This can't be undone.</p></div></div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button class="px-4 py-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-sm font-semibold transition-colors shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none">Cancel</button><button class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none">Reset Code`);
+var _tmpl$8 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
+var _tmpl$9 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
+var _tmpl$0 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
+var _tmpl$1 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
+var _tmpl$10 = /* @__PURE__ */ template(`<div class=trace-fail>`);
+var _tmpl$11 = /* @__PURE__ */ template(`<div class="text-[#78716c] mt-1">Bob's robot couldn't even read your code. Fix it and hit Grade me! again.`);
+var _tmpl$12 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== trace =====`);
+var _tmpl$13 = /* @__PURE__ */ template(`<div class="trace-header mt-2">=================`);
+var _tmpl$14 = /* @__PURE__ */ template(`<div class="success-banner mt-3 mb-1 bg-emerald-900/40 border border-emerald-700 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap font-sans"><div class="flex-1 min-w-[180px]"><div class="text-emerald-300 font-extrabold text-sm">Chore complete! Bob owes you one.</div><div class="text-emerald-500/80 text-xs">All <!> tests passed.</div></div><button class="flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"><span>Next chore`);
+var _tmpl$15 = /* @__PURE__ */ template(`<div class="whitespace-pre-wrap text-[#d6d3d1]">`);
+var _tmpl$16 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Stopped after 15 seconds — looks like an infinite loop!`);
+var _tmpl$17 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Output limit reached — your script prints WAY too much.`);
+var _tmpl$18 = /* @__PURE__ */ template(`<div class="trace-error mt-1">`);
+var _tmpl$19 = /* @__PURE__ */ template(`<div><div class="trace-header mb-1">===== run =====`);
+var _tmpl$20 = /* @__PURE__ */ template(`<div class=text-[#78716c]>(no output — try a print() in there)`);
+var _tmpl$21 = /* @__PURE__ */ template(`<div class=trace-error>`);
+var _tmpl$22 = /* @__PURE__ */ template(`<div class=mb-1.5><div class=trace-line-call><span class=test-num>Test <!>:</span></div><div class=trace-line-result>expected: <!> | got: <!> → <span>`);
+var _tmpl$23 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
+var _tmpl$24 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
+var _tmpl$25 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
+var _tmpl$26 = /* @__PURE__ */ template(`<li class="flex items-start gap-2 text-sm text-[#d6d3d1]"><span class="text-amber-500 mt-0.5 shrink-0"></span><span>`);
+var _tmpl$27 = /* @__PURE__ */ template(`<div class="text-[11px] text-[#78716c] mt-1 italic">`);
+var _tmpl$28 = /* @__PURE__ */ template(`<div class="bg-[#0c0a09] border border-[#292524] rounded-lg px-3 py-2"><div class="text-[12px] font-mono text-sky-300 break-all"></div><div class="text-[12px] font-mono text-[#a8a29e] break-all"><span class=text-[#57534e]>→ `);
+var _tmpl$29 = /* @__PURE__ */ template(`<div class="flex-1 overflow-y-auto min-h-0"><div class="max-w-4xl mx-auto px-5 py-8 md:py-12"><div class="text-center mb-10"><div class="inline-flex items-center justify-center bg-[#78350f] p-3 rounded-2xl mb-4 rotate-[-3deg]"></div><h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">call-me-<span class=text-amber-400>bob</span></h1><div class="inline-flex items-center gap-1.5 bg-[#292524] border border-[#44403c] rounded-full px-3 py-1 mb-4"><span class="text-[11px] font-bold uppercase tracking-widest text-[#a8a29e]">To-Do List #05</span></div><p class="text-[#a8a29e] text-base md:text-lg max-w-xl mx-auto leading-relaxed">Bob has a to-do list. You have Python. Help Bob tally his crates, book the barns, plant the coil garden and untangle his chore wheel — one chore at a time, right in your browser.</p><a href=https://github.com/italoalmeida0/call-me-bob-05 target=_blank rel="noopener noreferrer"class="mt-4 inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>Liked it? Give Bob a star on GitHub</span></a><div class="mt-5 flex items-center justify-center gap-3"><div class="w-48 h-2.5 bg-[#292524] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full transition-all duration-500"></div></div><span class="text-xs font-bold text-[#78716c]">/<!> chores done</span></div></div><p class="text-center text-xs text-[#57534e] pb-6">No timers, no pressure. Bob grades with his little robot helper — it runs entirely in your browser.</p><div class="flex items-center justify-center gap-2 pb-8">`);
+var _tmpl$30 = /* @__PURE__ */ template(`<div class=mb-8><div class="flex items-baseline gap-2 mb-3"><h2 class="text-sm font-black uppercase tracking-widest text-amber-500"></h2><span class="text-xs text-[#57534e] font-semibold"></span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`);
+var _tmpl$31 = /* @__PURE__ */ template(`<div class="flex flex-wrap gap-1.5 mt-2">`);
+var _tmpl$32 = /* @__PURE__ */ template(`<button class="chore-card text-left bg-[#1c1917] border-2 border-[#292524] hover:border-amber-600/60 rounded-2xl p-5 flex items-start gap-4"><div class="bg-[#78350f] p-2.5 rounded-xl shrink-0 flex items-center justify-center"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2"><h3 class="font-bold text-white"></h3></div><p class="text-sm text-[#a8a29e] mt-1"></p></div><div class="shrink-0 mt-1 text-[#57534e]">`);
+var _tmpl$33 = /* @__PURE__ */ template(`<a class="inline-flex items-center gap-2 bg-[#292524] hover:bg-[#44403c] border border-[#44403c] rounded-full px-4 py-1.5 text-xs font-bold text-[#e7e5e4] transition-colors"><span>`);
+var _tmpl$34 = /* @__PURE__ */ template(`<div class="h-full flex flex-col overflow-hidden"><div class=status-bar><span></span><span class=text-[#57534e]></span><span class=flex-1></span><span class=text-[#44403c]>call-me-bob 05`);
 var LS_SOLVED_KEY = "bob05_solved_chores";
 var LS_CODE_PREFIX = "bob05_chore_code_";
 var PREV_SITE = {
@@ -25628,6 +25631,7 @@ function PracticeScreen(props) {
   const [running, setRunning] = createSignal(false);
   const [trace, setTrace] = createSignal(null);
   const [leftTab, setLeftTab] = createSignal("note");
+  const [confirmReset, setConfirmReset] = createSignal(false);
   let editorContainerRef;
   let traceRef;
   let cmView = null;
@@ -25660,6 +25664,14 @@ function PracticeScreen(props) {
       })],
       parent: editorContainerRef
     });
+  });
+  onMount(() => {
+    const onEsc = (e) => {
+      if (e.key === "Escape")
+        setConfirmReset(false);
+    };
+    window.addEventListener("keydown", onEsc);
+    onCleanup(() => window.removeEventListener("keydown", onEsc));
   });
   onCleanup(() => {
     if (cmView)
@@ -25716,9 +25728,13 @@ function PracticeScreen(props) {
       }, 50);
     }
   };
-  const resetCode = () => {
-    if (!confirm("Start this chore over? Your current code will be replaced by the stub."))
-      return;
+  const resetCode = () => setConfirmReset(true);
+  const doReset = (clearStatus) => {
+    setConfirmReset(false);
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+      saveTimeout = null;
+    }
     cmView.dispatch({
       changes: {
         from: 0,
@@ -25726,7 +25742,10 @@ function PracticeScreen(props) {
         insert: ex().stub
       }
     });
+    saveCode(ex(), ex().stub);
     setTrace(null);
+    if (clearStatus)
+      props.onUnsolved(ex().id);
   };
   const formatCode = async () => {
     if (formatting() || grading() || props.pyodideState() !== "ready")
@@ -25756,7 +25775,7 @@ function PracticeScreen(props) {
   };
   const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
   return (() => {
-    var _el$2 = _tmpl$5(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.firstChild, _el$14 = _el$3.nextSibling, _el$15 = _el$14.firstChild, _el$16 = _el$15.firstChild, _el$30 = _el$16.nextSibling, _el$31 = _el$30.firstChild, _el$32 = _el$31.firstChild, _el$33 = _el$31.nextSibling, _el$34 = _el$33.firstChild, _el$37 = _el$15.nextSibling, _el$38 = _el$37.firstChild;
+    var _el$2 = _tmpl$8(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.firstChild, _el$14 = _el$3.nextSibling, _el$15 = _el$14.firstChild, _el$16 = _el$15.firstChild, _el$30 = _el$16.nextSibling, _el$31 = _el$30.firstChild, _el$32 = _el$31.firstChild, _el$33 = _el$31.nextSibling, _el$34 = _el$33.firstChild, _el$37 = _el$15.nextSibling, _el$38 = _el$37.firstChild;
     addEventListener(_el$5, "click", props.onBack, true);
     insert(_el$5, createComponent(Icon, {
       name: "arrow-back",
@@ -25818,148 +25837,148 @@ function PracticeScreen(props) {
       },
       get fallback() {
         return (() => {
-          var _el$39 = _tmpl$6();
+          var _el$49 = _tmpl$9();
           var _ref$2 = traceRef;
-          typeof _ref$2 === "function" ? use(_ref$2, _el$39) : traceRef = _el$39;
-          insert(_el$39, createComponent(Show, {
+          typeof _ref$2 === "function" ? use(_ref$2, _el$49) : traceRef = _el$49;
+          insert(_el$49, createComponent(Show, {
             get when() {
               return trace();
             },
             get fallback() {
               return (() => {
-                var _el$40 = _tmpl$7(), _el$41 = _el$40.firstChild;
-                insert(_el$41, createComponent(Icon, {
+                var _el$50 = _tmpl$0(), _el$51 = _el$50.firstChild;
+                insert(_el$51, createComponent(Icon, {
                   name: "smart-toy",
                   color: "57534e",
                   size: 32
                 }));
-                return _el$40;
+                return _el$50;
               })();
             },
             children: (t2) => (() => {
-              var _el$42 = _tmpl$();
-              insert(_el$42, createComponent(Show, {
+              var _el$52 = _tmpl$();
+              insert(_el$52, createComponent(Show, {
                 get when() {
                   return t2().run;
                 },
                 children: (r) => (() => {
-                  var _el$57 = _tmpl$16(), _el$58 = _el$57.firstChild;
-                  insert(_el$57, createComponent(Show, {
+                  var _el$67 = _tmpl$19(), _el$68 = _el$67.firstChild;
+                  insert(_el$67, createComponent(Show, {
                     get when() {
                       return r().stdout;
-                    },
-                    get fallback() {
-                      return _tmpl$17();
-                    },
-                    get children() {
-                      var _el$59 = _tmpl$12();
-                      insert(_el$59, () => r().stdout);
-                      return _el$59;
-                    }
-                  }), null);
-                  insert(_el$57, createComponent(Show, {
-                    get when() {
-                      return r().error === "timeout";
-                    },
-                    get children() {
-                      return _tmpl$13();
-                    }
-                  }), null);
-                  insert(_el$57, createComponent(Show, {
-                    get when() {
-                      return r().error === "output_limit";
-                    },
-                    get children() {
-                      return _tmpl$14();
-                    }
-                  }), null);
-                  insert(_el$57, createComponent(Show, {
-                    get when() {
-                      return memo(() => !!(r().error && r().error !== "timeout"))() && r().error !== "output_limit";
-                    },
-                    get children() {
-                      var _el$62 = _tmpl$15();
-                      insert(_el$62, () => r().error);
-                      return _el$62;
-                    }
-                  }), null);
-                  return _el$57;
-                })()
-              }), null);
-              insert(_el$42, createComponent(Show, {
-                get when() {
-                  return t2().fatal;
-                },
-                get children() {
-                  return [_tmpl$8(), (() => {
-                    var _el$44 = _tmpl$9();
-                    insert(_el$44, () => t2().fatal);
-                    return _el$44;
-                  })(), _tmpl$0()];
-                }
-              }), null);
-              insert(_el$42, createComponent(Show, {
-                get when() {
-                  return t2().results;
-                },
-                get children() {
-                  return [_tmpl$1(), createComponent(For, {
-                    get each() {
-                      return t2().results;
-                    },
-                    children: (r, i2) => (() => {
-                      var _el$64 = _tmpl$19(), _el$65 = _el$64.firstChild, _el$66 = _el$65.firstChild, _el$67 = _el$66.firstChild, _el$69 = _el$67.nextSibling, _el$68 = _el$69.nextSibling, _el$70 = _el$65.nextSibling, _el$71 = _el$70.firstChild, _el$77 = _el$71.nextSibling, _el$72 = _el$77.nextSibling, _el$78 = _el$72.nextSibling, _el$74 = _el$78.nextSibling, _el$76 = _el$74.nextSibling;
-                      insert(_el$66, () => i2() + 1, _el$69);
-                      insert(_el$65, () => r.call, null);
-                      insert(_el$70, () => r.expected, _el$77);
-                      insert(_el$70, (() => {
-                        var _c$ = memo(() => r.got === null);
-                        return () => _c$() ? "—" : r.got;
-                      })(), _el$78);
-                      insert(_el$76, () => r.ok ? "OK" : "KO");
-                      insert(_el$64, createComponent(Show, {
-                        get when() {
-                          return r.error;
-                        },
-                        get children() {
-                          var _el$79 = _tmpl$18();
-                          insert(_el$79, () => r.error);
-                          return _el$79;
-                        }
-                      }), null);
-                      createRenderEffect(() => className(_el$76, r.ok ? "trace-ok" : "trace-ko"));
-                      return _el$64;
-                    })()
-                  }), _tmpl$10(), createComponent(Show, {
-                    get when() {
-                      return t2().passed;
                     },
                     get fallback() {
                       return _tmpl$20();
                     },
                     get children() {
-                      var _el$48 = _tmpl$11(), _el$49 = _el$48.firstChild, _el$50 = _el$49.firstChild, _el$51 = _el$50.nextSibling, _el$52 = _el$51.firstChild, _el$54 = _el$52.nextSibling, _el$53 = _el$54.nextSibling, _el$55 = _el$49.nextSibling, _el$56 = _el$55.firstChild;
-                      insert(_el$48, createComponent(Icon, {
+                      var _el$69 = _tmpl$15();
+                      insert(_el$69, () => r().stdout);
+                      return _el$69;
+                    }
+                  }), null);
+                  insert(_el$67, createComponent(Show, {
+                    get when() {
+                      return r().error === "timeout";
+                    },
+                    get children() {
+                      return _tmpl$16();
+                    }
+                  }), null);
+                  insert(_el$67, createComponent(Show, {
+                    get when() {
+                      return r().error === "output_limit";
+                    },
+                    get children() {
+                      return _tmpl$17();
+                    }
+                  }), null);
+                  insert(_el$67, createComponent(Show, {
+                    get when() {
+                      return memo(() => !!(r().error && r().error !== "timeout"))() && r().error !== "output_limit";
+                    },
+                    get children() {
+                      var _el$72 = _tmpl$18();
+                      insert(_el$72, () => r().error);
+                      return _el$72;
+                    }
+                  }), null);
+                  return _el$67;
+                })()
+              }), null);
+              insert(_el$52, createComponent(Show, {
+                get when() {
+                  return t2().fatal;
+                },
+                get children() {
+                  return [_tmpl$1(), (() => {
+                    var _el$54 = _tmpl$10();
+                    insert(_el$54, () => t2().fatal);
+                    return _el$54;
+                  })(), _tmpl$11()];
+                }
+              }), null);
+              insert(_el$52, createComponent(Show, {
+                get when() {
+                  return t2().results;
+                },
+                get children() {
+                  return [_tmpl$12(), createComponent(For, {
+                    get each() {
+                      return t2().results;
+                    },
+                    children: (r, i2) => (() => {
+                      var _el$74 = _tmpl$22(), _el$75 = _el$74.firstChild, _el$76 = _el$75.firstChild, _el$77 = _el$76.firstChild, _el$79 = _el$77.nextSibling, _el$78 = _el$79.nextSibling, _el$80 = _el$75.nextSibling, _el$81 = _el$80.firstChild, _el$87 = _el$81.nextSibling, _el$82 = _el$87.nextSibling, _el$88 = _el$82.nextSibling, _el$84 = _el$88.nextSibling, _el$86 = _el$84.nextSibling;
+                      insert(_el$76, () => i2() + 1, _el$79);
+                      insert(_el$75, () => r.call, null);
+                      insert(_el$80, () => r.expected, _el$87);
+                      insert(_el$80, (() => {
+                        var _c$ = memo(() => r.got === null);
+                        return () => _c$() ? "—" : r.got;
+                      })(), _el$88);
+                      insert(_el$86, () => r.ok ? "OK" : "KO");
+                      insert(_el$74, createComponent(Show, {
+                        get when() {
+                          return r.error;
+                        },
+                        get children() {
+                          var _el$89 = _tmpl$21();
+                          insert(_el$89, () => r.error);
+                          return _el$89;
+                        }
+                      }), null);
+                      createRenderEffect(() => className(_el$86, r.ok ? "trace-ok" : "trace-ko"));
+                      return _el$74;
+                    })()
+                  }), _tmpl$13(), createComponent(Show, {
+                    get when() {
+                      return t2().passed;
+                    },
+                    get fallback() {
+                      return _tmpl$23();
+                    },
+                    get children() {
+                      var _el$58 = _tmpl$14(), _el$59 = _el$58.firstChild, _el$60 = _el$59.firstChild, _el$61 = _el$60.nextSibling, _el$62 = _el$61.firstChild, _el$64 = _el$62.nextSibling, _el$63 = _el$64.nextSibling, _el$65 = _el$59.nextSibling, _el$66 = _el$65.firstChild;
+                      insert(_el$58, createComponent(Icon, {
                         name: "celebration",
                         color: "4ade80",
                         size: 24
-                      }), _el$49);
-                      insert(_el$51, () => t2().results.length, _el$54);
-                      addEventListener(_el$55, "click", props.onNext, true);
-                      insert(_el$55, createComponent(Icon, {
+                      }), _el$59);
+                      insert(_el$61, () => t2().results.length, _el$64);
+                      addEventListener(_el$65, "click", props.onNext, true);
+                      insert(_el$65, createComponent(Icon, {
                         name: "arrow-forward",
                         color: "ffffff",
                         size: 14
                       }), null);
-                      return _el$48;
+                      return _el$58;
                     }
                   })];
                 }
               }), null);
-              return _el$42;
+              return _el$52;
             })()
           }));
-          return _el$39;
+          return _el$49;
         })();
       },
       get children() {
@@ -25978,9 +25997,9 @@ function PracticeScreen(props) {
                 return ex().topics;
               },
               children: (topic) => (() => {
-                var _el$81 = _tmpl$21();
-                insert(_el$81, topic);
-                return _el$81;
+                var _el$91 = _tmpl$24();
+                insert(_el$91, topic);
+                return _el$91;
               })()
             }));
             return _el$23;
@@ -25991,9 +26010,9 @@ function PracticeScreen(props) {
             return ex().story;
           },
           children: (p) => (() => {
-            var _el$82 = _tmpl$22();
-            insert(_el$82, p);
-            return _el$82;
+            var _el$92 = _tmpl$25();
+            insert(_el$92, p);
+            return _el$92;
           })()
         }), _el$24);
         insert(_el$25, () => ex().signature);
@@ -26002,14 +26021,14 @@ function PracticeScreen(props) {
             return ex().rules;
           },
           children: (rule) => (() => {
-            var _el$83 = _tmpl$23(), _el$84 = _el$83.firstChild, _el$85 = _el$84.nextSibling;
-            insert(_el$84, createComponent(Icon, {
+            var _el$93 = _tmpl$26(), _el$94 = _el$93.firstChild, _el$95 = _el$94.nextSibling;
+            insert(_el$94, createComponent(Icon, {
               name: "check-small",
               color: "f59e0b",
               size: 16
             }));
-            insert(_el$85, rule);
-            return _el$83;
+            insert(_el$95, rule);
+            return _el$93;
           })()
         }));
         insert(_el$29, createComponent(For, {
@@ -26017,20 +26036,20 @@ function PracticeScreen(props) {
             return ex().examples;
           },
           children: (example) => (() => {
-            var _el$86 = _tmpl$25(), _el$87 = _el$86.firstChild, _el$88 = _el$87.nextSibling, _el$89 = _el$88.firstChild;
-            insert(_el$87, () => example.input);
-            insert(_el$88, () => example.output, null);
-            insert(_el$86, createComponent(Show, {
+            var _el$96 = _tmpl$28(), _el$97 = _el$96.firstChild, _el$98 = _el$97.nextSibling, _el$99 = _el$98.firstChild;
+            insert(_el$97, () => example.input);
+            insert(_el$98, () => example.output, null);
+            insert(_el$96, createComponent(Show, {
               get when() {
                 return example.note;
               },
               get children() {
-                var _el$90 = _tmpl$24();
-                insert(_el$90, () => example.note);
-                return _el$90;
+                var _el$100 = _tmpl$27();
+                insert(_el$100, () => example.note);
+                return _el$100;
               }
             }), null);
-            return _el$86;
+            return _el$96;
           })()
         }));
         return _el$17;
@@ -26066,6 +26085,48 @@ function PracticeScreen(props) {
     }), null);
     var _ref$ = editorContainerRef;
     typeof _ref$ === "function" ? use(_ref$, _el$38) : editorContainerRef = _el$38;
+    insert(_el$2, createComponent(Show, {
+      get when() {
+        return confirmReset();
+      },
+      get children() {
+        var _el$39 = _tmpl$7(), _el$40 = _el$39.firstChild, _el$41 = _el$40.firstChild, _el$42 = _el$41.firstChild, _el$45 = _el$41.nextSibling, _el$46 = _el$45.firstChild, _el$48 = _el$46.nextSibling;
+        _el$39.$$click = () => setConfirmReset(false);
+        _el$40.$$click = (e) => e.stopPropagation();
+        insert(_el$42, createComponent(Icon, {
+          name: "restart-alt",
+          color: "fbbf24",
+          size: 20
+        }));
+        insert(_el$40, createComponent(Show, {
+          get when() {
+            return props.solved().has(ex().id);
+          },
+          get children() {
+            var _el$43 = _tmpl$5(), _el$44 = _el$43.firstChild;
+            insert(_el$44, createComponent(Icon, {
+              name: "star",
+              color: "fbbf24",
+              size: 14
+            }));
+            return _el$43;
+          }
+        }), _el$45);
+        _el$46.$$click = () => setConfirmReset(false);
+        insert(_el$45, createComponent(Show, {
+          get when() {
+            return props.solved().has(ex().id);
+          },
+          get children() {
+            var _el$47 = _tmpl$6();
+            _el$47.$$click = () => doReset(true);
+            return _el$47;
+          }
+        }), _el$48);
+        _el$48.$$click = () => doReset(false);
+        return _el$39;
+      }
+    }), null);
     createRenderEffect((_p$) => {
       var _v$5 = formatting() || props.pyodideState() !== "ready", _v$6 = running() || grading() || props.pyodideState() !== "ready", _v$7 = gradeDisabled(), _v$8 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$9 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
       _v$5 !== _p$.e && (_el$10.disabled = _p$.e = _v$5);
@@ -26089,25 +26150,25 @@ function PracticeScreen(props) {
 function HomeScreen(props) {
   const solvedCount = () => EXERCISES.filter((e) => props.solved().has(e.id)).length;
   return (() => {
-    var _el$91 = _tmpl$26(), _el$92 = _el$91.firstChild, _el$93 = _el$92.firstChild, _el$94 = _el$93.firstChild, _el$95 = _el$94.nextSibling, _el$96 = _el$95.nextSibling, _el$97 = _el$96.firstChild, _el$98 = _el$96.nextSibling, _el$99 = _el$98.nextSibling, _el$100 = _el$99.firstChild, _el$101 = _el$99.nextSibling, _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$102.nextSibling, _el$105 = _el$104.firstChild, _el$107 = _el$105.nextSibling, _el$106 = _el$107.nextSibling, _el$108 = _el$93.nextSibling, _el$109 = _el$108.nextSibling;
-    insert(_el$94, createComponent(Icon, {
+    var _el$101 = _tmpl$29(), _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.nextSibling, _el$106 = _el$105.nextSibling, _el$107 = _el$106.firstChild, _el$108 = _el$106.nextSibling, _el$109 = _el$108.nextSibling, _el$110 = _el$109.firstChild, _el$111 = _el$109.nextSibling, _el$112 = _el$111.firstChild, _el$113 = _el$112.firstChild, _el$114 = _el$112.nextSibling, _el$115 = _el$114.firstChild, _el$117 = _el$115.nextSibling, _el$116 = _el$117.nextSibling, _el$118 = _el$103.nextSibling, _el$119 = _el$118.nextSibling;
+    insert(_el$104, createComponent(Icon, {
       name: "smart-toy",
       color: "fbbf24",
       size: 44
     }));
-    insert(_el$96, createComponent(Icon, {
+    insert(_el$106, createComponent(Icon, {
       name: "checklist",
       color: "f59e0b",
       size: 14
-    }), _el$97);
-    insert(_el$99, createComponent(Icon, {
+    }), _el$107);
+    insert(_el$109, createComponent(Icon, {
       name: "star",
       color: "fbbf24",
       size: 14
-    }), _el$100);
-    insert(_el$104, solvedCount, _el$105);
-    insert(_el$104, () => EXERCISES.length, _el$107);
-    insert(_el$92, createComponent(For, {
+    }), _el$110);
+    insert(_el$114, solvedCount, _el$115);
+    insert(_el$114, () => EXERCISES.length, _el$117);
+    insert(_el$102, createComponent(For, {
       each: TIERS,
       children: (tier) => {
         const tierExercises = () => EXERCISES.filter((e) => e.tier === tier.tier);
@@ -26116,25 +26177,25 @@ function HomeScreen(props) {
             return tierExercises().length > 0;
           },
           get children() {
-            var _el$110 = _tmpl$27(), _el$111 = _el$110.firstChild, _el$112 = _el$111.firstChild, _el$113 = _el$112.nextSibling, _el$114 = _el$111.nextSibling;
-            insert(_el$112, () => tier.label);
-            insert(_el$113, () => tier.subtitle);
-            insert(_el$114, createComponent(For, {
+            var _el$120 = _tmpl$30(), _el$121 = _el$120.firstChild, _el$122 = _el$121.firstChild, _el$123 = _el$122.nextSibling, _el$124 = _el$121.nextSibling;
+            insert(_el$122, () => tier.label);
+            insert(_el$123, () => tier.subtitle);
+            insert(_el$124, createComponent(For, {
               get each() {
                 return tierExercises();
               },
               children: (ex) => (() => {
-                var _el$115 = _tmpl$29(), _el$116 = _el$115.firstChild, _el$117 = _el$116.nextSibling, _el$118 = _el$117.firstChild, _el$119 = _el$118.firstChild, _el$120 = _el$118.nextSibling, _el$122 = _el$117.nextSibling;
-                _el$115.$$click = () => props.onPick(ex.id);
-                insert(_el$116, createComponent(Icon, {
+                var _el$125 = _tmpl$32(), _el$126 = _el$125.firstChild, _el$127 = _el$126.nextSibling, _el$128 = _el$127.firstChild, _el$129 = _el$128.firstChild, _el$130 = _el$128.nextSibling, _el$132 = _el$127.nextSibling;
+                _el$125.$$click = () => props.onPick(ex.id);
+                insert(_el$126, createComponent(Icon, {
                   get name() {
                     return ex.icon;
                   },
                   color: "fbbf24",
                   size: 26
                 }));
-                insert(_el$119, () => ex.title);
-                insert(_el$118, createComponent(Show, {
+                insert(_el$129, () => ex.title);
+                insert(_el$128, createComponent(Show, {
                   get when() {
                     return props.solved().has(ex.id);
                   },
@@ -26146,69 +26207,69 @@ function HomeScreen(props) {
                     });
                   }
                 }), null);
-                insert(_el$120, () => ex.tagline);
-                insert(_el$117, createComponent(Show, {
+                insert(_el$130, () => ex.tagline);
+                insert(_el$127, createComponent(Show, {
                   get when() {
                     return ex.topics;
                   },
                   get children() {
-                    var _el$121 = _tmpl$28();
-                    insert(_el$121, createComponent(For, {
+                    var _el$131 = _tmpl$31();
+                    insert(_el$131, createComponent(For, {
                       get each() {
                         return ex.topics;
                       },
                       children: (topic) => (() => {
-                        var _el$123 = _tmpl$21();
-                        insert(_el$123, topic);
-                        return _el$123;
+                        var _el$133 = _tmpl$24();
+                        insert(_el$133, topic);
+                        return _el$133;
                       })()
                     }));
-                    return _el$121;
+                    return _el$131;
                   }
                 }), null);
-                insert(_el$122, createComponent(Icon, {
+                insert(_el$132, createComponent(Icon, {
                   name: "chevron-right",
                   color: "57534e",
                   size: 20
                 }));
-                return _el$115;
+                return _el$125;
               })()
             }));
-            return _el$110;
+            return _el$120;
           }
         });
       }
-    }), _el$108);
-    insert(_el$109, createComponent(Show, {
+    }), _el$118);
+    insert(_el$119, createComponent(Show, {
       when: PREV_SITE,
       children: (s) => (() => {
-        var _el$124 = _tmpl$30(), _el$125 = _el$124.firstChild;
-        insert(_el$124, createComponent(Icon, {
+        var _el$134 = _tmpl$33(), _el$135 = _el$134.firstChild;
+        insert(_el$134, createComponent(Icon, {
           name: "arrow-back",
           color: "a8a29e",
           size: 14
-        }), _el$125);
-        insert(_el$125, () => s().label);
-        createRenderEffect(() => setAttribute(_el$124, "href", s().url));
-        return _el$124;
+        }), _el$135);
+        insert(_el$135, () => s().label);
+        createRenderEffect(() => setAttribute(_el$134, "href", s().url));
+        return _el$134;
       })()
     }), null);
-    insert(_el$109, createComponent(Show, {
+    insert(_el$119, createComponent(Show, {
       when: NEXT_SITE,
       children: (s) => (() => {
-        var _el$126 = _tmpl$30(), _el$127 = _el$126.firstChild;
-        insert(_el$127, () => s().label);
-        insert(_el$126, createComponent(Icon, {
+        var _el$136 = _tmpl$33(), _el$137 = _el$136.firstChild;
+        insert(_el$137, () => s().label);
+        insert(_el$136, createComponent(Icon, {
           name: "arrow-forward",
           color: "a8a29e",
           size: 14
         }), null);
-        createRenderEffect(() => setAttribute(_el$126, "href", s().url));
-        return _el$126;
+        createRenderEffect(() => setAttribute(_el$136, "href", s().url));
+        return _el$136;
       })()
     }), null);
-    createRenderEffect((_$p) => setStyleProperty(_el$103, "width", `${solvedCount() / EXERCISES.length * 100}%`));
-    return _el$91;
+    createRenderEffect((_$p) => setStyleProperty(_el$113, "width", `${solvedCount() / EXERCISES.length * 100}%`));
+    return _el$101;
   })();
 }
 function App() {
@@ -26252,10 +26313,19 @@ function App() {
     setSolved(next);
     saveSolved(next);
   };
+  const markUnsolved = (id2) => {
+    if (!solved().has(id2))
+      return;
+    const next = new Set(solved());
+    next.delete(id2);
+    setSolved(next);
+    saveSolved(next);
+  };
+  const orderedExercises = TIERS.flatMap((t2) => EXERCISES.filter((e) => e.tier === t2.tier));
   const nextChore = () => {
-    const idx = EXERCISES.findIndex((e) => e.id === currentId());
-    const unsolved = EXERCISES.slice(idx + 1).find((e) => !solved().has(e.id));
-    const fallback = EXERCISES.find((e) => !solved().has(e.id));
+    const idx = orderedExercises.findIndex((e) => e.id === currentId());
+    const unsolved = orderedExercises.slice(idx + 1).find((e) => !solved().has(e.id));
+    const fallback = orderedExercises.find((e) => !solved().has(e.id));
     const next = unsolved || fallback;
     if (next) {
       pickExercise(next.id);
@@ -26264,8 +26334,8 @@ function App() {
     }
   };
   return (() => {
-    var _el$128 = _tmpl$31(), _el$129 = _el$128.firstChild, _el$130 = _el$129.firstChild, _el$131 = _el$130.nextSibling;
-    insert(_el$128, createComponent(Show, {
+    var _el$138 = _tmpl$34(), _el$139 = _el$138.firstChild, _el$140 = _el$139.firstChild, _el$141 = _el$140.nextSibling;
+    insert(_el$138, createComponent(Show, {
       get when() {
         return currentExercise();
       },
@@ -26282,12 +26352,13 @@ function App() {
         pyodideState,
         onBack: goHome,
         onSolved: markSolved,
+        onUnsolved: markUnsolved,
         onNext: nextChore
       })
-    }), _el$129);
-    insert(_el$131, pyodideText);
-    createRenderEffect(() => className(_el$130, `status-dot ${pyodideState()}`));
-    return _el$128;
+    }), _el$139);
+    insert(_el$141, pyodideText);
+    createRenderEffect(() => className(_el$140, `status-dot ${pyodideState()}`));
+    return _el$138;
   })();
 }
 render(() => createComponent(App, {}), document.getElementById("root"));
