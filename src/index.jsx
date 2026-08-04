@@ -159,6 +159,14 @@ function decodeSharedCode() {
   }
 }
 
+// Captured at startup — App's history shim rewrites the URL before the
+// practice screen mounts, which would otherwise drop the shared-code hash.
+const INITIAL_SHARED = (() => {
+  const code = decodeSharedCode();
+  const exId = routeExerciseId();
+  return code && exId ? { exId, code } : null;
+})();
+
 // ==========================================
 // TAB = 2 SPACES (Bob's robot hates \t)
 // ==========================================
@@ -237,7 +245,10 @@ function PracticeScreen(props) {
 
   onMount(() => {
     cmView = new EditorView({
-      doc: decodeSharedCode() ?? loadCode(ex()),
+      doc:
+        INITIAL_SHARED && INITIAL_SHARED.exId === ex().id
+          ? INITIAL_SHARED.code
+          : loadCode(ex()),
       extensions: [
         basicSetup,
         keymap.of([
@@ -1002,8 +1013,10 @@ function App() {
     // Opened via a direct chore link (F5 / shared URL): slip Home underneath
     // in history so the browser Back button stays inside the site.
     if (currentId()) {
+      // Keep a shared-code #hash alive across the history shim (F5-safe)
+      const hash = location.hash;
       history.replaceState(null, "", homeUrl());
-      history.pushState(null, "", exerciseUrl(currentId()));
+      history.pushState(null, "", exerciseUrl(currentId()) + hash);
     }
     const onPopState = () => setCurrentId(routeExerciseId());
     window.addEventListener("popstate", onPopState);

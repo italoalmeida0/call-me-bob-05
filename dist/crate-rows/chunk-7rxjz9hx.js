@@ -25576,6 +25576,14 @@ function decodeSharedCode() {
     return null;
   }
 }
+var INITIAL_SHARED = (() => {
+  const code2 = decodeSharedCode();
+  const exId = routeExerciseId();
+  return code2 && exId ? {
+    exId,
+    code: code2
+  } : null;
+})();
 var TWO_SPACES = "  ";
 function insertTwoSpaces(view) {
   const {
@@ -25657,7 +25665,7 @@ function PracticeScreen(props) {
   let saveTimeout = null;
   onMount(() => {
     cmView = new EditorView({
-      doc: decodeSharedCode() ?? loadCode(ex()),
+      doc: INITIAL_SHARED && INITIAL_SHARED.exId === ex().id ? INITIAL_SHARED.code : loadCode(ex()),
       extensions: [basicSetup, keymap.of([{
         key: "Tab",
         run: insertTwoSpaces
@@ -26339,8 +26347,9 @@ function App() {
   const currentExercise = createMemo(() => getExercise(currentId()));
   onMount(() => {
     if (currentId()) {
+      const hash2 = location.hash;
       history.replaceState(null, "", homeUrl());
-      history.pushState(null, "", exerciseUrl(currentId()));
+      history.pushState(null, "", exerciseUrl(currentId()) + hash2);
     }
     const onPopState = () => setCurrentId(routeExerciseId());
     window.addEventListener("popstate", onPopState);
