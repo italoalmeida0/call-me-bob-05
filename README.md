@@ -23,7 +23,7 @@ after) solving it.
 |-----|-------|----------------|-----------------|
 | 1 | Barn Bookings | Minimum rooms for overlapping intervals, with the exact first-fit assignment | Meeting Rooms, Greedy / Intervals |
 | 1 | The Crate Rows | Split a list into rows of n, padding the short last row with `None` | List Chunking, Matrix Building |
-| 2 | The Chore Wheel | Detect a directed cycle in a chore graph | Graph Cycle Detection, DFS |
+| 2 | The Chore Wheel | Detect a directed cycle in a chore graph — **without** `graphlib` (`TopologicalSorter`, `CycleError`) | Graph Cycle Detection, DFS |
 | 2 | The Crate Ledger | Run-length encode a tally and decode it back — counts never exceed 9, two functions | Run-Length Encoding, String Parsing |
 | 3 | The Coil Garden | Fill an n×n matrix with 1..n² in a clockwise spiral | Spiral Matrix, Matrix Simulation |
 | 3 | Grandma's Quilt | Find a word in a letter grid across 8 directions, reporting position and direction | Word Search, 2D Grid Traversal |
@@ -32,13 +32,18 @@ after) solving it.
 ## How it works
 
 - 📝 **7 chores** across 3 days of Bob's week, each with a story-driven subject
-- 🐍 **Python editor** powered by CodeMirror 6 (syntax highlighting, indent guides)
+- 🐍 **Python editor** powered by CodeMirror 6 (syntax highlighting, indent guides,
+  4-space indent matching [Black](https://github.com/psf/black))
 - 🤖 **In-browser grading** — tests run locally via [Pyodide](https://pyodide.org)
   (WebAssembly CPython), nothing ever leaves your machine
-- 🔍 **Full test trace** — every test case shows the call, expected value, your
-  result and OK/KO, just like a terminal grader
+- 🔍 **Full test trace** — every test case shows `[OK]`/`[KO]` up front, then the
+  call, the expected value and your result on aligned lines with horizontal
+  scroll — just like a terminal grader
 - ▶️ **Run button** — run your script anytime and see `print()` output in the
   robot log, with a 15s infinite-loop guard
+- 🚫 **Enforced rules** — chores that ban a function or module (`graphlib` in
+  The Chore Wheel) check your code statically AND at runtime, no sneaky
+  workarounds
 - ⭐ **Progress tracking** — solved chores and your code are saved in
   `localStorage`
 - 📱 **Responsive** — works on desktop and mobile
