@@ -18,6 +18,8 @@
  *             literals evaluated inside the Pyodide grader; `call` is
  *             display-only. `func` overrides funcName for that test
  *             (used by chores with more than one function).
+ *   banned   optional { names: [...], modules: [...] } — names/modules
+ *             the robot forbids (AST-detected, even aliased or imported)
  */
 
 export const TIERS = [
@@ -38,59 +40,59 @@ export const EXERCISES = [
     icon: "warehouse",
     funcName: "plan_barn_days",
     topics: ["Meeting Rooms", "Greedy / Intervals"],
-    stub: "def plan_barn_days(bookings: list[tuple[int, int]]) -> tuple[int, list]:\n    pass\n",
+    stub: "def plan_barn_days(bookings: list[list[int]]) -> dict:\n    pass\n",
     story: [
-      "The village fair is coming and every club wants to run a workshop in Bob's barns. Each request is a (start, end) time slot. Two workshops can't share a barn at the same time, but back-to-back is fine — if one ends at 5, the next can start at 5.",
+      "The village fair is coming and every club wants to run a workshop in Bob's barns. Each request is a [start, end] time slot. Two workshops can't share a barn at the same time, but back-to-back is fine — if one ends at 5, the next can start at 5.",
       "Bob handles the requests in ascending start time (if two start together, he keeps the order they arrived). For each request he uses the FIRST barn — in the order the barns were opened — whose last workshop ends at or before the new start. If no barn is free, he sighs and opens another one.",
       "Return how many barns Bob ended up using, along with the final schedule of each barn.",
     ],
-    signature: "def plan_barn_days(bookings: list[tuple[int, int]]) -> tuple[int, list]:",
+    signature: "def plan_barn_days(bookings: list[list[int]]) -> dict:",
     rules: [
       "Process bookings sorted by start time; equal starts keep their original order",
       "Assign each booking to the first barn (in opening order) whose last booking ends at or before the new start",
       "If no barn fits, open a new one",
       "Back-to-back bookings in the same barn are allowed (end <= start)",
-      "Return a tuple: (number of barns, list of barn schedules)",
-      "Each barn schedule is the list of its bookings as (start, end) tuples, in the order they were booked",
-      "No bookings at all means (0, [])",
+      'Return a dict: {"barns": number, "schedules": {0: [...], 1: [...], ...}}',
+      "Each barn schedule is the list of its bookings as [start, end] lists, in the order they were booked",
+      'No bookings means {"barns": 0, "schedules": {}}',
     ],
     examples: [
       {
-        input: "plan_barn_days([(1, 4), (2, 5), (6, 8)])",
-        output: "(2, [[(1, 4), (6, 8)], [(2, 5)]])",
+        input: "plan_barn_days([[1, 4], [2, 5], [6, 8]])",
+        output: '{"barns": 2, "schedules": {0: [[1, 4], [6, 8]], 1: [[2, 5]]}}',
         note: "barn 1 hosts 1-4 and 6-8, barn 2 hosts 2-5",
       },
       {
-        input: "plan_barn_days([(1, 3), (3, 5), (5, 7)])",
-        output: "(1, [[(1, 3), (3, 5), (5, 7)]])",
+        input: "plan_barn_days([[1, 3], [3, 5], [5, 7]])",
+        output: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 7]]}}',
         note: "back-to-back fits in a single barn",
       },
       {
-        input: "plan_barn_days([(9, 10), (4, 9), (3, 8)])",
-        output: "(2, [[(3, 8), (9, 10)], [(4, 9)]])",
+        input: "plan_barn_days([[9, 10], [4, 9], [3, 8]])",
+        output: '{"barns": 2, "schedules": {0: [[3, 8], [9, 10]], 1: [[4, 9]]}}',
         note: "requests are handled in ascending start time",
       },
       {
         input: "plan_barn_days([])",
-        output: "(0, [])",
+        output: '{"barns": 0, "schedules": {}}',
         note: "no requests, no barns",
       },
     ],
     tests: [
-      { call: "plan_barn_days([])", args: "([],)", expected: "(0, [])" },
-      { call: "plan_barn_days([(1, 4), (2, 5), (6, 8)])", args: "([(1, 4), (2, 5), (6, 8)],)", expected: "(2, [[(1, 4), (6, 8)], [(2, 5)]])" },
-      { call: "plan_barn_days([(1, 3), (3, 5), (5, 7)])", args: "([(1, 3), (3, 5), (5, 7)],)", expected: "(1, [[(1, 3), (3, 5), (5, 7)]])" },
-      { call: "plan_barn_days([(9, 10), (4, 9), (3, 8)])", args: "([(9, 10), (4, 9), (3, 8)],)", expected: "(2, [[(3, 8), (9, 10)], [(4, 9)]])" },
-      { call: "plan_barn_days([(1, 10), (2, 9), (3, 8), (4, 7)])", args: "([(1, 10), (2, 9), (3, 8), (4, 7)],)", expected: "(4, [[(1, 10)], [(2, 9)], [(3, 8)], [(4, 7)]])" },
-      { call: "plan_barn_days([(5, 8), (1, 3), (3, 5)])", args: "([(5, 8), (1, 3), (3, 5)],)", expected: "(1, [[(1, 3), (3, 5), (5, 8)]])" },
-      { call: "plan_barn_days([(0, 30), (5, 10), (15, 20)])", args: "([(0, 30), (5, 10), (15, 20)],)", expected: "(2, [[(0, 30)], [(5, 10), (15, 20)]])" },
-      { call: "plan_barn_days([(1, 5), (1, 3)])", args: "([(1, 5), (1, 3)],)", expected: "(2, [[(1, 5)], [(1, 3)]])" },
-      { call: "plan_barn_days([(1, 4), (1, 4), (1, 4)])", args: "([(1, 4), (1, 4), (1, 4)],)", expected: "(3, [[(1, 4)], [(1, 4)], [(1, 4)]])" },
-      { call: "plan_barn_days([(1, 3), (2, 4), (3, 5), (4, 6)])", args: "([(1, 3), (2, 4), (3, 5), (4, 6)],)", expected: "(2, [[(1, 3), (3, 5)], [(2, 4), (4, 6)]])" },
-      { call: "plan_barn_days([(-5, -1), (-3, 2)])", args: "([(-5, -1), (-3, 2)],)", expected: "(2, [[(-5, -1)], [(-3, 2)]])" },
-      { call: "plan_barn_days([(2, 2), (2, 3)])", args: "([(2, 2), (2, 3)],)", expected: "(1, [[(2, 2), (2, 3)]])" },
-      { call: "plan_barn_days([(7, 9)])", args: "([(7, 9)],)", expected: "(1, [[(7, 9)]])" },
-      { call: "plan_barn_days([(1, 2), (2, 3), (1, 2), (2, 3)])", args: "([(1, 2), (2, 3), (1, 2), (2, 3)],)", expected: "(2, [[(1, 2), (2, 3)], [(1, 2), (2, 3)]])" },
+      { call: "plan_barn_days([])", args: "([],)", expected: '{"barns": 0, "schedules": {}}' },
+      { call: "plan_barn_days([[1, 4], [2, 5], [6, 8]])", args: "([[1, 4], [2, 5], [6, 8]],)", expected: '{"barns": 2, "schedules": {0: [[1, 4], [6, 8]], 1: [[2, 5]]}}' },
+      { call: "plan_barn_days([[1, 3], [3, 5], [5, 7]])", args: "([[1, 3], [3, 5], [5, 7]],)", expected: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 7]]}}' },
+      { call: "plan_barn_days([[9, 10], [4, 9], [3, 8]])", args: "([[9, 10], [4, 9], [3, 8]],)", expected: '{"barns": 2, "schedules": {0: [[3, 8], [9, 10]], 1: [[4, 9]]}}' },
+      { call: "plan_barn_days([[1, 10], [2, 9], [3, 8], [4, 7]])", args: "([[1, 10], [2, 9], [3, 8], [4, 7]],)", expected: '{"barns": 4, "schedules": {0: [[1, 10]], 1: [[2, 9]], 2: [[3, 8]], 3: [[4, 7]]}}' },
+      { call: "plan_barn_days([[5, 8], [1, 3], [3, 5]])", args: "([[5, 8], [1, 3], [3, 5]],)", expected: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 8]]}}' },
+      { call: "plan_barn_days([[0, 30], [5, 10], [15, 20]])", args: "([[0, 30], [5, 10], [15, 20]],)", expected: '{"barns": 2, "schedules": {0: [[0, 30]], 1: [[5, 10], [15, 20]]}}' },
+      { call: "plan_barn_days([[1, 5], [1, 3]])", args: "([[1, 5], [1, 3]],)", expected: '{"barns": 2, "schedules": {0: [[1, 5]], 1: [[1, 3]]}}' },
+      { call: "plan_barn_days([[1, 4], [1, 4], [1, 4]])", args: "([[1, 4], [1, 4], [1, 4]],)", expected: '{"barns": 3, "schedules": {0: [[1, 4]], 1: [[1, 4]], 2: [[1, 4]]}}' },
+      { call: "plan_barn_days([[1, 3], [2, 4], [3, 5], [4, 6]])", args: "([[1, 3], [2, 4], [3, 5], [4, 6]],)", expected: '{"barns": 2, "schedules": {0: [[1, 3], [3, 5]], 1: [[2, 4], [4, 6]]}}' },
+      { call: "plan_barn_days([[-5, -1], [-3, 2]])", args: "([[-5, -1], [-3, 2]],)", expected: '{"barns": 2, "schedules": {0: [[-5, -1]], 1: [[-3, 2]]}}' },
+      { call: "plan_barn_days([[2, 2], [2, 3]])", args: "([[2, 2], [2, 3]],)", expected: '{"barns": 1, "schedules": {0: [[2, 2], [2, 3]]}}' },
+      { call: "plan_barn_days([[7, 9]])", args: "([[7, 9]],)", expected: '{"barns": 1, "schedules": {0: [[7, 9]]}}' },
+      { call: "plan_barn_days([[1, 2], [2, 3], [1, 2], [2, 3]])", args: "([[1, 2], [2, 3], [1, 2], [2, 3]],)", expected: '{"barns": 2, "schedules": {0: [[1, 2], [2, 3]], 1: [[1, 2], [2, 3]]}}' },
     ],
   },
   {
@@ -163,6 +165,7 @@ export const EXERCISES = [
     story: [
       "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
       "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends.",
+      "One more thing: Bob's robot helper is watching, and it will REFUSE to grade any solution that uses Python's graphlib module — TopologicalSorter, CycleError and friends. Bob says following the arrows by hand is a life skill.",
     ],
     signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
     rules: [
@@ -172,7 +175,9 @@ export const EXERCISES = [
       "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
       "The chart may have disconnected parts; a loop anywhere counts",
       "An empty chart has no loop (return False)",
+      "FORBIDDEN: importing or using graphlib (TopologicalSorter, CycleError, ...) — the robot checks and rejects it",
     ],
+    banned: { names: ["TopologicalSorter", "CycleError"], modules: ["graphlib"] },
     examples: [
       {
         input: "has_chore_loop({1: [2], 2: [3], 3: []})",
@@ -352,15 +357,15 @@ export const EXERCISES = [
     stub: "def find_motto(quilt: list[str], motto: str) -> list[tuple[int, int, str]]:\n    pass\n",
     story: [
       "Grandma Bob stitched a quilt made of little lettered squares — a grid of characters. Family legend says she hid her favorite motto in it, embroidered in a straight line: across, down, or along one of the diagonals, in either direction.",
-      "Given the quilt (a list of equal-length strings, one per row) and the motto, return every place it appears. A match is reported as (x, y, code): x is the column and y is the row of the motto's FIRST letter, with (0, 0) at the top-left corner, and code tells which way it reads from there.",
+      "Given the quilt (a list of equal-length strings, one per row) and the motto, return every place it appears. A match is reported as (y, x, code): y is the row and x is the column of the motto's FIRST letter, with (0, 0) at the top-left corner, and code tells which way it reads from there.",
       "The direction codes are: 'H' left-to-right, 'H-' right-to-left, 'V' top-to-bottom, 'V-' bottom-to-top, 'D1' down-right diagonal, 'D1-' up-left diagonal, 'D2' down-left diagonal, 'D2-' up-right diagonal.",
     ],
     signature: "def find_motto(quilt: list[str], motto: str) -> list[tuple[int, int, str]]:",
     rules: [
       "Scan the quilt column by column (x from 0 to width-1), and inside each column row by row (y from 0 to height-1)",
       "At each square, try the directions in this order: H, H-, V, V-, D1, D1-, D2, D2-",
-      "Collect every match as a tuple (x, y, code) — matches may overlap",
-      "Coordinates are (column, row), with (0, 0) at the top-left",
+      "Collect every match as a tuple (y, x, code) — matches may overlap",
+      "Coordinates are (row, column), with (0, 0) at the top-left",
       "A match that would fall off the quilt's edges doesn't count",
       "A one-letter motto matches in ALL 8 directions from its square",
       "An empty quilt or an empty motto means no matches (return [])",
@@ -374,7 +379,7 @@ export const EXERCISES = [
       },
       {
         input: 'find_motto(["abc", "def", "ghi"], "cfi")',
-        output: "[(2, 0, 'V')]",
+        output: "[(0, 2, 'V')]",
         note: "third column, top to bottom",
       },
       {
@@ -389,24 +394,24 @@ export const EXERCISES = [
       },
       {
         input: 'find_motto(["bob", "obo", "bob"], "bob")',
-        output: "[(0, 0, 'H'), (0, 0, 'V'), (0, 2, 'H'), (0, 2, 'V-'), (2, 0, 'H-'), (2, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]",
+        output: "[(0, 0, 'H'), (0, 0, 'V'), (2, 0, 'H'), (2, 0, 'V-'), (0, 2, 'H-'), (0, 2, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]",
         note: '"bob" backwards is still "bob" — palindromes match both ways',
       },
     ],
     tests: [
       { call: 'find_motto(["abc", "def", "ghi"], "aei")', args: '(["abc", "def", "ghi"], "aei")', expected: "[(0, 0, 'D1')]" },
-      { call: 'find_motto(["abc", "def", "ghi"], "cfi")', args: '(["abc", "def", "ghi"], "cfi")', expected: "[(2, 0, 'V')]" },
+      { call: 'find_motto(["abc", "def", "ghi"], "cfi")', args: '(["abc", "def", "ghi"], "cfi")', expected: "[(0, 2, 'V')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "abc")', args: '(["abc", "def", "ghi"], "abc")', expected: "[(0, 0, 'H')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "ihg")', args: '(["abc", "def", "ghi"], "ihg")', expected: "[(2, 2, 'H-')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "xyz")', args: '(["abc", "def", "ghi"], "xyz")', expected: "[]" },
       { call: 'find_motto([], "a")', args: '([], "a")', expected: "[]" },
       { call: 'find_motto(["abc", "def", "ghi"], "")', args: '(["abc", "def", "ghi"], "")', expected: "[]" },
       { call: 'find_motto(["abc", "def", "ghi"], "a")', args: '(["abc", "def", "ghi"], "a")', expected: "[(0, 0, 'H'), (0, 0, 'H-'), (0, 0, 'V'), (0, 0, 'V-'), (0, 0, 'D1'), (0, 0, 'D1-'), (0, 0, 'D2'), (0, 0, 'D2-')]" },
-      { call: 'find_motto(["aa", "aa"], "aa")', args: '(["aa", "aa"], "aa")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 0, 'D1'), (0, 1, 'H'), (0, 1, 'V-'), (0, 1, 'D2-'), (1, 0, 'H-'), (1, 0, 'V'), (1, 0, 'D2'), (1, 1, 'H-'), (1, 1, 'V-'), (1, 1, 'D1-')]" },
-      { call: 'find_motto(["bob", "obo", "bob"], "bob")', args: '(["bob", "obo", "bob"], "bob")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 2, 'H'), (0, 2, 'V-'), (2, 0, 'H-'), (2, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" },
+      { call: 'find_motto(["aa", "aa"], "aa")', args: '(["aa", "aa"], "aa")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 0, 'D1'), (1, 0, 'H'), (1, 0, 'V-'), (1, 0, 'D2-'), (0, 1, 'H-'), (0, 1, 'V'), (0, 1, 'D2'), (1, 1, 'H-'), (1, 1, 'V-'), (1, 1, 'D1-')]" },
+      { call: 'find_motto(["bob", "obo", "bob"], "bob")', args: '(["bob", "obo", "bob"], "bob")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (2, 0, 'H'), (2, 0, 'V-'), (0, 2, 'H-'), (0, 2, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" },
       { call: 'find_motto(["b"], "b")', args: '(["b"], "b")', expected: "[(0, 0, 'H'), (0, 0, 'H-'), (0, 0, 'V'), (0, 0, 'V-'), (0, 0, 'D1'), (0, 0, 'D1-'), (0, 0, 'D2'), (0, 0, 'D2-')]" },
       { call: 'find_motto(["ab"], "abc")', args: '(["ab"], "abc")', expected: "[]" },
-      { call: 'find_motto(["a", "b", "a"], "aba")', args: '(["a", "b", "a"], "aba")', expected: "[(0, 0, 'V'), (0, 2, 'V-')]" },
+      { call: 'find_motto(["a", "b", "a"], "aba")', args: '(["a", "b", "a"], "aba")', expected: "[(0, 0, 'V'), (2, 0, 'V-')]" },
       { call: 'find_motto(["ab", "ba"], "ab")', args: '(["ab", "ba"], "ab")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (1, 1, 'H-'), (1, 1, 'V-')]" },
       { call: 'find_motto(["Aba", "bab", "abA"], "Aba")', args: '(["Aba", "bab", "abA"], "Aba")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" },
     ],
@@ -423,6 +428,7 @@ export const EXERCISES = [
     story: [
       "The village renamed its main street, and Bob must repaint the old signpost into the new one. Paint is expensive and the mayor is strict: Bob may only change ONE letter per day, and every intermediate word on the sign must be a real word from the village wordbook — no gibberish allowed, even overnight.",
       "Given the start word, the end word and the wordbook, return the number of words in the SHORTEST repaint chain, counting both the start and the end word. If no chain exists, Bob returns 0 and the mayor goes back to bed.",
+      "The mayor is just as picky about the wordbook itself: if it holds any word with a capital letter, or if the start, the end and the wordbook words aren't all the same length, the whole job is off — Bob returns 0 and goes fishing.",
     ],
     signature: "def repaint_steps(start: str, end: str, wordbook: list[str]) -> int:",
     rules: [
@@ -432,7 +438,8 @@ export const EXERCISES = [
       "If start equals end, the chain has length 1 (even if the wordbook is empty)",
       "Return 0 if no valid chain exists",
       "If the end word is not in the wordbook (and differs from start), no chain exists",
-      "All words are lowercase and have the same length",
+      "The wordbook must contain only lowercase words — if any word has an uppercase letter, return 0",
+      "Every word in the wordbook, plus start and end, must be the same length — if not, return 0",
       "The wordbook may contain words that are never used",
     ],
     examples: [
@@ -472,6 +479,9 @@ export const EXERCISES = [
       { call: 'repaint_steps("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', args: '("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', expected: "5" },
       { call: 'repaint_steps("abc", "abc", [])', args: '("abc", "abc", [])', expected: "1" },
       { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" },
+      { call: 'repaint_steps("hit", "cog", ["hot", "dot", "Dog", "lot", "log", "cog"])', args: '("hit", "cog", ["hot", "dot", "Dog", "lot", "log", "cog"])', expected: "0" },
+      { call: 'repaint_steps("hit", "cog", ["hot", "dot", "do", "lot", "log", "cog"])', args: '("hit", "cog", ["hot", "dot", "do", "lot", "log", "cog"])', expected: "0" },
+      { call: 'repaint_steps("hit", "cogs", ["hot", "dot", "cogs"])', args: '("hit", "cogs", ["hot", "dot", "cogs"])', expected: "0" },
     ],
   },
 ];

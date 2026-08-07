@@ -168,17 +168,17 @@ const INITIAL_SHARED = (() => {
 })();
 
 // ==========================================
-// TAB = 2 SPACES (Bob's robot hates \t)
+// TAB = 4 SPACES (Bob's robot hates \t)
 // ==========================================
-const TWO_SPACES = "  ";
+const FOUR_SPACES = "    ";
 
-function insertTwoSpaces(view) {
+function insertFourSpaces(view) {
   const { state } = view;
   const hasSelection = state.selection.ranges.some((r) => !r.empty);
 
-  // Plain cursor: insert two spaces at the caret
+  // Plain cursor: insert four spaces at the caret
   if (!hasSelection) {
-    view.dispatch(state.replaceSelection(TWO_SPACES));
+    view.dispatch(state.replaceSelection(FOUR_SPACES));
     return true;
   }
 
@@ -194,14 +194,14 @@ function insertTwoSpaces(view) {
       const from = state.doc.line(n).from;
       if (seen.has(from)) continue;
       seen.add(from);
-      changes.push({ from, insert: TWO_SPACES });
+      changes.push({ from, insert: FOUR_SPACES });
     }
   }
   view.dispatch({ changes, userEvent: "input" });
   return true;
 }
 
-function removeTwoSpaces(view) {
+function removeFourSpaces(view) {
   const { state } = view;
   const changes = [];
   for (const range of state.selection.ranges) {
@@ -214,7 +214,7 @@ function removeTwoSpaces(view) {
     for (let n = first; n <= last; n++) {
       const line = state.doc.line(n);
       let count = 0;
-      while (count < 2 && line.text[count] === " ") count++;
+      while (count < 4 && line.text[count] === " ") count++;
       if (count > 0) changes.push({ from: line.from, to: line.from + count });
     }
   }
@@ -252,8 +252,8 @@ function PracticeScreen(props) {
       extensions: [
         basicSetup,
         keymap.of([
-          { key: "Tab", run: insertTwoSpaces },
-          { key: "Shift-Tab", run: removeTwoSpaces },
+          { key: "Tab", run: insertFourSpaces },
+          { key: "Shift-Tab", run: removeFourSpaces },
         ]),
         indentationMarkers(),
         python(),
@@ -441,7 +441,7 @@ function PracticeScreen(props) {
             onClick={shareCode}
             disabled={sharing()}
             class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
-            title="Share this code — copies a short link"
+            title="Share code"
           >
             <Icon
               name={
@@ -454,7 +454,7 @@ function PracticeScreen(props) {
           <button
             onClick={resetCode}
             class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
-            title="Reset code to stub"
+            title="Reset code"
           >
             <Icon name="restart-alt" color="a8a29e" size={16} />
           </button>
@@ -462,7 +462,7 @@ function PracticeScreen(props) {
             onClick={formatCode}
             disabled={formatting() || props.pyodideState() !== "ready"}
             class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
-            title="Format code with Black (downloads Black on first use)"
+            title="Format code"
           >
             <Icon
               name={formatting() ? "hourglass-top" : "format-align-left"}
@@ -476,7 +476,7 @@ function PracticeScreen(props) {
               running() || grading() || props.pyodideState() !== "ready"
             }
             class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"
-            title="Run the script — print() output shows up in the robot log (15s limit)"
+            title="Run script"
           >
             <Icon
               name={running() ? "hourglass-top" : "play-arrow"}
@@ -490,8 +490,8 @@ function PracticeScreen(props) {
             class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
             title={
               props.pyodideState() !== "ready"
-                ? "Robot helper still waking up..."
-                : "Grade me! (Ctrl+Enter)"
+                ? "Waking up..."
+                : "Grade me!"
             }
           >
             <Icon name="smart-toy" color="451a03" size={16} />
@@ -505,11 +505,11 @@ function PracticeScreen(props) {
         {/* Left panel: subject / robot log tabs */}
         <div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none">
           {/* Tab content */}
-          <div class="flex-1 overflow-y-auto min-h-0">
+          <div ref={traceRef} class="flex-1 overflow-auto min-h-0">
             <Show
               when={leftTab() === "note"}
               fallback={
-                <div ref={traceRef} class="px-4 py-3 font-mono text-[12px]">
+                <div class="px-4 py-3 font-mono text-[12px]">
                   <Show
                     when={trace()}
                     fallback={
@@ -539,7 +539,7 @@ function PracticeScreen(props) {
                                   </div>
                                 }
                               >
-                                <div class="whitespace-pre-wrap text-[#d6d3d1]">
+                                <div class="whitespace-pre text-[#d6d3d1]">
                                   {r().stdout}
                                 </div>
                               </Show>
@@ -580,19 +580,25 @@ function PracticeScreen(props) {
                           <For each={t().results}>
                             {(r, i) => (
                               <div class="mb-1.5">
-                                <div class="trace-line-call">
+                                <div class="trace-line-call whitespace-pre">
                                   <span class="test-num">Test {i() + 1}:</span>
-                                  {r.call}
-                                </div>
-                                <div class="trace-line-result">
-                                  expected: {r.expected} | got:{" "}
-                                  {r.got === null ? "—" : r.got} →{" "}
+                                  {r.call}{" -> "}
                                   <span class={r.ok ? "trace-ok" : "trace-ko"}>
                                     {r.ok ? "OK" : "KO"}
                                   </span>
                                 </div>
+                                <div class="trace-line-val whitespace-pre">
+                                  <span class="trace-label">expected:</span>{" "}
+                                  {r.expected}
+                                </div>
+                                <div class="trace-line-val whitespace-pre">
+                                  <span class="trace-label">got:</span>{" "}
+                                  {r.got === null ? "—" : r.got}
+                                </div>
                                 <Show when={r.error}>
-                                  <div class="trace-error">{r.error}</div>
+                                  <div class="trace-error whitespace-pre">
+                                    {r.error}
+                                  </div>
                                 </Show>
                               </div>
                             )}

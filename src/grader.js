@@ -10,6 +10,7 @@
 const HARNESS = `
 import copy as _bob_copy
 import json as _bob_json
+import ast as _bob_ast
 import sys as _bob_sys
 import time as _bob_time
 import io as _bob_io
@@ -48,62 +49,162 @@ def _bob_time_guard(limit_seconds):
 
 _TIMEOUT_MSG = "TimeLimit: your code ran for more than 15s — looks like an infinite loop!"
 
-def bob_grade(user_src, func_name, tests_literal, timeout_seconds=15):
-    ns = {}
-    _bob_sys.settrace(_bob_time_guard(timeout_seconds))
+# ---------------------------------------------------------------------
+# Banned-call detection (used by The Chore Wheel and friends).
+# Layer 1 — AST: any *use* of a banned name/attribute (even aliasing
+# like f = sorted), plus banned MODULE imports so tricks like
+# 'from graphlib import TopologicalSorter as T' are caught at the
+# import itself. String constants handed to getattr/eval/exec are
+# inspected too.
+# Layer 2 — runtime: banned builtins are replaced by tripwires BEFORE
+# the player's code runs, so dynamic tricks like
+# __builtins__['sorted'](x) or import builtins; builtins.sorted(x)
+# blow up too. Originals are restored after grading.
+# ---------------------------------------------------------------------
+class _BobBannedUse(BaseException):
+    def __init__(self, name):
+        super().__init__(name)
+        self.name = name
+
+def _bob_find_banned(user_src, banned_names, banned_attrs, banned_modules):
     try:
-        exec(user_src, ns)
-    except _BobTimeout:
-        return _bob_json.dumps({"fatal": _TIMEOUT_MSG})
-    except Exception as e:
-        return _bob_json.dumps({"fatal": f"{type(e).__name__}: {e}"})
-    finally:
-        _bob_sys.settrace(None)
+        tree = _bob_ast.parse(user_src)
+    except Exception:
+        return None  # syntax errors are reported by exec() later
+    for node in _bob_ast.walk(tree):
+        if isinstance(node, _bob_ast.Name) and isinstance(node.ctx, _bob_ast.Load):
+            if node.id in banned_names:
+                return node.id + "()"
+        if isinstance(node, _bob_ast.Attribute) and isinstance(node.ctx, _bob_ast.Load):
+            if node.attr in banned_attrs:
+                return "." + node.attr + "()"
+        if isinstance(node, _bob_ast.Import):
+            for alias in node.names:
+                if alias.name in banned_modules:
+                    return "import " + alias.name
+        if isinstance(node, _bob_ast.ImportFrom):
+            if node.module in banned_modules:
+                return "import " + node.module
+        if isinstance(node, _bob_ast.Call):
+            f = node.func
+            fname = None
+            if isinstance(f, _bob_ast.Name):
+                fname = f.id
+            elif isinstance(f, _bob_ast.Attribute):
+                fname = f.attr
+            if fname in ("getattr", "vars"):
+                for a in node.args:
+                    if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
+                        if a.value in banned_names or a.value in banned_attrs:
+                            return a.value + "()"
+            if fname in ("eval", "exec", "compile"):
+                for a in node.args:
+                    if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
+                        words = a.value.replace("(", " ").replace(")", " ").replace(".", " ").split()
+                        for w in words:
+                            if w in banned_names or w in banned_attrs or w in banned_modules:
+                                return w + "()"
+    return None
 
-    func = ns.get(func_name)
-    if not callable(func):
-        return _bob_json.dumps({
-            "fatal": f"Function '{func_name}' not found. Check the 'def' line in the subject."
-        })
+def _bob_patch_builtins(banned_names):
+    import builtins as _bob_b
+    patched = {}
+    for name in banned_names:
+        if hasattr(_bob_b, name):
+            real = getattr(_bob_b, name)
+            def _make_tripwire(n):
+                def _tripwire(*a, **k):
+                    raise _BobBannedUse(n + "()")
+                return _tripwire
+            setattr(_bob_b, name, _make_tripwire(name))
+            patched[name] = real
+    return patched
 
-    tests = eval(tests_literal)
-    results = []
-    for fname, args, expected in tests:
-        test_func = ns.get(fname)
-        if not callable(test_func):
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": f"Function '{fname}' not found. Check the 'def' line in the subject.",
-            })
-            continue
+def _bob_restore_builtins(patched):
+    import builtins as _bob_b
+    for name, real in patched.items():
+        setattr(_bob_b, name, real)
+
+def _bob_forbidden(bad):
+    return _bob_json.dumps({
+        "fatal": f"Forbidden function '{bad}' detected. This chore bans it — read the rules and solve it by hand!"
+    })
+
+def bob_grade(user_src, func_name, tests_literal, banned_literal, timeout_seconds=15):
+    banned = _bob_json.loads(banned_literal)
+    bad = _bob_find_banned(
+        user_src,
+        banned.get("names", []),
+        banned.get("attrs", []),
+        banned.get("modules", []),
+    )
+    if bad:
+        return _bob_forbidden(bad)
+
+    patched = _bob_patch_builtins(banned.get("names", []))
+    try:
+        ns = {}
         _bob_sys.settrace(_bob_time_guard(timeout_seconds))
         try:
-            got = test_func(*_bob_copy.deepcopy(args))
-            results.append({
-                "ok": bool(got == expected),
-                "expected": repr(expected),
-                "got": repr(got),
-                "error": None,
-            })
+            exec(user_src, ns)
+        except _BobBannedUse as b:
+            return _bob_forbidden(b.name)
         except _BobTimeout:
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": _TIMEOUT_MSG,
-            })
+            return _bob_json.dumps({"fatal": _TIMEOUT_MSG})
         except Exception as e:
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": f"{type(e).__name__}: {e}",
-            })
+            return _bob_json.dumps({"fatal": f"{type(e).__name__}: {e}"})
         finally:
             _bob_sys.settrace(None)
-    return _bob_json.dumps({"results": results})
+
+        func = ns.get(func_name)
+        if not callable(func):
+            return _bob_json.dumps({
+                "fatal": f"Function '{func_name}' not found. Check the 'def' line in the subject."
+            })
+
+        tests = eval(tests_literal)
+        results = []
+        for fname, args, expected in tests:
+            test_func = ns.get(fname)
+            if not callable(test_func):
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": f"Function '{fname}' not found. Check the 'def' line in the subject.",
+                })
+                continue
+            _bob_sys.settrace(_bob_time_guard(timeout_seconds))
+            try:
+                got = test_func(*_bob_copy.deepcopy(args))
+                results.append({
+                    "ok": bool(got == expected),
+                    "expected": repr(expected),
+                    "got": repr(got),
+                    "error": None,
+                })
+            except _BobBannedUse as b:
+                return _bob_forbidden(b.name)
+            except _BobTimeout:
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": _TIMEOUT_MSG,
+                })
+            except Exception as e:
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": f"{type(e).__name__}: {e}",
+                })
+            finally:
+                _bob_sys.settrace(None)
+        return _bob_json.dumps({"results": results})
+    finally:
+        _bob_restore_builtins(patched)
+        _bob_sys.settrace(None)
 
 def bob_run(user_src, timeout_seconds):
     buf = _BobLimitedStdout()
@@ -166,10 +267,14 @@ export async function grade(code, exercise) {
   pyodide.globals.set("__bob_src", code);
   pyodide.globals.set("__bob_func", exercise.funcName);
   pyodide.globals.set("__bob_tests", testsLiteral(exercise));
+  pyodide.globals.set(
+    "__bob_banned",
+    JSON.stringify(exercise.banned || {}),
+  );
   pyodide.globals.set("__bob_timeout", GRADE_TIMEOUT_SECONDS);
 
   const out = await pyodide.runPythonAsync(
-    "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_timeout)",
+    "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)",
   );
   const data = JSON.parse(out);
 

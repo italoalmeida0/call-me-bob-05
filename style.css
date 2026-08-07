@@ -69,24 +69,21 @@ button {
 }
 
 /* Trace console */
-.trace-console {
-  background: #0c0a09;
-  border-top: 2px solid #292524;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  overflow-y: auto;
-}
 .trace-line-call {
   color: #a8a29e;
 }
 .trace-line-call .test-num {
   color: #57534e;
   display: inline-block;
-  min-width: 52px;
+  min-width: 60px;
 }
-.trace-line-result {
-  padding-left: 60px;
+.trace-line-val {
   color: #78716c;
+}
+.trace-label {
+  display: inline-block;
+  width: 9ch;
+  color: #57534e;
 }
 .trace-ok {
   color: #4ade80;
@@ -98,7 +95,6 @@ button {
 }
 .trace-error {
   color: #fbbf24;
-  padding-left: 60px;
 }
 .trace-header {
   color: #f59e0b;

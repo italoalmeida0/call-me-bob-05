@@ -24776,61 +24776,61 @@ var EXERCISES = [
     icon: "warehouse",
     funcName: "plan_barn_days",
     topics: ["Meeting Rooms", "Greedy / Intervals"],
-    stub: `def plan_barn_days(bookings: list[tuple[int, int]]) -> tuple[int, list]:
+    stub: `def plan_barn_days(bookings: list[list[int]]) -> dict:
     pass
 `,
     story: [
-      "The village fair is coming and every club wants to run a workshop in Bob's barns. Each request is a (start, end) time slot. Two workshops can't share a barn at the same time, but back-to-back is fine — if one ends at 5, the next can start at 5.",
+      "The village fair is coming and every club wants to run a workshop in Bob's barns. Each request is a [start, end] time slot. Two workshops can't share a barn at the same time, but back-to-back is fine — if one ends at 5, the next can start at 5.",
       "Bob handles the requests in ascending start time (if two start together, he keeps the order they arrived). For each request he uses the FIRST barn — in the order the barns were opened — whose last workshop ends at or before the new start. If no barn is free, he sighs and opens another one.",
       "Return how many barns Bob ended up using, along with the final schedule of each barn."
     ],
-    signature: "def plan_barn_days(bookings: list[tuple[int, int]]) -> tuple[int, list]:",
+    signature: "def plan_barn_days(bookings: list[list[int]]) -> dict:",
     rules: [
       "Process bookings sorted by start time; equal starts keep their original order",
       "Assign each booking to the first barn (in opening order) whose last booking ends at or before the new start",
       "If no barn fits, open a new one",
       "Back-to-back bookings in the same barn are allowed (end <= start)",
-      "Return a tuple: (number of barns, list of barn schedules)",
-      "Each barn schedule is the list of its bookings as (start, end) tuples, in the order they were booked",
-      "No bookings at all means (0, [])"
+      'Return a dict: {"barns": number, "schedules": {0: [...], 1: [...], ...}}',
+      "Each barn schedule is the list of its bookings as [start, end] lists, in the order they were booked",
+      'No bookings means {"barns": 0, "schedules": {}}'
     ],
     examples: [
       {
-        input: "plan_barn_days([(1, 4), (2, 5), (6, 8)])",
-        output: "(2, [[(1, 4), (6, 8)], [(2, 5)]])",
+        input: "plan_barn_days([[1, 4], [2, 5], [6, 8]])",
+        output: '{"barns": 2, "schedules": {0: [[1, 4], [6, 8]], 1: [[2, 5]]}}',
         note: "barn 1 hosts 1-4 and 6-8, barn 2 hosts 2-5"
       },
       {
-        input: "plan_barn_days([(1, 3), (3, 5), (5, 7)])",
-        output: "(1, [[(1, 3), (3, 5), (5, 7)]])",
+        input: "plan_barn_days([[1, 3], [3, 5], [5, 7]])",
+        output: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 7]]}}',
         note: "back-to-back fits in a single barn"
       },
       {
-        input: "plan_barn_days([(9, 10), (4, 9), (3, 8)])",
-        output: "(2, [[(3, 8), (9, 10)], [(4, 9)]])",
+        input: "plan_barn_days([[9, 10], [4, 9], [3, 8]])",
+        output: '{"barns": 2, "schedules": {0: [[3, 8], [9, 10]], 1: [[4, 9]]}}',
         note: "requests are handled in ascending start time"
       },
       {
         input: "plan_barn_days([])",
-        output: "(0, [])",
+        output: '{"barns": 0, "schedules": {}}',
         note: "no requests, no barns"
       }
     ],
     tests: [
-      { call: "plan_barn_days([])", args: "([],)", expected: "(0, [])" },
-      { call: "plan_barn_days([(1, 4), (2, 5), (6, 8)])", args: "([(1, 4), (2, 5), (6, 8)],)", expected: "(2, [[(1, 4), (6, 8)], [(2, 5)]])" },
-      { call: "plan_barn_days([(1, 3), (3, 5), (5, 7)])", args: "([(1, 3), (3, 5), (5, 7)],)", expected: "(1, [[(1, 3), (3, 5), (5, 7)]])" },
-      { call: "plan_barn_days([(9, 10), (4, 9), (3, 8)])", args: "([(9, 10), (4, 9), (3, 8)],)", expected: "(2, [[(3, 8), (9, 10)], [(4, 9)]])" },
-      { call: "plan_barn_days([(1, 10), (2, 9), (3, 8), (4, 7)])", args: "([(1, 10), (2, 9), (3, 8), (4, 7)],)", expected: "(4, [[(1, 10)], [(2, 9)], [(3, 8)], [(4, 7)]])" },
-      { call: "plan_barn_days([(5, 8), (1, 3), (3, 5)])", args: "([(5, 8), (1, 3), (3, 5)],)", expected: "(1, [[(1, 3), (3, 5), (5, 8)]])" },
-      { call: "plan_barn_days([(0, 30), (5, 10), (15, 20)])", args: "([(0, 30), (5, 10), (15, 20)],)", expected: "(2, [[(0, 30)], [(5, 10), (15, 20)]])" },
-      { call: "plan_barn_days([(1, 5), (1, 3)])", args: "([(1, 5), (1, 3)],)", expected: "(2, [[(1, 5)], [(1, 3)]])" },
-      { call: "plan_barn_days([(1, 4), (1, 4), (1, 4)])", args: "([(1, 4), (1, 4), (1, 4)],)", expected: "(3, [[(1, 4)], [(1, 4)], [(1, 4)]])" },
-      { call: "plan_barn_days([(1, 3), (2, 4), (3, 5), (4, 6)])", args: "([(1, 3), (2, 4), (3, 5), (4, 6)],)", expected: "(2, [[(1, 3), (3, 5)], [(2, 4), (4, 6)]])" },
-      { call: "plan_barn_days([(-5, -1), (-3, 2)])", args: "([(-5, -1), (-3, 2)],)", expected: "(2, [[(-5, -1)], [(-3, 2)]])" },
-      { call: "plan_barn_days([(2, 2), (2, 3)])", args: "([(2, 2), (2, 3)],)", expected: "(1, [[(2, 2), (2, 3)]])" },
-      { call: "plan_barn_days([(7, 9)])", args: "([(7, 9)],)", expected: "(1, [[(7, 9)]])" },
-      { call: "plan_barn_days([(1, 2), (2, 3), (1, 2), (2, 3)])", args: "([(1, 2), (2, 3), (1, 2), (2, 3)],)", expected: "(2, [[(1, 2), (2, 3)], [(1, 2), (2, 3)]])" }
+      { call: "plan_barn_days([])", args: "([],)", expected: '{"barns": 0, "schedules": {}}' },
+      { call: "plan_barn_days([[1, 4], [2, 5], [6, 8]])", args: "([[1, 4], [2, 5], [6, 8]],)", expected: '{"barns": 2, "schedules": {0: [[1, 4], [6, 8]], 1: [[2, 5]]}}' },
+      { call: "plan_barn_days([[1, 3], [3, 5], [5, 7]])", args: "([[1, 3], [3, 5], [5, 7]],)", expected: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 7]]}}' },
+      { call: "plan_barn_days([[9, 10], [4, 9], [3, 8]])", args: "([[9, 10], [4, 9], [3, 8]],)", expected: '{"barns": 2, "schedules": {0: [[3, 8], [9, 10]], 1: [[4, 9]]}}' },
+      { call: "plan_barn_days([[1, 10], [2, 9], [3, 8], [4, 7]])", args: "([[1, 10], [2, 9], [3, 8], [4, 7]],)", expected: '{"barns": 4, "schedules": {0: [[1, 10]], 1: [[2, 9]], 2: [[3, 8]], 3: [[4, 7]]}}' },
+      { call: "plan_barn_days([[5, 8], [1, 3], [3, 5]])", args: "([[5, 8], [1, 3], [3, 5]],)", expected: '{"barns": 1, "schedules": {0: [[1, 3], [3, 5], [5, 8]]}}' },
+      { call: "plan_barn_days([[0, 30], [5, 10], [15, 20]])", args: "([[0, 30], [5, 10], [15, 20]],)", expected: '{"barns": 2, "schedules": {0: [[0, 30]], 1: [[5, 10], [15, 20]]}}' },
+      { call: "plan_barn_days([[1, 5], [1, 3]])", args: "([[1, 5], [1, 3]],)", expected: '{"barns": 2, "schedules": {0: [[1, 5]], 1: [[1, 3]]}}' },
+      { call: "plan_barn_days([[1, 4], [1, 4], [1, 4]])", args: "([[1, 4], [1, 4], [1, 4]],)", expected: '{"barns": 3, "schedules": {0: [[1, 4]], 1: [[1, 4]], 2: [[1, 4]]}}' },
+      { call: "plan_barn_days([[1, 3], [2, 4], [3, 5], [4, 6]])", args: "([[1, 3], [2, 4], [3, 5], [4, 6]],)", expected: '{"barns": 2, "schedules": {0: [[1, 3], [3, 5]], 1: [[2, 4], [4, 6]]}}' },
+      { call: "plan_barn_days([[-5, -1], [-3, 2]])", args: "([[-5, -1], [-3, 2]],)", expected: '{"barns": 2, "schedules": {0: [[-5, -1]], 1: [[-3, 2]]}}' },
+      { call: "plan_barn_days([[2, 2], [2, 3]])", args: "([[2, 2], [2, 3]],)", expected: '{"barns": 1, "schedules": {0: [[2, 2], [2, 3]]}}' },
+      { call: "plan_barn_days([[7, 9]])", args: "([[7, 9]],)", expected: '{"barns": 1, "schedules": {0: [[7, 9]]}}' },
+      { call: "plan_barn_days([[1, 2], [2, 3], [1, 2], [2, 3]])", args: "([[1, 2], [2, 3], [1, 2], [2, 3]],)", expected: '{"barns": 2, "schedules": {0: [[1, 2], [2, 3]], 1: [[1, 2], [2, 3]]}}' }
     ]
   },
   {
@@ -24902,7 +24902,8 @@ var EXERCISES = [
 `,
     story: [
       "Bob pinned his chore chart on the wall: every chore has a number, and under it a list of arrows to the chores that come right after it. Finishing chore 1 sends him to chore 2, and so on.",
-      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends."
+      "The problem: some weeks the arrows loop back — chore 4 sends Bob to chore 7, chore 7 sends him to chore 2, chore 2 sends him to chore 4... and nothing ever gets done. Bob needs a function that looks at the chart and says True if following the arrows can bring him back to a chore he is already on, and False if every path eventually ends.",
+      "One more thing: Bob's robot helper is watching, and it will REFUSE to grade any solution that uses Python's graphlib module — TopologicalSorter, CycleError and friends. Bob says following the arrows by hand is a life skill."
     ],
     signature: "def has_chore_loop(chores: dict[int, list[int]]) -> bool:",
     rules: [
@@ -24911,8 +24912,10 @@ var EXERCISES = [
       "A chore pointing to itself is a loop",
       "A chore may point to a number that has no outgoing arrows (or isn't even a key) — that path simply ends there",
       "The chart may have disconnected parts; a loop anywhere counts",
-      "An empty chart has no loop (return False)"
+      "An empty chart has no loop (return False)",
+      "FORBIDDEN: importing or using graphlib (TopologicalSorter, CycleError, ...) — the robot checks and rejects it"
     ],
+    banned: { names: ["TopologicalSorter", "CycleError"], modules: ["graphlib"] },
     examples: [
       {
         input: "has_chore_loop({1: [2], 2: [3], 3: []})",
@@ -25099,15 +25102,15 @@ def unpack_tally(packed: str) -> str:`,
 `,
     story: [
       "Grandma Bob stitched a quilt made of little lettered squares — a grid of characters. Family legend says she hid her favorite motto in it, embroidered in a straight line: across, down, or along one of the diagonals, in either direction.",
-      "Given the quilt (a list of equal-length strings, one per row) and the motto, return every place it appears. A match is reported as (x, y, code): x is the column and y is the row of the motto's FIRST letter, with (0, 0) at the top-left corner, and code tells which way it reads from there.",
+      "Given the quilt (a list of equal-length strings, one per row) and the motto, return every place it appears. A match is reported as (y, x, code): y is the row and x is the column of the motto's FIRST letter, with (0, 0) at the top-left corner, and code tells which way it reads from there.",
       "The direction codes are: 'H' left-to-right, 'H-' right-to-left, 'V' top-to-bottom, 'V-' bottom-to-top, 'D1' down-right diagonal, 'D1-' up-left diagonal, 'D2' down-left diagonal, 'D2-' up-right diagonal."
     ],
     signature: "def find_motto(quilt: list[str], motto: str) -> list[tuple[int, int, str]]:",
     rules: [
       "Scan the quilt column by column (x from 0 to width-1), and inside each column row by row (y from 0 to height-1)",
       "At each square, try the directions in this order: H, H-, V, V-, D1, D1-, D2, D2-",
-      "Collect every match as a tuple (x, y, code) — matches may overlap",
-      "Coordinates are (column, row), with (0, 0) at the top-left",
+      "Collect every match as a tuple (y, x, code) — matches may overlap",
+      "Coordinates are (row, column), with (0, 0) at the top-left",
       "A match that would fall off the quilt's edges doesn't count",
       "A one-letter motto matches in ALL 8 directions from its square",
       "An empty quilt or an empty motto means no matches (return [])",
@@ -25121,7 +25124,7 @@ def unpack_tally(packed: str) -> str:`,
       },
       {
         input: 'find_motto(["abc", "def", "ghi"], "cfi")',
-        output: "[(2, 0, 'V')]",
+        output: "[(0, 2, 'V')]",
         note: "third column, top to bottom"
       },
       {
@@ -25136,24 +25139,24 @@ def unpack_tally(packed: str) -> str:`,
       },
       {
         input: 'find_motto(["bob", "obo", "bob"], "bob")',
-        output: "[(0, 0, 'H'), (0, 0, 'V'), (0, 2, 'H'), (0, 2, 'V-'), (2, 0, 'H-'), (2, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]",
+        output: "[(0, 0, 'H'), (0, 0, 'V'), (2, 0, 'H'), (2, 0, 'V-'), (0, 2, 'H-'), (0, 2, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]",
         note: '"bob" backwards is still "bob" — palindromes match both ways'
       }
     ],
     tests: [
       { call: 'find_motto(["abc", "def", "ghi"], "aei")', args: '(["abc", "def", "ghi"], "aei")', expected: "[(0, 0, 'D1')]" },
-      { call: 'find_motto(["abc", "def", "ghi"], "cfi")', args: '(["abc", "def", "ghi"], "cfi")', expected: "[(2, 0, 'V')]" },
+      { call: 'find_motto(["abc", "def", "ghi"], "cfi")', args: '(["abc", "def", "ghi"], "cfi")', expected: "[(0, 2, 'V')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "abc")', args: '(["abc", "def", "ghi"], "abc")', expected: "[(0, 0, 'H')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "ihg")', args: '(["abc", "def", "ghi"], "ihg")', expected: "[(2, 2, 'H-')]" },
       { call: 'find_motto(["abc", "def", "ghi"], "xyz")', args: '(["abc", "def", "ghi"], "xyz")', expected: "[]" },
       { call: 'find_motto([], "a")', args: '([], "a")', expected: "[]" },
       { call: 'find_motto(["abc", "def", "ghi"], "")', args: '(["abc", "def", "ghi"], "")', expected: "[]" },
       { call: 'find_motto(["abc", "def", "ghi"], "a")', args: '(["abc", "def", "ghi"], "a")', expected: "[(0, 0, 'H'), (0, 0, 'H-'), (0, 0, 'V'), (0, 0, 'V-'), (0, 0, 'D1'), (0, 0, 'D1-'), (0, 0, 'D2'), (0, 0, 'D2-')]" },
-      { call: 'find_motto(["aa", "aa"], "aa")', args: '(["aa", "aa"], "aa")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 0, 'D1'), (0, 1, 'H'), (0, 1, 'V-'), (0, 1, 'D2-'), (1, 0, 'H-'), (1, 0, 'V'), (1, 0, 'D2'), (1, 1, 'H-'), (1, 1, 'V-'), (1, 1, 'D1-')]" },
-      { call: 'find_motto(["bob", "obo", "bob"], "bob")', args: '(["bob", "obo", "bob"], "bob")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 2, 'H'), (0, 2, 'V-'), (2, 0, 'H-'), (2, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" },
+      { call: 'find_motto(["aa", "aa"], "aa")', args: '(["aa", "aa"], "aa")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (0, 0, 'D1'), (1, 0, 'H'), (1, 0, 'V-'), (1, 0, 'D2-'), (0, 1, 'H-'), (0, 1, 'V'), (0, 1, 'D2'), (1, 1, 'H-'), (1, 1, 'V-'), (1, 1, 'D1-')]" },
+      { call: 'find_motto(["bob", "obo", "bob"], "bob")', args: '(["bob", "obo", "bob"], "bob")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (2, 0, 'H'), (2, 0, 'V-'), (0, 2, 'H-'), (0, 2, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" },
       { call: 'find_motto(["b"], "b")', args: '(["b"], "b")', expected: "[(0, 0, 'H'), (0, 0, 'H-'), (0, 0, 'V'), (0, 0, 'V-'), (0, 0, 'D1'), (0, 0, 'D1-'), (0, 0, 'D2'), (0, 0, 'D2-')]" },
       { call: 'find_motto(["ab"], "abc")', args: '(["ab"], "abc")', expected: "[]" },
-      { call: 'find_motto(["a", "b", "a"], "aba")', args: '(["a", "b", "a"], "aba")', expected: "[(0, 0, 'V'), (0, 2, 'V-')]" },
+      { call: 'find_motto(["a", "b", "a"], "aba")', args: '(["a", "b", "a"], "aba")', expected: "[(0, 0, 'V'), (2, 0, 'V-')]" },
       { call: 'find_motto(["ab", "ba"], "ab")', args: '(["ab", "ba"], "ab")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (1, 1, 'H-'), (1, 1, 'V-')]" },
       { call: 'find_motto(["Aba", "bab", "abA"], "Aba")', args: '(["Aba", "bab", "abA"], "Aba")', expected: "[(0, 0, 'H'), (0, 0, 'V'), (2, 2, 'H-'), (2, 2, 'V-')]" }
     ]
@@ -25171,7 +25174,8 @@ def unpack_tally(packed: str) -> str:`,
 `,
     story: [
       "The village renamed its main street, and Bob must repaint the old signpost into the new one. Paint is expensive and the mayor is strict: Bob may only change ONE letter per day, and every intermediate word on the sign must be a real word from the village wordbook — no gibberish allowed, even overnight.",
-      "Given the start word, the end word and the wordbook, return the number of words in the SHORTEST repaint chain, counting both the start and the end word. If no chain exists, Bob returns 0 and the mayor goes back to bed."
+      "Given the start word, the end word and the wordbook, return the number of words in the SHORTEST repaint chain, counting both the start and the end word. If no chain exists, Bob returns 0 and the mayor goes back to bed.",
+      "The mayor is just as picky about the wordbook itself: if it holds any word with a capital letter, or if the start, the end and the wordbook words aren't all the same length, the whole job is off — Bob returns 0 and goes fishing."
     ],
     signature: "def repaint_steps(start: str, end: str, wordbook: list[str]) -> int:",
     rules: [
@@ -25181,7 +25185,8 @@ def unpack_tally(packed: str) -> str:`,
       "If start equals end, the chain has length 1 (even if the wordbook is empty)",
       "Return 0 if no valid chain exists",
       "If the end word is not in the wordbook (and differs from start), no chain exists",
-      "All words are lowercase and have the same length",
+      "The wordbook must contain only lowercase words — if any word has an uppercase letter, return 0",
+      "Every word in the wordbook, plus start and end, must be the same length — if not, return 0",
       "The wordbook may contain words that are never used"
     ],
     examples: [
@@ -25220,7 +25225,10 @@ def unpack_tally(packed: str) -> str:`,
       { call: 'repaint_steps("lead", "gold", ["lead", "load", "goad", "gold"])', args: '("lead", "gold", ["lead", "load", "goad", "gold"])', expected: "4" },
       { call: 'repaint_steps("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', args: '("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog", "xyz", "zzz"])', expected: "5" },
       { call: 'repaint_steps("abc", "abc", [])', args: '("abc", "abc", [])', expected: "1" },
-      { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" }
+      { call: 'repaint_steps("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', args: '("lost", "miss", ["lost", "last", "mast", "mass", "miss"])', expected: "5" },
+      { call: 'repaint_steps("hit", "cog", ["hot", "dot", "Dog", "lot", "log", "cog"])', args: '("hit", "cog", ["hot", "dot", "Dog", "lot", "log", "cog"])', expected: "0" },
+      { call: 'repaint_steps("hit", "cog", ["hot", "dot", "do", "lot", "log", "cog"])', args: '("hit", "cog", ["hot", "dot", "do", "lot", "log", "cog"])', expected: "0" },
+      { call: 'repaint_steps("hit", "cogs", ["hot", "dot", "cogs"])', args: '("hit", "cogs", ["hot", "dot", "cogs"])', expected: "0" }
     ]
   }
 ];
@@ -25232,6 +25240,7 @@ function getExercise(id2) {
 var HARNESS = `
 import copy as _bob_copy
 import json as _bob_json
+import ast as _bob_ast
 import sys as _bob_sys
 import time as _bob_time
 import io as _bob_io
@@ -25270,62 +25279,162 @@ def _bob_time_guard(limit_seconds):
 
 _TIMEOUT_MSG = "TimeLimit: your code ran for more than 15s — looks like an infinite loop!"
 
-def bob_grade(user_src, func_name, tests_literal, timeout_seconds=15):
-    ns = {}
-    _bob_sys.settrace(_bob_time_guard(timeout_seconds))
+# ---------------------------------------------------------------------
+# Banned-call detection (used by The Chore Wheel and friends).
+# Layer 1 — AST: any *use* of a banned name/attribute (even aliasing
+# like f = sorted), plus banned MODULE imports so tricks like
+# 'from graphlib import TopologicalSorter as T' are caught at the
+# import itself. String constants handed to getattr/eval/exec are
+# inspected too.
+# Layer 2 — runtime: banned builtins are replaced by tripwires BEFORE
+# the player's code runs, so dynamic tricks like
+# __builtins__['sorted'](x) or import builtins; builtins.sorted(x)
+# blow up too. Originals are restored after grading.
+# ---------------------------------------------------------------------
+class _BobBannedUse(BaseException):
+    def __init__(self, name):
+        super().__init__(name)
+        self.name = name
+
+def _bob_find_banned(user_src, banned_names, banned_attrs, banned_modules):
     try:
-        exec(user_src, ns)
-    except _BobTimeout:
-        return _bob_json.dumps({"fatal": _TIMEOUT_MSG})
-    except Exception as e:
-        return _bob_json.dumps({"fatal": f"{type(e).__name__}: {e}"})
-    finally:
-        _bob_sys.settrace(None)
+        tree = _bob_ast.parse(user_src)
+    except Exception:
+        return None  # syntax errors are reported by exec() later
+    for node in _bob_ast.walk(tree):
+        if isinstance(node, _bob_ast.Name) and isinstance(node.ctx, _bob_ast.Load):
+            if node.id in banned_names:
+                return node.id + "()"
+        if isinstance(node, _bob_ast.Attribute) and isinstance(node.ctx, _bob_ast.Load):
+            if node.attr in banned_attrs:
+                return "." + node.attr + "()"
+        if isinstance(node, _bob_ast.Import):
+            for alias in node.names:
+                if alias.name in banned_modules:
+                    return "import " + alias.name
+        if isinstance(node, _bob_ast.ImportFrom):
+            if node.module in banned_modules:
+                return "import " + node.module
+        if isinstance(node, _bob_ast.Call):
+            f = node.func
+            fname = None
+            if isinstance(f, _bob_ast.Name):
+                fname = f.id
+            elif isinstance(f, _bob_ast.Attribute):
+                fname = f.attr
+            if fname in ("getattr", "vars"):
+                for a in node.args:
+                    if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
+                        if a.value in banned_names or a.value in banned_attrs:
+                            return a.value + "()"
+            if fname in ("eval", "exec", "compile"):
+                for a in node.args:
+                    if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
+                        words = a.value.replace("(", " ").replace(")", " ").replace(".", " ").split()
+                        for w in words:
+                            if w in banned_names or w in banned_attrs or w in banned_modules:
+                                return w + "()"
+    return None
 
-    func = ns.get(func_name)
-    if not callable(func):
-        return _bob_json.dumps({
-            "fatal": f"Function '{func_name}' not found. Check the 'def' line in the subject."
-        })
+def _bob_patch_builtins(banned_names):
+    import builtins as _bob_b
+    patched = {}
+    for name in banned_names:
+        if hasattr(_bob_b, name):
+            real = getattr(_bob_b, name)
+            def _make_tripwire(n):
+                def _tripwire(*a, **k):
+                    raise _BobBannedUse(n + "()")
+                return _tripwire
+            setattr(_bob_b, name, _make_tripwire(name))
+            patched[name] = real
+    return patched
 
-    tests = eval(tests_literal)
-    results = []
-    for fname, args, expected in tests:
-        test_func = ns.get(fname)
-        if not callable(test_func):
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": f"Function '{fname}' not found. Check the 'def' line in the subject.",
-            })
-            continue
+def _bob_restore_builtins(patched):
+    import builtins as _bob_b
+    for name, real in patched.items():
+        setattr(_bob_b, name, real)
+
+def _bob_forbidden(bad):
+    return _bob_json.dumps({
+        "fatal": f"Forbidden function '{bad}' detected. This chore bans it — read the rules and solve it by hand!"
+    })
+
+def bob_grade(user_src, func_name, tests_literal, banned_literal, timeout_seconds=15):
+    banned = _bob_json.loads(banned_literal)
+    bad = _bob_find_banned(
+        user_src,
+        banned.get("names", []),
+        banned.get("attrs", []),
+        banned.get("modules", []),
+    )
+    if bad:
+        return _bob_forbidden(bad)
+
+    patched = _bob_patch_builtins(banned.get("names", []))
+    try:
+        ns = {}
         _bob_sys.settrace(_bob_time_guard(timeout_seconds))
         try:
-            got = test_func(*_bob_copy.deepcopy(args))
-            results.append({
-                "ok": bool(got == expected),
-                "expected": repr(expected),
-                "got": repr(got),
-                "error": None,
-            })
+            exec(user_src, ns)
+        except _BobBannedUse as b:
+            return _bob_forbidden(b.name)
         except _BobTimeout:
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": _TIMEOUT_MSG,
-            })
+            return _bob_json.dumps({"fatal": _TIMEOUT_MSG})
         except Exception as e:
-            results.append({
-                "ok": False,
-                "expected": repr(expected),
-                "got": None,
-                "error": f"{type(e).__name__}: {e}",
-            })
+            return _bob_json.dumps({"fatal": f"{type(e).__name__}: {e}"})
         finally:
             _bob_sys.settrace(None)
-    return _bob_json.dumps({"results": results})
+
+        func = ns.get(func_name)
+        if not callable(func):
+            return _bob_json.dumps({
+                "fatal": f"Function '{func_name}' not found. Check the 'def' line in the subject."
+            })
+
+        tests = eval(tests_literal)
+        results = []
+        for fname, args, expected in tests:
+            test_func = ns.get(fname)
+            if not callable(test_func):
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": f"Function '{fname}' not found. Check the 'def' line in the subject.",
+                })
+                continue
+            _bob_sys.settrace(_bob_time_guard(timeout_seconds))
+            try:
+                got = test_func(*_bob_copy.deepcopy(args))
+                results.append({
+                    "ok": bool(got == expected),
+                    "expected": repr(expected),
+                    "got": repr(got),
+                    "error": None,
+                })
+            except _BobBannedUse as b:
+                return _bob_forbidden(b.name)
+            except _BobTimeout:
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": _TIMEOUT_MSG,
+                })
+            except Exception as e:
+                results.append({
+                    "ok": False,
+                    "expected": repr(expected),
+                    "got": None,
+                    "error": f"{type(e).__name__}: {e}",
+                })
+            finally:
+                _bob_sys.settrace(None)
+        return _bob_json.dumps({"results": results})
+    finally:
+        _bob_restore_builtins(patched)
+        _bob_sys.settrace(None)
 
 def bob_run(user_src, timeout_seconds):
     buf = _BobLimitedStdout()
@@ -25368,8 +25477,9 @@ async function grade(code2, exercise) {
   pyodide.globals.set("__bob_src", code2);
   pyodide.globals.set("__bob_func", exercise.funcName);
   pyodide.globals.set("__bob_tests", testsLiteral(exercise));
+  pyodide.globals.set("__bob_banned", JSON.stringify(exercise.banned || {}));
   pyodide.globals.set("__bob_timeout", GRADE_TIMEOUT_SECONDS);
-  const out = await pyodide.runPythonAsync("bob_grade(__bob_src, __bob_func, __bob_tests, __bob_timeout)");
+  const out = await pyodide.runPythonAsync("bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)");
   const data = JSON.parse(out);
   if (data.fatal)
     return data;
@@ -25429,7 +25539,7 @@ var _tmpl$4 = /* @__PURE__ */ template(`<span>/`);
 var _tmpl$5 = /* @__PURE__ */ template(`<div class="flex items-start gap-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2"><span class="shrink-0 mt-px flex"></span><span>You already earned the star on this chore. Pick <span class=font-bold>Reset Code and Status</span> to wipe that too, as if you never solved it.`);
 var _tmpl$6 = /* @__PURE__ */ template(`<button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors shadow-[0_3px_0_#7f1d1d] active:translate-y-[2px] active:shadow-none"title="Reset the code and remove the star for this chore">Reset Code and Status`);
 var _tmpl$7 = /* @__PURE__ */ template(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"><div role=dialog aria-modal=true class="w-full max-w-sm bg-[#1c1917] border-2 border-[#292524] rounded-2xl p-5 flex flex-col gap-4 shadow-[0_8px_0_#0c0a09]"><div class="flex items-start gap-3"><div class="bg-[#78350f] p-2 rounded-lg shrink-0 flex items-center justify-center"></div><div class=min-w-0><div class="text-sm font-bold text-[#e7e5e4]">Start this chore over?</div><p class="text-xs text-[#a8a29e] leading-relaxed mt-1">Your current code will be replaced by the original stub. This can't be undone.</p></div></div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2"><button class="px-4 py-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-sm font-semibold transition-colors shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none">Cancel</button><button class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none">Reset Code`);
-var _tmpl$8 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Share this code — copies a short link"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code to stub"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code with Black (downloads Black on first use)"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run the script — print() output shows up in the robot log (15s limit)"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-y-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
+var _tmpl$8 = /* @__PURE__ */ template(`<div class="flex-1 flex flex-col overflow-hidden min-h-0"><div class="bg-[#1c1917] border-b border-[#292524] px-3 py-2 shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center"><div class="flex items-center gap-2 min-w-0 sm:flex-1"><button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] text-xs font-semibold transition-colors shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"><span>Chores</span></button><div class="flex items-center gap-2 min-w-0"><div class="bg-[#78350f] p-1 rounded-md shrink-0 flex items-center justify-center"></div><span class="text-sm font-bold text-[#e7e5e4] truncate"></span></div></div><div class="flex items-center gap-2"><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Share code"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Reset code"></button><button class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"title="Format code"></button><button class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"title="Run script"></button><button class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"><span></span></button></div></div><div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0"><div class="shrink-0 lg:w-[420px] xl:w-[460px] bg-[#1c1917] border-b lg:border-b-0 lg:border-r border-[#292524] flex flex-col min-h-0 max-h-[55%] lg:max-h-none"><div class="flex-1 overflow-auto min-h-0"></div><div class="shrink-0 flex border-t border-[#292524]"><button><span>Bob's note</span></button><button><span>Robot log</span></button></div></div><div class="flex-1 relative min-h-0 overflow-hidden bg-[#1e1e1e]"><div class="absolute inset-0">`);
 var _tmpl$9 = /* @__PURE__ */ template(`<div class="px-4 py-3 font-mono text-[12px]">`);
 var _tmpl$0 = /* @__PURE__ */ template(`<div class="text-[#57534e] font-sans text-sm px-1 py-4 text-center"><div class="flex justify-center mb-2 opacity-50"></div>No runs yet. Hit <span class="font-bold text-amber-500">Grade me!</span> and Bob's robot will check your code here.`);
 var _tmpl$1 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== oops =====`);
@@ -25438,14 +25548,14 @@ var _tmpl$11 = /* @__PURE__ */ template(`<div class="text-[#78716c] mt-1">Bob's 
 var _tmpl$12 = /* @__PURE__ */ template(`<div class="trace-header mb-1">===== trace =====`);
 var _tmpl$13 = /* @__PURE__ */ template(`<div class="trace-header mt-2">=================`);
 var _tmpl$14 = /* @__PURE__ */ template(`<div class="success-banner mt-3 mb-1 bg-emerald-900/40 border border-emerald-700 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap font-sans"><div class="flex-1 min-w-[180px]"><div class="text-emerald-300 font-extrabold text-sm">Chore complete! Bob owes you one.</div><div class="text-emerald-500/80 text-xs">All <!> tests passed.</div></div><button class="flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"><span>Next chore`);
-var _tmpl$15 = /* @__PURE__ */ template(`<div class="whitespace-pre-wrap text-[#d6d3d1]">`);
+var _tmpl$15 = /* @__PURE__ */ template(`<div class="whitespace-pre text-[#d6d3d1]">`);
 var _tmpl$16 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Stopped after 15 seconds — looks like an infinite loop!`);
 var _tmpl$17 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Output limit reached — your script prints WAY too much.`);
 var _tmpl$18 = /* @__PURE__ */ template(`<div class="trace-error mt-1">`);
 var _tmpl$19 = /* @__PURE__ */ template(`<div><div class="trace-header mb-1">===== run =====`);
 var _tmpl$20 = /* @__PURE__ */ template(`<div class=text-[#78716c]>(no output — try a print() in there)`);
-var _tmpl$21 = /* @__PURE__ */ template(`<div class=trace-error>`);
-var _tmpl$22 = /* @__PURE__ */ template(`<div class=mb-1.5><div class=trace-line-call><span class=test-num>Test <!>:</span></div><div class=trace-line-result>expected: <!> | got: <!> → <span>`);
+var _tmpl$21 = /* @__PURE__ */ template(`<div class="trace-error whitespace-pre">`);
+var _tmpl$22 = /* @__PURE__ */ template(`<div class=mb-1.5><div class="trace-line-call whitespace-pre"><span class=test-num>Test <!>:</span> -> <span></span></div><div class="trace-line-val whitespace-pre"><span class=trace-label>expected:</span> </div><div class="trace-line-val whitespace-pre"><span class=trace-label>got:</span> `);
 var _tmpl$23 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
 var _tmpl$24 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
 var _tmpl$25 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
@@ -25584,14 +25694,14 @@ var INITIAL_SHARED = (() => {
     code: code2
   } : null;
 })();
-var TWO_SPACES = "  ";
-function insertTwoSpaces(view) {
+var FOUR_SPACES = "    ";
+function insertFourSpaces(view) {
   const {
     state
   } = view;
   const hasSelection2 = state.selection.ranges.some((r) => !r.empty);
   if (!hasSelection2) {
-    view.dispatch(state.replaceSelection(TWO_SPACES));
+    view.dispatch(state.replaceSelection(FOUR_SPACES));
     return true;
   }
   const changes = [];
@@ -25608,7 +25718,7 @@ function insertTwoSpaces(view) {
       seen.add(from);
       changes.push({
         from,
-        insert: TWO_SPACES
+        insert: FOUR_SPACES
       });
     }
   }
@@ -25618,7 +25728,7 @@ function insertTwoSpaces(view) {
   });
   return true;
 }
-function removeTwoSpaces(view) {
+function removeFourSpaces(view) {
   const {
     state
   } = view;
@@ -25632,7 +25742,7 @@ function removeTwoSpaces(view) {
     for (let n = first;n <= last; n++) {
       const line = state.doc.line(n);
       let count = 0;
-      while (count < 2 && line.text[count] === " ")
+      while (count < 4 && line.text[count] === " ")
         count++;
       if (count > 0)
         changes.push({
@@ -25668,10 +25778,10 @@ function PracticeScreen(props) {
       doc: INITIAL_SHARED && INITIAL_SHARED.exId === ex().id ? INITIAL_SHARED.code : loadCode(ex()),
       extensions: [basicSetup, keymap.of([{
         key: "Tab",
-        run: insertTwoSpaces
+        run: insertFourSpaces
       }, {
         key: "Shift-Tab",
-        run: removeTwoSpaces
+        run: removeFourSpaces
       }]), indentationMarkers(), python(), vscodeDark, Prec.highest(keymap.of([{
         key: "Mod-s",
         run: () => true
@@ -25896,6 +26006,8 @@ function PracticeScreen(props) {
       size: 16
     }), _el$14);
     insert(_el$14, () => grading() ? "Grading..." : "Grade me!");
+    var _ref$ = traceRef;
+    typeof _ref$ === "function" ? use(_ref$, _el$17) : traceRef = _el$17;
     insert(_el$17, createComponent(Show, {
       get when() {
         return leftTab() === "note";
@@ -25903,8 +26015,6 @@ function PracticeScreen(props) {
       get fallback() {
         return (() => {
           var _el$50 = _tmpl$9();
-          var _ref$2 = traceRef;
-          typeof _ref$2 === "function" ? use(_ref$2, _el$50) : traceRef = _el$50;
           insert(_el$50, createComponent(Show, {
             get when() {
               return trace();
@@ -25992,26 +26102,26 @@ function PracticeScreen(props) {
                       return t2().results;
                     },
                     children: (r, i2) => (() => {
-                      var _el$75 = _tmpl$22(), _el$76 = _el$75.firstChild, _el$77 = _el$76.firstChild, _el$78 = _el$77.firstChild, _el$80 = _el$78.nextSibling, _el$79 = _el$80.nextSibling, _el$81 = _el$76.nextSibling, _el$82 = _el$81.firstChild, _el$88 = _el$82.nextSibling, _el$83 = _el$88.nextSibling, _el$89 = _el$83.nextSibling, _el$85 = _el$89.nextSibling, _el$87 = _el$85.nextSibling;
+                      var _el$75 = _tmpl$22(), _el$76 = _el$75.firstChild, _el$77 = _el$76.firstChild, _el$78 = _el$77.firstChild, _el$80 = _el$78.nextSibling, _el$79 = _el$80.nextSibling, _el$81 = _el$77.nextSibling, _el$82 = _el$81.nextSibling, _el$83 = _el$76.nextSibling, _el$84 = _el$83.firstChild, _el$85 = _el$84.nextSibling, _el$86 = _el$83.nextSibling, _el$87 = _el$86.firstChild, _el$88 = _el$87.nextSibling;
                       insert(_el$77, () => i2() + 1, _el$80);
-                      insert(_el$76, () => r.call, null);
-                      insert(_el$81, () => r.expected, _el$88);
-                      insert(_el$81, (() => {
+                      insert(_el$76, () => r.call, _el$81);
+                      insert(_el$82, () => r.ok ? "OK" : "KO");
+                      insert(_el$83, () => r.expected, null);
+                      insert(_el$86, (() => {
                         var _c$ = memo(() => r.got === null);
                         return () => _c$() ? "—" : r.got;
-                      })(), _el$89);
-                      insert(_el$87, () => r.ok ? "OK" : "KO");
+                      })(), null);
                       insert(_el$75, createComponent(Show, {
                         get when() {
                           return r.error;
                         },
                         get children() {
-                          var _el$90 = _tmpl$21();
-                          insert(_el$90, () => r.error);
-                          return _el$90;
+                          var _el$89 = _tmpl$21();
+                          insert(_el$89, () => r.error);
+                          return _el$89;
                         }
                       }), null);
-                      createRenderEffect(() => className(_el$87, r.ok ? "trace-ok" : "trace-ko"));
+                      createRenderEffect(() => className(_el$82, r.ok ? "trace-ok" : "trace-ko"));
                       return _el$75;
                     })()
                   }), _tmpl$13(), createComponent(Show, {
@@ -26062,9 +26172,9 @@ function PracticeScreen(props) {
                 return ex().topics;
               },
               children: (topic) => (() => {
-                var _el$92 = _tmpl$24();
-                insert(_el$92, topic);
-                return _el$92;
+                var _el$91 = _tmpl$24();
+                insert(_el$91, topic);
+                return _el$91;
               })()
             }));
             return _el$24;
@@ -26075,9 +26185,9 @@ function PracticeScreen(props) {
             return ex().story;
           },
           children: (p) => (() => {
-            var _el$93 = _tmpl$25();
-            insert(_el$93, p);
-            return _el$93;
+            var _el$92 = _tmpl$25();
+            insert(_el$92, p);
+            return _el$92;
           })()
         }), _el$25);
         insert(_el$26, () => ex().signature);
@@ -26086,14 +26196,14 @@ function PracticeScreen(props) {
             return ex().rules;
           },
           children: (rule) => (() => {
-            var _el$94 = _tmpl$26(), _el$95 = _el$94.firstChild, _el$96 = _el$95.nextSibling;
-            insert(_el$95, createComponent(Icon, {
+            var _el$93 = _tmpl$26(), _el$94 = _el$93.firstChild, _el$95 = _el$94.nextSibling;
+            insert(_el$94, createComponent(Icon, {
               name: "check-small",
               color: "f59e0b",
               size: 16
             }));
-            insert(_el$96, rule);
-            return _el$94;
+            insert(_el$95, rule);
+            return _el$93;
           })()
         }));
         insert(_el$30, createComponent(For, {
@@ -26101,20 +26211,20 @@ function PracticeScreen(props) {
             return ex().examples;
           },
           children: (example) => (() => {
-            var _el$97 = _tmpl$28(), _el$98 = _el$97.firstChild, _el$99 = _el$98.nextSibling, _el$100 = _el$99.firstChild;
-            insert(_el$98, () => example.input);
-            insert(_el$99, () => example.output, null);
-            insert(_el$97, createComponent(Show, {
+            var _el$96 = _tmpl$28(), _el$97 = _el$96.firstChild, _el$98 = _el$97.nextSibling, _el$99 = _el$98.firstChild;
+            insert(_el$97, () => example.input);
+            insert(_el$98, () => example.output, null);
+            insert(_el$96, createComponent(Show, {
               get when() {
                 return example.note;
               },
               get children() {
-                var _el$101 = _tmpl$27();
-                insert(_el$101, () => example.note);
-                return _el$101;
+                var _el$100 = _tmpl$27();
+                insert(_el$100, () => example.note);
+                return _el$100;
               }
             }), null);
-            return _el$97;
+            return _el$96;
           })()
         }));
         return _el$18;
@@ -26148,8 +26258,8 @@ function PracticeScreen(props) {
         return _el$36;
       }
     }), null);
-    var _ref$ = editorContainerRef;
-    typeof _ref$ === "function" ? use(_ref$, _el$39) : editorContainerRef = _el$39;
+    var _ref$2 = editorContainerRef;
+    typeof _ref$2 === "function" ? use(_ref$2, _el$39) : editorContainerRef = _el$39;
     insert(_el$2, createComponent(Show, {
       get when() {
         return confirmReset();
@@ -26193,7 +26303,7 @@ function PracticeScreen(props) {
       }
     }), null);
     createRenderEffect((_p$) => {
-      var _v$5 = sharing(), _v$6 = formatting() || props.pyodideState() !== "ready", _v$7 = running() || grading() || props.pyodideState() !== "ready", _v$8 = gradeDisabled(), _v$9 = props.pyodideState() !== "ready" ? "Robot helper still waking up..." : "Grade me! (Ctrl+Enter)", _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$1 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
+      var _v$5 = sharing(), _v$6 = formatting() || props.pyodideState() !== "ready", _v$7 = running() || grading() || props.pyodideState() !== "ready", _v$8 = gradeDisabled(), _v$9 = props.pyodideState() !== "ready" ? "Waking up..." : "Grade me!", _v$0 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "note" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`, _v$1 = `flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors border-t-2 ${leftTab() === "log" ? "bg-[#0c0a09] text-amber-400 border-amber-500" : "text-[#78716c] hover:text-[#a8a29e] border-transparent"}`;
       _v$5 !== _p$.e && (_el$1.disabled = _p$.e = _v$5);
       _v$6 !== _p$.t && (_el$11.disabled = _p$.t = _v$6);
       _v$7 !== _p$.a && (_el$12.disabled = _p$.a = _v$7);
@@ -26217,25 +26327,25 @@ function PracticeScreen(props) {
 function HomeScreen(props) {
   const solvedCount = () => EXERCISES.filter((e) => props.solved().has(e.id)).length;
   return (() => {
-    var _el$102 = _tmpl$29(), _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.firstChild, _el$106 = _el$105.nextSibling, _el$107 = _el$106.nextSibling, _el$108 = _el$107.firstChild, _el$109 = _el$107.nextSibling, _el$110 = _el$109.nextSibling, _el$111 = _el$110.firstChild, _el$112 = _el$110.nextSibling, _el$113 = _el$112.firstChild, _el$114 = _el$113.firstChild, _el$115 = _el$113.nextSibling, _el$116 = _el$115.firstChild, _el$118 = _el$116.nextSibling, _el$117 = _el$118.nextSibling, _el$119 = _el$104.nextSibling, _el$120 = _el$119.nextSibling;
-    insert(_el$105, createComponent(Icon, {
+    var _el$101 = _tmpl$29(), _el$102 = _el$101.firstChild, _el$103 = _el$102.firstChild, _el$104 = _el$103.firstChild, _el$105 = _el$104.nextSibling, _el$106 = _el$105.nextSibling, _el$107 = _el$106.firstChild, _el$108 = _el$106.nextSibling, _el$109 = _el$108.nextSibling, _el$110 = _el$109.firstChild, _el$111 = _el$109.nextSibling, _el$112 = _el$111.firstChild, _el$113 = _el$112.firstChild, _el$114 = _el$112.nextSibling, _el$115 = _el$114.firstChild, _el$117 = _el$115.nextSibling, _el$116 = _el$117.nextSibling, _el$118 = _el$103.nextSibling, _el$119 = _el$118.nextSibling;
+    insert(_el$104, createComponent(Icon, {
       name: "smart-toy",
       color: "fbbf24",
       size: 44
     }));
-    insert(_el$107, createComponent(Icon, {
+    insert(_el$106, createComponent(Icon, {
       name: "checklist",
       color: "f59e0b",
       size: 14
-    }), _el$108);
-    insert(_el$110, createComponent(Icon, {
+    }), _el$107);
+    insert(_el$109, createComponent(Icon, {
       name: "star",
       color: "fbbf24",
       size: 14
-    }), _el$111);
-    insert(_el$115, solvedCount, _el$116);
-    insert(_el$115, () => EXERCISES.length, _el$118);
-    insert(_el$103, createComponent(For, {
+    }), _el$110);
+    insert(_el$114, solvedCount, _el$115);
+    insert(_el$114, () => EXERCISES.length, _el$117);
+    insert(_el$102, createComponent(For, {
       each: TIERS,
       children: (tier) => {
         const tierExercises = () => EXERCISES.filter((e) => e.tier === tier.tier);
@@ -26244,25 +26354,25 @@ function HomeScreen(props) {
             return tierExercises().length > 0;
           },
           get children() {
-            var _el$121 = _tmpl$30(), _el$122 = _el$121.firstChild, _el$123 = _el$122.firstChild, _el$124 = _el$123.nextSibling, _el$125 = _el$122.nextSibling;
-            insert(_el$123, () => tier.label);
-            insert(_el$124, () => tier.subtitle);
-            insert(_el$125, createComponent(For, {
+            var _el$120 = _tmpl$30(), _el$121 = _el$120.firstChild, _el$122 = _el$121.firstChild, _el$123 = _el$122.nextSibling, _el$124 = _el$121.nextSibling;
+            insert(_el$122, () => tier.label);
+            insert(_el$123, () => tier.subtitle);
+            insert(_el$124, createComponent(For, {
               get each() {
                 return tierExercises();
               },
               children: (ex) => (() => {
-                var _el$126 = _tmpl$32(), _el$127 = _el$126.firstChild, _el$128 = _el$127.nextSibling, _el$129 = _el$128.firstChild, _el$130 = _el$129.firstChild, _el$131 = _el$129.nextSibling, _el$133 = _el$128.nextSibling;
-                _el$126.$$click = () => props.onPick(ex.id);
-                insert(_el$127, createComponent(Icon, {
+                var _el$125 = _tmpl$32(), _el$126 = _el$125.firstChild, _el$127 = _el$126.nextSibling, _el$128 = _el$127.firstChild, _el$129 = _el$128.firstChild, _el$130 = _el$128.nextSibling, _el$132 = _el$127.nextSibling;
+                _el$125.$$click = () => props.onPick(ex.id);
+                insert(_el$126, createComponent(Icon, {
                   get name() {
                     return ex.icon;
                   },
                   color: "fbbf24",
                   size: 26
                 }));
-                insert(_el$130, () => ex.title);
-                insert(_el$129, createComponent(Show, {
+                insert(_el$129, () => ex.title);
+                insert(_el$128, createComponent(Show, {
                   get when() {
                     return props.solved().has(ex.id);
                   },
@@ -26274,69 +26384,69 @@ function HomeScreen(props) {
                     });
                   }
                 }), null);
-                insert(_el$131, () => ex.tagline);
-                insert(_el$128, createComponent(Show, {
+                insert(_el$130, () => ex.tagline);
+                insert(_el$127, createComponent(Show, {
                   get when() {
                     return ex.topics;
                   },
                   get children() {
-                    var _el$132 = _tmpl$31();
-                    insert(_el$132, createComponent(For, {
+                    var _el$131 = _tmpl$31();
+                    insert(_el$131, createComponent(For, {
                       get each() {
                         return ex.topics;
                       },
                       children: (topic) => (() => {
-                        var _el$134 = _tmpl$24();
-                        insert(_el$134, topic);
-                        return _el$134;
+                        var _el$133 = _tmpl$24();
+                        insert(_el$133, topic);
+                        return _el$133;
                       })()
                     }));
-                    return _el$132;
+                    return _el$131;
                   }
                 }), null);
-                insert(_el$133, createComponent(Icon, {
+                insert(_el$132, createComponent(Icon, {
                   name: "chevron-right",
                   color: "57534e",
                   size: 20
                 }));
-                return _el$126;
+                return _el$125;
               })()
             }));
-            return _el$121;
+            return _el$120;
           }
         });
       }
-    }), _el$119);
-    insert(_el$120, createComponent(Show, {
+    }), _el$118);
+    insert(_el$119, createComponent(Show, {
       when: PREV_SITE,
       children: (s) => (() => {
-        var _el$135 = _tmpl$33(), _el$136 = _el$135.firstChild;
-        insert(_el$135, createComponent(Icon, {
+        var _el$134 = _tmpl$33(), _el$135 = _el$134.firstChild;
+        insert(_el$134, createComponent(Icon, {
           name: "arrow-back",
           color: "a8a29e",
           size: 14
-        }), _el$136);
-        insert(_el$136, () => s().label);
-        createRenderEffect(() => setAttribute(_el$135, "href", s().url));
-        return _el$135;
+        }), _el$135);
+        insert(_el$135, () => s().label);
+        createRenderEffect(() => setAttribute(_el$134, "href", s().url));
+        return _el$134;
       })()
     }), null);
-    insert(_el$120, createComponent(Show, {
+    insert(_el$119, createComponent(Show, {
       when: NEXT_SITE,
       children: (s) => (() => {
-        var _el$137 = _tmpl$33(), _el$138 = _el$137.firstChild;
-        insert(_el$138, () => s().label);
-        insert(_el$137, createComponent(Icon, {
+        var _el$136 = _tmpl$33(), _el$137 = _el$136.firstChild;
+        insert(_el$137, () => s().label);
+        insert(_el$136, createComponent(Icon, {
           name: "arrow-forward",
           color: "a8a29e",
           size: 14
         }), null);
-        createRenderEffect(() => setAttribute(_el$137, "href", s().url));
-        return _el$137;
+        createRenderEffect(() => setAttribute(_el$136, "href", s().url));
+        return _el$136;
       })()
     }), null);
-    createRenderEffect((_$p) => setStyleProperty(_el$114, "width", `${solvedCount() / EXERCISES.length * 100}%`));
-    return _el$102;
+    createRenderEffect((_$p) => setStyleProperty(_el$113, "width", `${solvedCount() / EXERCISES.length * 100}%`));
+    return _el$101;
   })();
 }
 function App() {
@@ -26402,8 +26512,8 @@ function App() {
     }
   };
   return (() => {
-    var _el$139 = _tmpl$34(), _el$140 = _el$139.firstChild, _el$141 = _el$140.firstChild, _el$142 = _el$141.nextSibling;
-    insert(_el$139, createComponent(Show, {
+    var _el$138 = _tmpl$34(), _el$139 = _el$138.firstChild, _el$140 = _el$139.firstChild, _el$141 = _el$140.nextSibling;
+    insert(_el$138, createComponent(Show, {
       get when() {
         return currentExercise();
       },
@@ -26423,10 +26533,10 @@ function App() {
         onUnsolved: markUnsolved,
         onNext: nextChore
       })
-    }), _el$140);
-    insert(_el$142, pyodideText);
-    createRenderEffect(() => className(_el$141, `status-dot ${pyodideState()}`));
-    return _el$139;
+    }), _el$139);
+    insert(_el$141, pyodideText);
+    createRenderEffect(() => className(_el$140, `status-dot ${pyodideState()}`));
+    return _el$138;
   })();
 }
 render(() => createComponent(App, {}), document.getElementById("root"));

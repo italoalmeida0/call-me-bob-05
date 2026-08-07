@@ -488,6 +488,10 @@
     white-space: nowrap;
   }
 
+  .overflow-auto {
+    overflow: auto;
+  }
+
   .overflow-hidden {
     overflow: hidden;
   }
@@ -858,8 +862,8 @@
     word-break: break-all;
   }
 
-  .whitespace-pre-wrap {
-    white-space: pre-wrap;
+  .whitespace-pre {
+    white-space: pre;
   }
 
   .text-\[\#022c22\] {
@@ -1510,14 +1514,6 @@ button {
   }
 }
 
-.trace-console {
-  overflow-y: auto;
-  background: #0c0a09;
-  border-top: 2px solid #292524;
-  font-family: Courier New, Courier, monospace;
-  font-size: 12px;
-}
-
 .trace-line-call {
   color: #a8a29e;
 }
@@ -1525,12 +1521,17 @@ button {
 .trace-line-call .test-num {
   color: #57534e;
   display: inline-block;
-  min-width: 52px;
+  min-width: 60px;
 }
 
-.trace-line-result {
+.trace-line-val {
   color: #78716c;
-  padding-left: 60px;
+}
+
+.trace-label {
+  display: inline-block;
+  color: #57534e;
+  width: 9ch;
 }
 
 .trace-ok {
@@ -1545,7 +1546,6 @@ button {
 
 .trace-error {
   color: #fbbf24;
-  padding-left: 60px;
 }
 
 .trace-header {
