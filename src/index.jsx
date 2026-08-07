@@ -582,10 +582,11 @@ function PracticeScreen(props) {
                               <div class="mb-1.5">
                                 <div class="trace-line-call whitespace-pre">
                                   <span class="test-num">Test {i() + 1}:</span>
-                                  {r.call}{" -> "}
                                   <span class={r.ok ? "trace-ok" : "trace-ko"}>
-                                    {r.ok ? "OK" : "KO"}
+                                    [{r.ok ? "OK" : "KO"}]
                                   </span>
+                                  {" -> "}
+                                  {r.call}
                                 </div>
                                 <div class="trace-line-val whitespace-pre">
                                   <span class="trace-label">expected:</span>{" "}
