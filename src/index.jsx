@@ -12,6 +12,7 @@ import { basicSetup } from "codemirror";
 import { python } from "@codemirror/lang-python";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
+import { indentUnit } from "@codemirror/language";
 import { Prec } from "@codemirror/state";
 
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
@@ -251,6 +252,7 @@ function PracticeScreen(props) {
           : loadCode(ex()),
       extensions: [
         basicSetup,
+        indentUnit.of("    "),
         keymap.of([
           { key: "Tab", run: insertFourSpaces },
           { key: "Shift-Tab", run: removeFourSpaces },

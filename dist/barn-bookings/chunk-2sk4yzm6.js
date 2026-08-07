@@ -25776,7 +25776,7 @@ function PracticeScreen(props) {
   onMount(() => {
     cmView = new EditorView({
       doc: INITIAL_SHARED && INITIAL_SHARED.exId === ex().id ? INITIAL_SHARED.code : loadCode(ex()),
-      extensions: [basicSetup, keymap.of([{
+      extensions: [basicSetup, indentUnit.of("    "), keymap.of([{
         key: "Tab",
         run: insertFourSpaces
       }, {
