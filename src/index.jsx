@@ -675,7 +675,7 @@ function PracticeScreen(props) {
                           <div class="trace-header mb-1">===== trace =====</div>
                           <For each={t().results}>
                             {(r, i) => (
-                              <div class="mb-1.5">
+                              <div class="mb-1.5 mt-3">
                                 <div class="trace-line-call whitespace-pre">
                                   <span class="test-num">Test {i() + 1}:</span>
                                   <span class={r.ok ? "trace-ok" : "trace-ko"}>

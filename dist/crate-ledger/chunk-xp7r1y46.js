@@ -25737,7 +25737,7 @@ var _tmpl$18 = /* @__PURE__ */ template(`<div class="trace-error mt-1">`);
 var _tmpl$19 = /* @__PURE__ */ template(`<div><div class="trace-header mb-1">===== run =====`);
 var _tmpl$20 = /* @__PURE__ */ template(`<div class=text-[#78716c]>(no output — try a print() in there)`);
 var _tmpl$21 = /* @__PURE__ */ template(`<div class="trace-error whitespace-pre">`);
-var _tmpl$22 = /* @__PURE__ */ template(`<div class=mb-1.5><div class="trace-line-call whitespace-pre"><span class=test-num>Test <!>:</span><span>[<!>]</span> -> </div><div class="trace-line-val whitespace-pre"><span class=trace-label>expected:</span> </div><div class="trace-line-val whitespace-pre"><span class=trace-label>got:</span> `);
+var _tmpl$22 = /* @__PURE__ */ template(`<div class="mb-1.5 mt-3"><div class="trace-line-call whitespace-pre"><span class=test-num>Test <!>:</span><span>[<!>]</span> -> </div><div class="trace-line-val whitespace-pre"><span class=trace-label>expected:</span> </div><div class="trace-line-val whitespace-pre"><span class=trace-label>got:</span> `);
 var _tmpl$23 = /* @__PURE__ */ template(`<div class="trace-fail mt-1">Not yet. Some tests failed — tweak your code and try again!`);
 var _tmpl$24 = /* @__PURE__ */ template(`<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#292524] border border-[#44403c] text-amber-500/90">`);
 var _tmpl$25 = /* @__PURE__ */ template(`<p class="text-sm text-[#d6d3d1] leading-relaxed mb-3">`);
