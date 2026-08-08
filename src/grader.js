@@ -312,14 +312,27 @@ function startInit() {
 /**
  * Sends a run/format request that expects a result keyed by id.
  * Waits for the worker to be ready first so callers never race with
- * init.
+ * init. If the worker doesn't reply within timeoutMs (e.g. an infinite
+ * loop in C code where sys.settrace can't fire), the promise is
+ * rejected and forceStop() is called to kill and restart the worker.
  */
-async function send(type, payload) {
+async function send(type, payload, timeoutMs) {
   if (!worker) throw new Error("Grader not initialized");
   await readyPromise;
   const id = nextId++;
   return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject });
+    const timer = setTimeout(() => {
+      if (pending.has(id)) {
+        pending.delete(id);
+        // Worker is stuck — kill and restart it.
+        forceStop().catch(() => {});
+        reject(new ForceStopError());
+      }
+    }, timeoutMs);
+    pending.set(id, {
+      resolve: (v) => { clearTimeout(timer); resolve(v); },
+      reject: (e) => { clearTimeout(timer); reject(e); },
+    });
     worker.postMessage({ id, type, ...payload });
   });
 }
@@ -358,7 +371,9 @@ export async function grade(code, exercise) {
   };
   const expr =
     "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)";
-  const out = await send("run", { globals, expr });
+  // Give the Python sys.settrace guard (15s) a 5s buffer; if the worker
+  // still hasn't replied, it's stuck in C code — force-kill it.
+  const out = await send("run", { globals, expr }, (GRADE_TIMEOUT_SECONDS + 5) * 1000);
   const data = JSON.parse(out);
   if (data.fatal) return data;
   const results = data.results.map((r, i) => ({
@@ -379,7 +394,7 @@ export async function runScript(code) {
     __bob_run_src: code,
     __bob_run_timeout: RUN_TIMEOUT_SECONDS,
   };
-  const out = await send("run", { globals, expr: "bob_run(__bob_run_src, __bob_run_timeout)" });
+  const out = await send("run", { globals, expr: "bob_run(__bob_run_src, __bob_run_timeout)" }, (RUN_TIMEOUT_SECONDS + 5) * 1000);
   return JSON.parse(out);
 }
 
@@ -389,7 +404,7 @@ export async function runScript(code) {
  * if Black can't parse the code.
  */
 export async function formatPython(code) {
-  return send("format", { code });
+  return send("format", { code }, 60000);
 }
 
 /**
@@ -398,21 +413,24 @@ export async function formatPython(code) {
  * the UI can show a "restarting" state. The new worker re-runs init
  * (Pyodide + harness + Black) automatically; onStatus flips back
  * through loading -> ready.
+ *
+ * worker.terminate() is synchronous and unconditional — the only
+ * reliable way to break a runaway Python loop (including C-level loops
+ * where sys.settrace can't fire).
  */
-export async function forceStop() {
-  if (!worker) return;
+export function forceStop() {
+  if (!worker) return Promise.resolve();
 
   // Reject everything in flight as force-stopped.
   for (const [, h] of pending) h.reject(new ForceStopError());
   pending.clear();
 
-  // The ready promise (if mid-boot) also dies — reset so re-init works.
-  if (readyReject) readyReject(new ForceStopError());
+  // Reset ready state so callers awaiting readyPromise don't hang.
   readyPromise = null;
   readyResolve = null;
   readyReject = null;
 
-  // Kill the worker — the only way to break a runaway Python loop.
+  // Kill the worker — synchronous, always works.
   worker.terminate();
   worker = null;
 

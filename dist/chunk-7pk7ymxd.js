@@ -25629,13 +25629,29 @@ function startInit() {
   worker.postMessage({ type: "init", pyodideUrl, harness: HARNESS });
   return readyPromise;
 }
-async function send(type, payload) {
+async function send(type, payload, timeoutMs) {
   if (!worker)
     throw new Error("Grader not initialized");
   await readyPromise;
   const id2 = nextId++;
   return new Promise((resolve, reject) => {
-    pending.set(id2, { resolve, reject });
+    const timer = setTimeout(() => {
+      if (pending.has(id2)) {
+        pending.delete(id2);
+        forceStop().catch(() => {});
+        reject(new ForceStopError);
+      }
+    }, timeoutMs);
+    pending.set(id2, {
+      resolve: (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      reject: (e) => {
+        clearTimeout(timer);
+        reject(e);
+      }
+    });
     worker.postMessage({ id: id2, type, ...payload });
   });
 }
@@ -25659,7 +25675,7 @@ async function grade(code2, exercise) {
     __bob_timeout: GRADE_TIMEOUT_SECONDS
   };
   const expr = "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)";
-  const out = await send("run", { globals: globals2, expr });
+  const out = await send("run", { globals: globals2, expr }, (GRADE_TIMEOUT_SECONDS + 5) * 1000);
   const data = JSON.parse(out);
   if (data.fatal)
     return data;
@@ -25674,20 +25690,18 @@ async function runScript(code2) {
     __bob_run_src: code2,
     __bob_run_timeout: RUN_TIMEOUT_SECONDS
   };
-  const out = await send("run", { globals: globals2, expr: "bob_run(__bob_run_src, __bob_run_timeout)" });
+  const out = await send("run", { globals: globals2, expr: "bob_run(__bob_run_src, __bob_run_timeout)" }, (RUN_TIMEOUT_SECONDS + 5) * 1000);
   return JSON.parse(out);
 }
 async function formatPython(code2) {
-  return send("format", { code: code2 });
+  return send("format", { code: code2 }, 60000);
 }
-async function forceStop() {
+function forceStop() {
   if (!worker)
-    return;
+    return Promise.resolve();
   for (const [, h] of pending)
     h.reject(new ForceStopError);
   pending.clear();
-  if (readyReject)
-    readyReject(new ForceStopError);
   readyPromise = null;
   readyResolve = null;
   readyReject = null;
@@ -26141,6 +26155,24 @@ function PracticeScreen(props) {
     }
   };
   const gradeDisabled = () => grading() || running() || props.pyodideState() !== "ready";
+  const onGradeClick = () => {
+    if (stopMode() === "grade")
+      forceStop();
+    else
+      runGrader();
+  };
+  const onRunClick = () => {
+    if (stopMode() === "run")
+      forceStop();
+    else
+      runCode();
+  };
+  const onFormatClick = () => {
+    if (stopMode() === "format")
+      forceStop();
+    else
+      formatCode();
+  };
   return (() => {
     var _el$2 = _tmpl$8(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.nextSibling, _el$14 = _el$13.firstChild, _el$15 = _el$3.nextSibling, _el$16 = _el$15.firstChild, _el$17 = _el$16.firstChild, _el$31 = _el$17.nextSibling, _el$32 = _el$31.firstChild, _el$33 = _el$32.firstChild, _el$34 = _el$32.nextSibling, _el$35 = _el$34.firstChild, _el$38 = _el$16.nextSibling, _el$39 = _el$38.firstChild;
     addEventListener(_el$5, "click", props.onBack, true);
@@ -26185,7 +26217,7 @@ function PracticeScreen(props) {
       color: "a8a29e",
       size: 16
     }));
-    addEventListener(_el$11, "click", stopMode() === "format" ? forceStop : formatCode, true);
+    _el$11.$$click = onFormatClick;
     insert(_el$11, createComponent(Icon, {
       get name() {
         return memo(() => stopMode() === "format")() ? "close" : formatting() ? "hourglass-top" : "format-align-left";
@@ -26195,7 +26227,7 @@ function PracticeScreen(props) {
       },
       size: 16
     }));
-    addEventListener(_el$12, "click", stopMode() === "run" ? forceStop : runCode, true);
+    _el$12.$$click = onRunClick;
     insert(_el$12, createComponent(Icon, {
       get name() {
         return memo(() => stopMode() === "run")() ? "close" : running() ? "hourglass-top" : "play-arrow";
@@ -26205,7 +26237,7 @@ function PracticeScreen(props) {
       },
       size: 16
     }));
-    addEventListener(_el$13, "click", stopMode() === "grade" ? forceStop : runGrader, true);
+    _el$13.$$click = onGradeClick;
     insert(_el$13, createComponent(Icon, {
       get name() {
         return stopMode() === "grade" ? "close" : "smart-toy";
