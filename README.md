@@ -32,20 +32,19 @@ after) solving it.
 ## How it works
 
 - 📝 **7 chores** across 3 days of Bob's week, each with a story-driven subject
-- 🐍 **Python editor** powered by CodeMirror 6 (syntax highlighting, indent guides,
-  4-space indent matching [Black](https://github.com/psf/black))
 - 🤖 **In-browser grading** — tests run locally via [Pyodide](https://pyodide.org)
-  (WebAssembly CPython), nothing ever leaves your machine
+  (Python compiled to WebAssembly), nothing ever leaves your machine
 - 🔍 **Full test trace** — every test case shows `[OK]`/`[KO]` up front, then the
-  call, the expected value and your result on aligned lines with horizontal
-  scroll — just like a terminal grader
+  call, the expected value and your result, line by line
 - ▶️ **Run button** — run your script anytime and see `print()` output in the
-  robot log, with a 15s infinite-loop guard
+  robot log
+- ✋ **Force stop** — if your code loops forever, the Grade/Run/Format buttons
+  turn red after 2 seconds; click to kill it instantly and restart the robot
 - 🚫 **Enforced rules** — chores that ban a function or module (`graphlib` in
   The Chore Wheel) check your code statically AND at runtime, no sneaky
   workarounds
-- ⭐ **Progress tracking** — solved chores and your code are saved in
-  `localStorage`
+- 💾 **Progress tracking** — solved chores and your code are saved locally on
+  your machine (in `localStorage`), not sent to any server
 - 📱 **Responsive** — works on desktop and mobile
 
 ## Tech stack
