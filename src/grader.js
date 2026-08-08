@@ -256,24 +256,30 @@ let worker = null;
 let onStatus = null;
 let nextId = 1;
 const pending = new Map(); // id -> { resolve, reject }
-let initPromise = null;
-let initResolve = null;
-let initReject = null;
+
+// readyPromise resolves when the worker finishes init (Pyodide +
+// harness + Black). It's the single source of truth for "can we send
+// work yet?" — grade/run/format all await it before posting.
+let readyPromise = null;
+let readyResolve = null;
+let readyReject = null;
 
 function createWorker() {
   worker = new Worker(workerBlobUrl);
   worker.onmessage = (e) => {
     const msg = e.data;
-    // Status updates have no id — they're fire-and-forget from the worker.
+    // Status updates (loading/ready/error) — fire-and-forget.
     if (msg.type === "status") {
       if (onStatus) onStatus(msg.state, msg.text);
       return;
     }
-    if (msg.type === "done" && initResolve) {
-      // init completed
-      initResolve();
+    // "ready" = init fully complete (Pyodide + harness + Black).
+    if (msg.type === "ready") {
+      if (readyResolve) readyResolve();
       return;
     }
+    // Everything else is a response to a run/format request, matched
+    // by id.
     const handler = pending.get(msg.id);
     if (!handler) return;
     pending.delete(msg.id);
@@ -281,21 +287,40 @@ function createWorker() {
     else if (msg.type === "error") handler.reject(new Error(msg.message));
   };
   worker.onerror = (e) => {
-    // Fatal worker error: reject the init promise if pending, and all
-    // pending requests. The worker is dead.
-    if (initReject) initReject(new Error(e.message || "Worker crashed"));
+    if (readyReject) readyReject(new Error(e.message || "Worker crashed"));
     for (const [, h] of pending) h.reject(new Error("Worker crashed"));
     pending.clear();
     if (onStatus) onStatus("error", "Robot helper crashed");
   };
 }
 
-function send(type, payload, { awaitsResult = true } = {}) {
+/**
+ * Posts the init message and returns a promise that resolves when the
+ * worker signals "ready". Does NOT go through the pending Map — init
+ * has no id because its response is the "ready" broadcast.
+ */
+function startInit() {
+  readyPromise = new Promise((resolve, reject) => {
+    readyResolve = resolve;
+    readyReject = reject;
+  });
+  const pyodideUrl = new URL("pyodide/", location.href).href;
+  worker.postMessage({ type: "init", pyodideUrl, harness: HARNESS });
+  return readyPromise;
+}
+
+/**
+ * Sends a run/format request that expects a result keyed by id.
+ * Waits for the worker to be ready first so callers never race with
+ * init.
+ */
+async function send(type, payload) {
+  if (!worker) throw new Error("Grader not initialized");
+  await readyPromise;
   const id = nextId++;
   return new Promise((resolve, reject) => {
-    if (awaitsResult) pending.set(id, { resolve, reject });
+    pending.set(id, { resolve, reject });
     worker.postMessage({ id, type, ...payload });
-    if (!awaitsResult) resolve();
   });
 }
 
@@ -305,22 +330,9 @@ function send(type, payload, { awaitsResult = true } = {}) {
  */
 export async function initBob(statusCb) {
   onStatus = statusCb || null;
-  if (initPromise) return initPromise;
+  if (worker) return readyPromise;
   createWorker();
-  initPromise = new Promise((resolve, reject) => {
-    initResolve = resolve;
-    initReject = reject;
-  });
-  try {
-    // pyodide/ sits next to the current page (build.ts copies it into
-    // every exercise route). Resolve its absolute URL from the page.
-    const pyodideUrl = new URL("pyodide/", location.href).href;
-    await send("init", { harness: HARNESS, pyodideUrl });
-  } catch (err) {
-    initReject(err);
-    throw err;
-  }
-  return initPromise;
+  return startInit();
 }
 
 function testsLiteral(exercise) {
@@ -337,8 +349,6 @@ function testsLiteral(exercise) {
  *   { results: [{ok, expected, got, error}], passed: bool }
  */
 export async function grade(code, exercise) {
-  if (!worker) throw new Error("Grader not initialized");
-
   const globals = {
     __bob_src: code,
     __bob_func: exercise.funcName,
@@ -365,7 +375,6 @@ export async function grade(code, exercise) {
  * Returns { stdout: string, error: null | "timeout" | "output_limit" | "SomeError: ..." }
  */
 export async function runScript(code) {
-  if (!worker) throw new Error("Grader not initialized");
   const globals = {
     __bob_run_src: code,
     __bob_run_timeout: RUN_TIMEOUT_SECONDS,
@@ -375,20 +384,20 @@ export async function runScript(code) {
 }
 
 /**
- * Formats `code` with Black (loaded on first use from the local
- * pyodide/ dir). Returns the formatted source, or the original text if
- * nothing changed. Throws if Black can't parse the code.
+ * Formats `code` with Black (pre-loaded during init). Returns the
+ * formatted source, or the original text if nothing changed. Throws
+ * if Black can't parse the code.
  */
 export async function formatPython(code) {
-  if (!worker) throw new Error("Grader not initialized");
   return send("format", { code });
 }
 
 /**
  * Kills the current worker and spins up a fresh one. Every pending
  * operation (grade / run / format) is rejected with ForceStopError so
- * the UI can show a "restarting" state. The new worker re-runs initBob
- * automatically; onStatus will flip back through loading -> ready.
+ * the UI can show a "restarting" state. The new worker re-runs init
+ * (Pyodide + harness + Black) automatically; onStatus flips back
+ * through loading -> ready.
  */
 export async function forceStop() {
   if (!worker) return;
@@ -397,28 +406,18 @@ export async function forceStop() {
   for (const [, h] of pending) h.reject(new ForceStopError());
   pending.clear();
 
-  // The init promise (if mid-boot) also dies — reset so re-init works.
-  if (initReject) initReject(new ForceStopError());
-  initPromise = null;
-  initResolve = null;
-  initReject = null;
+  // The ready promise (if mid-boot) also dies — reset so re-init works.
+  if (readyReject) readyReject(new ForceStopError());
+  readyPromise = null;
+  readyResolve = null;
+  readyReject = null;
 
+  // Kill the worker — the only way to break a runaway Python loop.
   worker.terminate();
   worker = null;
 
-  // Re-boot a fresh worker.
+  // Boot a fresh worker and re-init.
   if (onStatus) onStatus("loading", "Restarting the robot helper...");
-  initPromise = new Promise((resolve, reject) => {
-    initResolve = resolve;
-    initReject = reject;
-  });
   createWorker();
-  try {
-    const pyodideUrl = new URL("pyodide/", location.href).href;
-    await send("init", { harness: HARNESS, pyodideUrl });
-  } catch (err) {
-    initReject(err);
-    throw err;
-  }
-  return initPromise;
+  return startInit();
 }

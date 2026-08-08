@@ -13,7 +13,6 @@
 
 let pyodide = null;
 let pyodidePromise = null;
-let blackReady = false;
 // Absolute URL of the local pyodide/ dir, sent from the main thread
 // (a Blob worker can't resolve relative paths against its own location).
 let pyodideUrl = null;
@@ -45,8 +44,13 @@ self.onmessage = async (e) => {
       const py = await ensurePyodide();
       postStatus("loading", "Teaching the robot how to grade...");
       await py.runPythonAsync(msg.harness);
+      // Pre-load Black so the Format button works instantly and so a
+      // force-stop/restart leaves the new worker fully ready.
+      postStatus("loading", "Loading the formatter...");
+      await py.loadPackage("black");
       postStatus("ready", "Robot helper ready");
-      self.postMessage({ id, type: "done" });
+      // Signal init completion — no id, handled by the ready listener.
+      self.postMessage({ type: "ready" });
       return;
     }
 
@@ -75,13 +79,9 @@ self.onmessage = async (e) => {
 
     if (type === "format") {
       const py = await ensurePyodide();
-      if (!blackReady) {
-        postStatus("loading", "Loading the formatter...");
-        // Black + deps are registered in pyodide-lock.json, so this
-        // loads entirely from the local pyodide/ dir (no CDN/PyPI).
-        await py.loadPackage("black");
-        blackReady = true;
-      }
+      // Black was pre-loaded during init — no lazy loading here, which
+      // keeps the format handler fast and avoids touching the global
+      // status (no "loading" flicker that would lock the buttons).
       py.globals.set("__bob_fmt_src", msg.code);
       const formatted = await py.runPythonAsync(`
 import black as _bob_black

@@ -314,7 +314,7 @@ function PracticeScreen(props) {
     setGrading(true);
     setStopMode(null);
     setTrace(null);
-    stopTimer = setTimeout(() => setStopMode("grade"), 3000);
+    stopTimer = setTimeout(() => setStopMode("grade"), 2000);
     try {
       const code = cmView.state.doc.toString();
       const result = await grade(code, ex());
@@ -351,7 +351,7 @@ function PracticeScreen(props) {
     setRunning(true);
     setStopMode(null);
     setLeftTab("log");
-    stopTimer = setTimeout(() => setStopMode("run"), 3000);
+    stopTimer = setTimeout(() => setStopMode("run"), 2000);
     try {
       const code = cmView.state.doc.toString();
       const out = await runScript(code);
@@ -422,7 +422,7 @@ function PracticeScreen(props) {
     if (formatting() || grading() || props.pyodideState() !== "ready") return;
     setFormatting(true);
     setStopMode(null);
-    stopTimer = setTimeout(() => setStopMode("format"), 3000);
+    stopTimer = setTimeout(() => setStopMode("format"), 2000);
     try {
       const code = cmView.state.doc.toString();
       const formatted = await formatPython(code);
@@ -448,7 +448,8 @@ function PracticeScreen(props) {
     }
   };
 
-  const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
+  const gradeDisabled = () =>
+    grading() || running() || props.pyodideState() !== "ready";
 
   return (
     <div class="flex-1 flex flex-col overflow-hidden min-h-0">

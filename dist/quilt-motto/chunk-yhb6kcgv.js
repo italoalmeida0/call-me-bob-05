@@ -25252,7 +25252,6 @@ var pyodide_worker_default = `/**
 
 let pyodide = null;
 let pyodidePromise = null;
-let blackReady = false;
 // Absolute URL of the local pyodide/ dir, sent from the main thread
 // (a Blob worker can't resolve relative paths against its own location).
 let pyodideUrl = null;
@@ -25284,8 +25283,13 @@ self.onmessage = async (e) => {
       const py = await ensurePyodide();
       postStatus("loading", "Teaching the robot how to grade...");
       await py.runPythonAsync(msg.harness);
+      // Pre-load Black so the Format button works instantly and so a
+      // force-stop/restart leaves the new worker fully ready.
+      postStatus("loading", "Loading the formatter...");
+      await py.loadPackage("black");
       postStatus("ready", "Robot helper ready");
-      self.postMessage({ id, type: "done" });
+      // Signal init completion — no id, handled by the ready listener.
+      self.postMessage({ type: "ready" });
       return;
     }
 
@@ -25314,13 +25318,9 @@ self.onmessage = async (e) => {
 
     if (type === "format") {
       const py = await ensurePyodide();
-      if (!blackReady) {
-        postStatus("loading", "Loading the formatter...");
-        // Black + deps are registered in pyodide-lock.json, so this
-        // loads entirely from the local pyodide/ dir (no CDN/PyPI).
-        await py.loadPackage("black");
-        blackReady = true;
-      }
+      // Black was pre-loaded during init — no lazy loading here, which
+      // keeps the format handler fast and avoids touching the global
+      // status (no "loading" flicker that would lock the buttons).
       py.globals.set("__bob_fmt_src", msg.code);
       const formatted = await py.runPythonAsync(\`
 import black as _bob_black
@@ -25584,9 +25584,9 @@ var worker = null;
 var onStatus = null;
 var nextId = 1;
 var pending = new Map;
-var initPromise = null;
-var initResolve = null;
-var initReject = null;
+var readyPromise = null;
+var readyResolve = null;
+var readyReject = null;
 function createWorker() {
   worker = new Worker(workerBlobUrl);
   worker.onmessage = (e) => {
@@ -25596,8 +25596,9 @@ function createWorker() {
         onStatus(msg.state, msg.text);
       return;
     }
-    if (msg.type === "done" && initResolve) {
-      initResolve();
+    if (msg.type === "ready") {
+      if (readyResolve)
+        readyResolve();
       return;
     }
     const handler = pending.get(msg.id);
@@ -25610,8 +25611,8 @@ function createWorker() {
       handler.reject(new Error(msg.message));
   };
   worker.onerror = (e) => {
-    if (initReject)
-      initReject(new Error(e.message || "Worker crashed"));
+    if (readyReject)
+      readyReject(new Error(e.message || "Worker crashed"));
     for (const [, h] of pending)
       h.reject(new Error("Worker crashed"));
     pending.clear();
@@ -25619,41 +25620,37 @@ function createWorker() {
       onStatus("error", "Robot helper crashed");
   };
 }
-function send(type, payload, { awaitsResult = true } = {}) {
+function startInit() {
+  readyPromise = new Promise((resolve, reject) => {
+    readyResolve = resolve;
+    readyReject = reject;
+  });
+  const pyodideUrl = new URL("pyodide/", location.href).href;
+  worker.postMessage({ type: "init", pyodideUrl, harness: HARNESS });
+  return readyPromise;
+}
+async function send(type, payload) {
+  if (!worker)
+    throw new Error("Grader not initialized");
+  await readyPromise;
   const id2 = nextId++;
   return new Promise((resolve, reject) => {
-    if (awaitsResult)
-      pending.set(id2, { resolve, reject });
+    pending.set(id2, { resolve, reject });
     worker.postMessage({ id: id2, type, ...payload });
-    if (!awaitsResult)
-      resolve();
   });
 }
 async function initBob(statusCb) {
   onStatus = statusCb || null;
-  if (initPromise)
-    return initPromise;
+  if (worker)
+    return readyPromise;
   createWorker();
-  initPromise = new Promise((resolve, reject) => {
-    initResolve = resolve;
-    initReject = reject;
-  });
-  try {
-    const pyodideUrl = new URL("pyodide/", location.href).href;
-    await send("init", { harness: HARNESS, pyodideUrl });
-  } catch (err) {
-    initReject(err);
-    throw err;
-  }
-  return initPromise;
+  return startInit();
 }
 function testsLiteral(exercise) {
   const items = exercise.tests.map((t2) => `(${JSON.stringify(t2.func || exercise.funcName)}, (${t2.args}), (${t2.expected}))`);
   return `[${items.join(", ")}]`;
 }
 async function grade(code2, exercise) {
-  if (!worker)
-    throw new Error("Grader not initialized");
   const globals2 = {
     __bob_src: code2,
     __bob_func: exercise.funcName,
@@ -25673,8 +25670,6 @@ async function grade(code2, exercise) {
   return { results, passed: results.every((r) => r.ok) };
 }
 async function runScript(code2) {
-  if (!worker)
-    throw new Error("Grader not initialized");
   const globals2 = {
     __bob_run_src: code2,
     __bob_run_timeout: RUN_TIMEOUT_SECONDS
@@ -25683,8 +25678,6 @@ async function runScript(code2) {
   return JSON.parse(out);
 }
 async function formatPython(code2) {
-  if (!worker)
-    throw new Error("Grader not initialized");
   return send("format", { code: code2 });
 }
 async function forceStop() {
@@ -25693,28 +25686,17 @@ async function forceStop() {
   for (const [, h] of pending)
     h.reject(new ForceStopError);
   pending.clear();
-  if (initReject)
-    initReject(new ForceStopError);
-  initPromise = null;
-  initResolve = null;
-  initReject = null;
+  if (readyReject)
+    readyReject(new ForceStopError);
+  readyPromise = null;
+  readyResolve = null;
+  readyReject = null;
   worker.terminate();
   worker = null;
   if (onStatus)
     onStatus("loading", "Restarting the robot helper...");
-  initPromise = new Promise((resolve, reject) => {
-    initResolve = resolve;
-    initReject = reject;
-  });
   createWorker();
-  try {
-    const pyodideUrl = new URL("pyodide/", location.href).href;
-    await send("init", { harness: HARNESS, pyodideUrl });
-  } catch (err) {
-    initReject(err);
-    throw err;
-  }
-  return initPromise;
+  return startInit();
 }
 
 // src/index.jsx
@@ -26012,7 +25994,7 @@ function PracticeScreen(props) {
     setGrading(true);
     setStopMode(null);
     setTrace(null);
-    stopTimer = setTimeout(() => setStopMode("grade"), 3000);
+    stopTimer = setTimeout(() => setStopMode("grade"), 2000);
     try {
       const code2 = cmView.state.doc.toString();
       const result = await grade(code2, ex());
@@ -26048,7 +26030,7 @@ function PracticeScreen(props) {
     setRunning(true);
     setStopMode(null);
     setLeftTab("log");
-    stopTimer = setTimeout(() => setStopMode("run"), 3000);
+    stopTimer = setTimeout(() => setStopMode("run"), 2000);
     try {
       const code2 = cmView.state.doc.toString();
       const out = await runScript(code2);
@@ -26127,7 +26109,7 @@ function PracticeScreen(props) {
       return;
     setFormatting(true);
     setStopMode(null);
-    stopTimer = setTimeout(() => setStopMode("format"), 3000);
+    stopTimer = setTimeout(() => setStopMode("format"), 2000);
     try {
       const code2 = cmView.state.doc.toString();
       const formatted = await formatPython(code2);
@@ -26158,7 +26140,7 @@ function PracticeScreen(props) {
       setFormatting(false);
     }
   };
-  const gradeDisabled = () => grading() || props.pyodideState() !== "ready";
+  const gradeDisabled = () => grading() || running() || props.pyodideState() !== "ready";
   return (() => {
     var _el$2 = _tmpl$8(), _el$3 = _el$2.firstChild, _el$4 = _el$3.firstChild, _el$5 = _el$4.firstChild, _el$6 = _el$5.firstChild, _el$7 = _el$5.nextSibling, _el$8 = _el$7.firstChild, _el$9 = _el$8.nextSibling, _el$0 = _el$4.nextSibling, _el$1 = _el$0.firstChild, _el$10 = _el$1.nextSibling, _el$11 = _el$10.nextSibling, _el$12 = _el$11.nextSibling, _el$13 = _el$12.nextSibling, _el$14 = _el$13.firstChild, _el$15 = _el$3.nextSibling, _el$16 = _el$15.firstChild, _el$17 = _el$16.firstChild, _el$31 = _el$17.nextSibling, _el$32 = _el$31.firstChild, _el$33 = _el$32.firstChild, _el$34 = _el$32.nextSibling, _el$35 = _el$34.firstChild, _el$38 = _el$16.nextSibling, _el$39 = _el$38.firstChild;
     addEventListener(_el$5, "click", props.onBack, true);
