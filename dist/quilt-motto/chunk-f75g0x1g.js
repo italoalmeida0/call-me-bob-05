@@ -25400,20 +25400,41 @@ _TIMEOUT_MSG = "TimeLimit: your code ran for more than 15s — looks like an inf
 
 # ---------------------------------------------------------------------
 # Banned-call detection (used by The Chore Wheel and friends).
-# Layer 1 — AST: any *use* of a banned name/attribute (even aliasing
-# like f = sorted), plus banned MODULE imports so tricks like
-# 'from graphlib import TopologicalSorter as T' are caught at the
-# import itself. String constants handed to getattr/eval/exec are
-# inspected too.
+# Layer 1 — AST (static): catches direct use, aliasing (f = sorted),
+#   banned module imports, subscripts of namespace dicts
+#   (vars/globals/__dict__/__builtins__), and dynamic attribute lookups
+#   (getattr with a non-constant name). ANY string constant matching a
+#   banned name/attr/module is flagged, so tricks like
+#   vars(x)['sort'] or __builtins__['sorted'] or __import__('graphlib')
+#   are caught even though the string is "just data". If this causes a
+#   false positive (e.g. a dict key that happens to match), the error
+#   message tells the user to rename it.
 # Layer 2 — runtime: banned builtins are replaced by tripwires BEFORE
-# the player's code runs, so dynamic tricks like
-# __builtins__['sorted'](x) or import builtins; builtins.sorted(x)
-# blow up too. Originals are restored after grading.
+#   the player's code runs, so dynamic tricks like __builtins__['sorted']
+#   or import builtins; builtins.sorted blow up too. Banned functions in
+#   importable modules (graphlib.TopologicalSorter, graphlib.CycleError)
+#   are patched too. Originals are restored after grading.
 # ---------------------------------------------------------------------
 class _BobBannedUse(BaseException):
     def __init__(self, name):
         super().__init__(name)
         self.name = name
+
+def _bob_is_namespace_base(node):
+    if isinstance(node, _bob_ast.Call):
+        f = node.func
+        fn = None
+        if isinstance(f, _bob_ast.Name):
+            fn = f.id
+        elif isinstance(f, _bob_ast.Attribute):
+            fn = f.attr
+        if fn in ("vars", "dir", "globals", "locals"):
+            return True
+    if isinstance(node, _bob_ast.Attribute) and node.attr == "__dict__":
+        return True
+    if isinstance(node, _bob_ast.Name) and node.id == "__builtins__":
+        return True
+    return False
 
 def _bob_find_banned(user_src, banned_names, banned_attrs, banned_modules):
     try:
@@ -25434,6 +25455,21 @@ def _bob_find_banned(user_src, banned_names, banned_attrs, banned_modules):
         if isinstance(node, _bob_ast.ImportFrom):
             if node.module in banned_modules:
                 return "import " + node.module
+        if isinstance(node, _bob_ast.Constant) and isinstance(node.value, str):
+            v = node.value
+            if v in banned_names:
+                return v + "()"
+            if v in banned_attrs:
+                return "." + v + "()"
+            if v in banned_modules:
+                return "import " + v
+        if isinstance(node, _bob_ast.Subscript):
+            sl = node.slice
+            if isinstance(sl, _bob_ast.Index):
+                sl = sl.value
+            if not (isinstance(sl, _bob_ast.Constant) and isinstance(sl.value, str)):
+                if _bob_is_namespace_base(node.value):
+                    return "dynamic lookup"
         if isinstance(node, _bob_ast.Call):
             f = node.func
             fname = None
@@ -25441,18 +25477,35 @@ def _bob_find_banned(user_src, banned_names, banned_attrs, banned_modules):
                 fname = f.id
             elif isinstance(f, _bob_ast.Attribute):
                 fname = f.attr
-            if fname in ("getattr", "vars"):
-                for a in node.args:
-                    if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
-                        if a.value in banned_names or a.value in banned_attrs:
-                            return a.value + "()"
+            if fname in ("getattr", "setattr", "hasattr", "delattr"):
+                if len(node.args) >= 2:
+                    na = node.args[1]
+                    if not (isinstance(na, _bob_ast.Constant) and isinstance(na.value, str)):
+                        return "dynamic attribute access"
+            if fname in ("__getattribute__", "__getattr__"):
+                if len(node.args) >= 1:
+                    na = node.args[0]
+                    if not (isinstance(na, _bob_ast.Constant) and isinstance(na.value, str)):
+                        return "dynamic attribute access"
+            if fname in ("__import__", "import_module"):
+                if node.args:
+                    a0 = node.args[0]
+                    if isinstance(a0, _bob_ast.Constant) and isinstance(a0.value, str):
+                        if a0.value in banned_modules:
+                            return "import " + a0.value
+                    else:
+                        return "dynamic import"
             if fname in ("eval", "exec", "compile"):
                 for a in node.args:
                     if isinstance(a, _bob_ast.Constant) and isinstance(a.value, str):
                         words = a.value.replace("(", " ").replace(")", " ").replace(".", " ").split()
                         for w in words:
-                            if w in banned_names or w in banned_attrs or w in banned_modules:
+                            if w in banned_names:
                                 return w + "()"
+                            if w in banned_attrs:
+                                return "." + w + "()"
+                            if w in banned_modules:
+                                return "import " + w
     return None
 
 def _bob_patch_builtins(banned_names):
@@ -25474,9 +25527,48 @@ def _bob_restore_builtins(patched):
     for name, real in patched.items():
         setattr(_bob_b, name, real)
 
+def _bob_patch_modules(banned_names, banned_modules):
+    patched = []
+    if "merge" in banned_names:
+        try:
+            import heapq as _bob_hq
+            if hasattr(_bob_hq, "merge"):
+                real = _bob_hq.merge
+                def _tw(*a, **k):
+                    raise _BobBannedUse("merge()")
+                _bob_hq.merge = _tw
+                patched.append(("heapq", "merge", real))
+        except ImportError:
+            pass
+    if "graphlib" in banned_modules:
+        try:
+            import graphlib as _bob_gl
+            for attr in ("TopologicalSorter", "CycleError"):
+                if hasattr(_bob_gl, attr):
+                    real = getattr(_bob_gl, attr)
+                    def _tw2(*a, _n=attr, **k):
+                        raise _BobBannedUse(_n)
+                    setattr(_bob_gl, attr, _tw2)
+                    patched.append(("graphlib", attr, real))
+        except ImportError:
+            pass
+    return patched
+
+def _bob_restore_modules(patched):
+    for mod_name, attr, real in patched:
+        try:
+            mod = __import__(mod_name)
+            setattr(mod, attr, real)
+        except Exception:
+            pass
+
 def _bob_forbidden(bad):
     return _bob_json.dumps({
-        "fatal": f"Forbidden function '{bad}' detected. This chore bans it — read the rules and solve it by hand!"
+        "fatal": (
+            f"Forbidden '{bad}' detected. This chore bans it — read the rules "
+            f"and solve it by hand! If you used '{bad}' as a variable, dict-key "
+            f"or string and NOT as the banned function, rename it and try again."
+        )
     })
 
 def bob_grade(user_src, func_name, tests_literal, banned_literal, timeout_seconds=15):
@@ -25491,6 +25583,7 @@ def bob_grade(user_src, func_name, tests_literal, banned_literal, timeout_second
         return _bob_forbidden(bad)
 
     patched = _bob_patch_builtins(banned.get("names", []))
+    mod_patched = _bob_patch_modules(banned.get("names", []), banned.get("modules", []))
     try:
         ns = {}
         _bob_sys.settrace(_bob_time_guard(timeout_seconds))
@@ -25553,6 +25646,7 @@ def bob_grade(user_src, func_name, tests_literal, banned_literal, timeout_second
         return _bob_json.dumps({"results": results})
     finally:
         _bob_restore_builtins(patched)
+        _bob_restore_modules(mod_patched)
         _bob_sys.settrace(None)
 
 def bob_run(user_src, timeout_seconds):
