@@ -5502,19 +5502,6 @@
 "unvendored_tests": false,
 "version": "26.5.1"
 },
-"mypy_extensions": {
-"depends": [],
-"file_name": "mypy_extensions-1.1.0-py3-none-any.whl",
-"imports": [
-"mypy_extensions"
-],
-"install_dir": "site",
-"name": "mypy_extensions",
-"package_type": "package",
-"sha256": "1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505",
-"unvendored_tests": false,
-"version": "1.1.0"
-},
 "pathspec": {
 "depends": [],
 "file_name": "pathspec-1.1.1-py3-none-any.whl",
@@ -5540,6 +5527,19 @@
 "sha256": "26cef14744a8385f35d0e095dc8b3a7583f6c953c2e3d269c7f82484bf5ad2de",
 "unvendored_tests": false,
 "version": "0.4.1"
+},
+"mypy-extensions": {
+"depends": [],
+"file_name": "mypy_extensions-1.1.0-py3-none-any.whl",
+"imports": [
+"mypy_extensions"
+],
+"install_dir": "site",
+"name": "mypy-extensions",
+"package_type": "package",
+"sha256": "1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505",
+"unvendored_tests": false,
+"version": "1.1.0"
 }
 }
 }
