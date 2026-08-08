@@ -16,7 +16,14 @@ import { indentUnit } from "@codemirror/language";
 import { Prec } from "@codemirror/state";
 
 import { EXERCISES, TIERS, getExercise } from "./exercises.js";
-import { initBob, grade, formatPython, runScript } from "./grader.js";
+import {
+  initBob,
+  grade,
+  formatPython,
+  runScript,
+  forceStop,
+  ForceStopError,
+} from "./grader.js";
 
 const LS_SOLVED_KEY = "bob05_solved_chores";
 const LS_CODE_PREFIX = "bob05_chore_code_";
@@ -238,11 +245,15 @@ function PracticeScreen(props) {
   const [confirmReset, setConfirmReset] = createSignal(false);
   const [sharing, setSharing] = createSignal(false);
   const [sharedOk, setSharedOk] = createSignal(false);
+  // Which button (if any) is past 3s and now offers a force-stop.
+  // null | "grade" | "run" | "format"
+  const [stopMode, setStopMode] = createSignal(null);
 
   let editorContainerRef;
   let traceRef;
   let cmView = null;
   let saveTimeout = null;
+  let stopTimer = null;
 
   onMount(() => {
     cmView = new EditorView({
@@ -295,12 +306,15 @@ function PracticeScreen(props) {
   onCleanup(() => {
     if (cmView) cmView.destroy();
     if (saveTimeout) clearTimeout(saveTimeout);
+    if (stopTimer) clearTimeout(stopTimer);
   });
 
   const runGrader = async () => {
     if (grading() || props.pyodideState() !== "ready") return;
     setGrading(true);
+    setStopMode(null);
     setTrace(null);
+    stopTimer = setTimeout(() => setStopMode("grade"), 3000);
     try {
       const code = cmView.state.doc.toString();
       const result = await grade(code, ex());
@@ -310,9 +324,15 @@ function PracticeScreen(props) {
         props.onSolved(ex().id);
       }
     } catch (err) {
-      setTrace({ fatal: String(err && err.message ? err.message : err) });
       setLeftTab("log");
+      if (err instanceof ForceStopError) {
+        setTrace({ fatal: "Force-stopped — restarting the robot helper. Try again in a moment." });
+      } else {
+        setTrace({ fatal: String(err && err.message ? err.message : err) });
+      }
     } finally {
+      clearTimeout(stopTimer);
+      setStopMode(null);
       setGrading(false);
       setTimeout(() => {
         if (traceRef) traceRef.scrollTop = traceRef.scrollHeight;
@@ -329,14 +349,22 @@ function PracticeScreen(props) {
     )
       return;
     setRunning(true);
+    setStopMode(null);
     setLeftTab("log");
+    stopTimer = setTimeout(() => setStopMode("run"), 3000);
     try {
       const code = cmView.state.doc.toString();
       const out = await runScript(code);
       setTrace({ run: out });
     } catch (err) {
-      setTrace({ fatal: String(err && err.message ? err.message : err) });
+      if (err instanceof ForceStopError) {
+        setTrace({ fatal: "Force-stopped — restarting the robot helper. Try again in a moment." });
+      } else {
+        setTrace({ fatal: String(err && err.message ? err.message : err) });
+      }
     } finally {
+      clearTimeout(stopTimer);
+      setStopMode(null);
       setRunning(false);
       setTimeout(() => {
         if (traceRef) traceRef.scrollTop = traceRef.scrollHeight;
@@ -393,6 +421,8 @@ function PracticeScreen(props) {
   const formatCode = async () => {
     if (formatting() || grading() || props.pyodideState() !== "ready") return;
     setFormatting(true);
+    setStopMode(null);
+    stopTimer = setTimeout(() => setStopMode("format"), 3000);
     try {
       const code = cmView.state.doc.toString();
       const formatted = await formatPython(code);
@@ -404,10 +434,16 @@ function PracticeScreen(props) {
       }
     } catch (err) {
       setLeftTab("log");
-      setTrace({
-        fatal: "Black couldn't format this code: " + err.message,
-      });
+      if (err instanceof ForceStopError) {
+        setTrace({ fatal: "Force-stopped — restarting the robot helper. Try again in a moment." });
+      } else {
+        setTrace({
+          fatal: "Black couldn't format this code: " + err.message,
+        });
+      }
     } finally {
+      clearTimeout(stopTimer);
+      setStopMode(null);
       setFormatting(false);
     }
   };
@@ -461,43 +497,85 @@ function PracticeScreen(props) {
             <Icon name="restart-alt" color="a8a29e" size={16} />
           </button>
           <button
-            onClick={formatCode}
-            disabled={formatting() || props.pyodideState() !== "ready"}
-            class="p-2 rounded-lg bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] transition-colors flex shrink-0 shadow-[0_3px_0_#0c0a09] active:translate-y-[2px] active:shadow-none"
-            title="Format code"
-          >
-            <Icon
-              name={formatting() ? "hourglass-top" : "format-align-left"}
-              color="a8a29e"
-              size={16}
-            />
-          </button>
-          <button
-            onClick={runCode}
+            onClick={stopMode() === "format" ? forceStop : formatCode}
             disabled={
-              running() || grading() || props.pyodideState() !== "ready"
+              stopMode() === "format"
+                ? false
+                : formatting() || props.pyodideState() !== "ready"
             }
-            class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] transition-colors flex shrink-0 shadow-[0_3px_0_#065f46] active:translate-y-[2px] active:shadow-none"
-            title="Run script"
+            class={`p-2 rounded-lg transition-colors flex shrink-0 active:translate-y-[2px] active:shadow-none ${
+              stopMode() === "format"
+                ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_3px_0_#7f1d1d]"
+                : "bg-[#292524] hover:bg-[#44403c] disabled:opacity-50 disabled:cursor-not-allowed text-[#a8a29e] shadow-[0_3px_0_#0c0a09]"
+            }`}
+            title={stopMode() === "format" ? "Force stop" : "Format code"}
           >
             <Icon
-              name={running() ? "hourglass-top" : "play-arrow"}
-              color="022c22"
+              name={
+                stopMode() === "format"
+                  ? "close"
+                  : formatting()
+                    ? "hourglass-top"
+                    : "format-align-left"
+              }
+              color={stopMode() === "format" ? "ffffff" : "a8a29e"}
               size={16}
             />
           </button>
           <button
-            onClick={runGrader}
-            disabled={gradeDisabled()}
-            class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] text-sm font-extrabold transition-colors shadow-[0_3px_0_#92400e] active:translate-y-[2px] active:shadow-none"
+            onClick={stopMode() === "run" ? forceStop : runCode}
+            disabled={
+              stopMode() === "run"
+                ? false
+                : running() || grading() || props.pyodideState() !== "ready"
+            }
+            class={`p-2 rounded-lg transition-colors flex shrink-0 active:translate-y-[2px] active:shadow-none ${
+              stopMode() === "run"
+                ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_3px_0_#7f1d1d]"
+                : "bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] shadow-[0_3px_0_#065f46]"
+            }`}
+            title={stopMode() === "run" ? "Force stop" : "Run script"}
+          >
+            <Icon
+              name={
+                stopMode() === "run"
+                  ? "close"
+                  : running()
+                    ? "hourglass-top"
+                    : "play-arrow"
+              }
+              color={stopMode() === "run" ? "ffffff" : "022c22"}
+              size={16}
+            />
+          </button>
+          <button
+            onClick={stopMode() === "grade" ? forceStop : runGrader}
+            disabled={stopMode() === "grade" ? false : gradeDisabled()}
+            class={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-extrabold transition-colors active:translate-y-[2px] active:shadow-none ${
+              stopMode() === "grade"
+                ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_3px_0_#7f1d1d]"
+                : "bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-[#451a03] shadow-[0_3px_0_#92400e]"
+            }`}
             title={
-              props.pyodideState() !== "ready"
-                ? "Waking up..."
-                : "Grade me!"
+              stopMode() === "grade"
+                ? "Force stop"
+                : props.pyodideState() !== "ready"
+                  ? "Waking up..."
+                  : "Grade me!"
             }
           >
-            <Icon name="smart-toy" color="451a03" size={16} />
-            <span>{grading() ? "Grading..." : "Grade me!"}</span>
+            <Icon
+              name={stopMode() === "grade" ? "close" : "smart-toy"}
+              color={stopMode() === "grade" ? "ffffff" : "451a03"}
+              size={16}
+            />
+            <span>
+              {stopMode() === "grade"
+                ? "Stop"
+                : grading()
+                  ? "Grading..."
+                  : "Grade me!"}
+            </span>
           </button>
         </div>
       </div>

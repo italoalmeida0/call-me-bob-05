@@ -1,10 +1,15 @@
 /**
  * grader.js — Bob's little robot helper.
  *
- * Loads Pyodide (from the CDN script tag) and grades the player's code
- * entirely in the browser. Mirrors the trace style of a terminal grader:
- * for each test it reports the call, the expected value, what the player's
- * function returned, and OK/KO.
+ * Pyodide runs entirely inside a Web Worker (see pyodide.worker.js), so
+ * the UI thread never blocks — not while Pyodide boots, not while it
+ * grades, and not when player code loops forever. forceStop() kills the
+ * worker and starts a fresh one, which is the only way to break a
+ * runaway Python loop without freezing the page.
+ *
+ * The grading harness (HARNESS below) is unchanged: it still uses a
+ * sys.settrace time guard (15s) as a safety net, but the real
+ * kill-switch is now the user-driven force-stop after 3s.
  */
 
 const HARNESS = `
@@ -222,29 +227,100 @@ def bob_run(user_src, timeout_seconds):
     return _bob_json.dumps({"stdout": buf.getvalue(), "error": error})
 `;
 
-let pyodideInstance = null;
-
 const GRADE_TIMEOUT_SECONDS = 15;
 const RUN_TIMEOUT_SECONDS = 15;
 
+// ==========================================
+// WORKER BRIDGE
+// ==========================================
+// The worker source is inlined as a string (see plugins/worker-inline-
+// plugin.ts) and started from a Blob URL. This keeps it self-contained:
+// no separate file to serve/copy, and it works identically in dev and
+// prod. A Blob worker can't resolve relative URLs, so we pass the
+// absolute pyodide/ URL in the init message.
+import workerSource from "./pyodide.worker.js";
+const workerBlobUrl = URL.createObjectURL(
+  new Blob([workerSource], { type: "application/javascript" }),
+);
+
+// Force-stopped operations are rejected with this so callers can tell
+// them apart from real errors and show a "restarting" message.
+export class ForceStopError extends Error {
+  constructor() {
+    super("Force-stopped — restarting the robot helper.");
+    this.name = "ForceStopError";
+  }
+}
+
+let worker = null;
+let onStatus = null;
+let nextId = 1;
+const pending = new Map(); // id -> { resolve, reject }
+let initPromise = null;
+let initResolve = null;
+let initReject = null;
+
+function createWorker() {
+  worker = new Worker(workerBlobUrl);
+  worker.onmessage = (e) => {
+    const msg = e.data;
+    // Status updates have no id — they're fire-and-forget from the worker.
+    if (msg.type === "status") {
+      if (onStatus) onStatus(msg.state, msg.text);
+      return;
+    }
+    if (msg.type === "done" && initResolve) {
+      // init completed
+      initResolve();
+      return;
+    }
+    const handler = pending.get(msg.id);
+    if (!handler) return;
+    pending.delete(msg.id);
+    if (msg.type === "result") handler.resolve(msg.value);
+    else if (msg.type === "error") handler.reject(new Error(msg.message));
+  };
+  worker.onerror = (e) => {
+    // Fatal worker error: reject the init promise if pending, and all
+    // pending requests. The worker is dead.
+    if (initReject) initReject(new Error(e.message || "Worker crashed"));
+    for (const [, h] of pending) h.reject(new Error("Worker crashed"));
+    pending.clear();
+    if (onStatus) onStatus("error", "Robot helper crashed");
+  };
+}
+
+function send(type, payload, { awaitsResult = true } = {}) {
+  const id = nextId++;
+  return new Promise((resolve, reject) => {
+    if (awaitsResult) pending.set(id, { resolve, reject });
+    worker.postMessage({ id, type, ...payload });
+    if (!awaitsResult) resolve();
+  });
+}
+
 /**
- * Loads Pyodide and defines the grading harness.
+ * Loads Pyodide (inside the worker) and defines the grading harness.
  * onStatus(state, text): state is "loading" | "ready" | "error".
  */
-export async function initBob(onStatus) {
-  if (pyodideInstance) return pyodideInstance;
-
-  const setStatus = (s, t) => onStatus && onStatus(s, t);
-
-  setStatus("loading", "Waking up Bob's robot helper...");
-  const pyodide = await loadPyodide();
-
-  setStatus("loading", "Teaching the robot how to grade...");
-  await pyodide.runPythonAsync(HARNESS);
-
-  pyodideInstance = pyodide;
-  setStatus("ready", "Robot helper ready");
-  return pyodide;
+export async function initBob(statusCb) {
+  onStatus = statusCb || null;
+  if (initPromise) return initPromise;
+  createWorker();
+  initPromise = new Promise((resolve, reject) => {
+    initResolve = resolve;
+    initReject = reject;
+  });
+  try {
+    // pyodide/ sits next to the current page (build.ts copies it into
+    // every exercise route). Resolve its absolute URL from the page.
+    const pyodideUrl = new URL("pyodide/", location.href).href;
+    await send("init", { harness: HARNESS, pyodideUrl });
+  } catch (err) {
+    initReject(err);
+    throw err;
+  }
+  return initPromise;
 }
 
 function testsLiteral(exercise) {
@@ -261,25 +337,20 @@ function testsLiteral(exercise) {
  *   { results: [{ok, expected, got, error}], passed: bool }
  */
 export async function grade(code, exercise) {
-  const pyodide = pyodideInstance;
-  if (!pyodide) throw new Error("Grader not initialized");
+  if (!worker) throw new Error("Grader not initialized");
 
-  pyodide.globals.set("__bob_src", code);
-  pyodide.globals.set("__bob_func", exercise.funcName);
-  pyodide.globals.set("__bob_tests", testsLiteral(exercise));
-  pyodide.globals.set(
-    "__bob_banned",
-    JSON.stringify(exercise.banned || {}),
-  );
-  pyodide.globals.set("__bob_timeout", GRADE_TIMEOUT_SECONDS);
-
-  const out = await pyodide.runPythonAsync(
-    "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)",
-  );
+  const globals = {
+    __bob_src: code,
+    __bob_func: exercise.funcName,
+    __bob_tests: testsLiteral(exercise),
+    __bob_banned: JSON.stringify(exercise.banned || {}),
+    __bob_timeout: GRADE_TIMEOUT_SECONDS,
+  };
+  const expr =
+    "bob_grade(__bob_src, __bob_func, __bob_tests, __bob_banned, __bob_timeout)";
+  const out = await send("run", { globals, expr });
   const data = JSON.parse(out);
-
   if (data.fatal) return data;
-
   const results = data.results.map((r, i) => ({
     ...r,
     call: exercise.tests[i].call,
@@ -294,57 +365,60 @@ export async function grade(code, exercise) {
  * Returns { stdout: string, error: null | "timeout" | "output_limit" | "SomeError: ..." }
  */
 export async function runScript(code) {
-  const pyodide = pyodideInstance;
-  if (!pyodide) throw new Error("Grader not initialized");
-
-  pyodide.globals.set("__bob_run_src", code);
-  pyodide.globals.set("__bob_run_timeout", RUN_TIMEOUT_SECONDS);
-  const out = await pyodide.runPythonAsync(
-    "bob_run(__bob_run_src, __bob_run_timeout)",
-  );
+  if (!worker) throw new Error("Grader not initialized");
+  const globals = {
+    __bob_run_src: code,
+    __bob_run_timeout: RUN_TIMEOUT_SECONDS,
+  };
+  const out = await send("run", { globals, expr: "bob_run(__bob_run_src, __bob_run_timeout)" });
   return JSON.parse(out);
-}
-// ==========================================
-// BLACK FORMATTER (via micropip, lazy-loaded)
-// ==========================================
-let blackPromise = null;
-
-async function ensureBlack(pyodide) {
-  if (!blackPromise) {
-    blackPromise = (async () => {
-      await pyodide.loadPackage("micropip");
-      await pyodide.runPythonAsync(
-        "import micropip\nawait micropip.install('black')",
-      );
-    })();
-    // If the download/install fails, allow a retry on the next click
-    blackPromise.catch(() => {
-      blackPromise = null;
-    });
-  }
-  return blackPromise;
 }
 
 /**
- * Formats `code` with Black (installed on first use via micropip).
- * Returns the formatted source, or the original text if nothing changed.
- * Throws if Black can't parse the code or fails to install.
+ * Formats `code` with Black (loaded on first use from the local
+ * pyodide/ dir). Returns the formatted source, or the original text if
+ * nothing changed. Throws if Black can't parse the code.
  */
 export async function formatPython(code) {
-  const pyodide = pyodideInstance;
-  if (!pyodide) throw new Error("Grader not initialized");
+  if (!worker) throw new Error("Grader not initialized");
+  return send("format", { code });
+}
 
-  await ensureBlack(pyodide);
-  pyodide.globals.set("__bob_fmt_src", code);
-  return pyodide.runPythonAsync(`
-import black as _bob_black
+/**
+ * Kills the current worker and spins up a fresh one. Every pending
+ * operation (grade / run / format) is rejected with ForceStopError so
+ * the UI can show a "restarting" state. The new worker re-runs initBob
+ * automatically; onStatus will flip back through loading -> ready.
+ */
+export async function forceStop() {
+  if (!worker) return;
 
-def _bob_black_format(src):
-    try:
-        return _bob_black.format_str(src, mode=_bob_black.Mode())
-    except _bob_black.report.NothingChanged:
-        return src
+  // Reject everything in flight as force-stopped.
+  for (const [, h] of pending) h.reject(new ForceStopError());
+  pending.clear();
 
-_bob_black_format(__bob_fmt_src)
-`);
+  // The init promise (if mid-boot) also dies — reset so re-init works.
+  if (initReject) initReject(new ForceStopError());
+  initPromise = null;
+  initResolve = null;
+  initReject = null;
+
+  worker.terminate();
+  worker = null;
+
+  // Re-boot a fresh worker.
+  if (onStatus) onStatus("loading", "Restarting the robot helper...");
+  initPromise = new Promise((resolve, reject) => {
+    initResolve = resolve;
+    initReject = reject;
+  });
+  createWorker();
+  try {
+    const pyodideUrl = new URL("pyodide/", location.href).href;
+    await send("init", { harness: HARNESS, pyodideUrl });
+  } catch (err) {
+    initReject(err);
+    throw err;
+  }
+  return initPromise;
 }

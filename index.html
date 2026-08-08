@@ -26,12 +26,8 @@
       rel="stylesheet"
     />
 
-    <!-- Pyodide -->
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js"
-    ></script>
-
+    <!-- Pyodide is bundled locally (pyodide/) and loaded inside a Web
+         Worker — see src/pyodide.worker.js + src/grader.js. No CDN. -->
     <link rel="stylesheet" href="./style.tailwindcss.css" />
     <link rel="stylesheet" href="./style.css" />
   </head>

@@ -1,2 +1,2 @@
 [serve.static]
-plugins = [ "./plugins/tailwind-plugin.ts", "./plugins/solid-plugin.ts"]
+plugins = [ "./plugins/tailwind-plugin.ts", "./plugins/solid-plugin.ts", "./plugins/worker-inline-plugin.ts"]
