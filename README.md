@@ -25,13 +25,14 @@ after) solving it.
 | 1 | The Crate Rows | Split a list into rows of n, padding the short last row with `None` | List Chunking, Matrix Building |
 | 2 | The Chore Wheel | Detect a directed cycle in a chore graph — **without** `graphlib` (`TopologicalSorter`, `CycleError`) | Graph Cycle Detection, DFS |
 | 2 | The Crate Ledger | Run-length encode a tally and decode it back — counts never exceed 9, two functions | Run-Length Encoding, String Parsing |
+| 2 | The Pumpkin Patches | Count groups of connected 1s in a grid, up/down/left/right only | Number of Islands, Flood Fill / DFS |
 | 3 | The Coil Garden | Fill an n×n matrix with 1..n² in a clockwise spiral | Spiral Matrix, Matrix Simulation |
 | 3 | Grandma's Quilt | Find a word in a letter grid across 8 directions, reporting position and direction | Word Search, 2D Grid Traversal |
 | 3 | Signpost Repaint | Shortest word chain changing one letter at a time through a dictionary | Word Ladder, BFS |
 
 ## How it works
 
-- 📝 **7 chores** across 3 days of Bob's week, each with a story-driven subject
+- 📝 **8 chores** across 3 days of Bob's week, each with a story-driven subject
 - 🤖 **In-browser grading** — tests run locally via [Pyodide](https://pyodide.org)
   (Python compiled to WebAssembly), nothing ever leaves your machine
 - 🔍 **Full test trace** — every test case shows `[OK]`/`[KO]` up front, then the

@@ -291,6 +291,70 @@ export const EXERCISES = [
     ],
   },
 
+  {
+    id: "pumpkin-patches",
+    tier: 2,
+    title: "The Pumpkin Patches",
+    tagline: "How many separate pumpkin patches does Bob have to water?",
+    icon: "grass",
+    funcName: "count_patches",
+    topics: ["Number of Islands", "Flood Fill / DFS"],
+    stub: "def count_patches(grid: list[list[int]]) -> int:\n    pass\n",
+    story: [
+      "Bob's field is a grid of little plots. A 1 means a pumpkin is growing there, a 0 means bare soil. Pumpkins that touch each other — straight up, down, left or right — belong to the same patch. Diagonal neighbors don't count: Bob's watering can doesn't reach around corners.",
+      "A patch ends where the soil begins or where the field ends. Bob wants to know how many separate patches he has to water this morning, so he can decide whether to bring the big can or the small one.",
+      "Given the field as a list of rows, return the number of patches.",
+    ],
+    signature: "def count_patches(grid: list[list[int]]) -> int:",
+    rules: [
+      "The field is a list of rows; each plot is 1 (pumpkin) or 0 (soil)",
+      "A patch is a group of 1s connected horizontally or vertically",
+      "Diagonal neighbors are NOT connected",
+      "A patch is surrounded by 0s or by the edges of the field",
+      "Return the number of patches as an int",
+      "An empty field (or a field with empty rows) has 0 patches",
+      "The input grid must not be modified",
+    ],
+    examples: [
+      {
+        input: "count_patches([[1, 0, 1], [0, 1, 0], [1, 0, 1]])",
+        output: "5",
+        note: "diagonals don't connect — five lonely pumpkins",
+      },
+      {
+        input: "count_patches([[1, 1, 0, 0, 0], [1, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 1]])",
+        output: "3",
+        note: "the 2x2 block, the single pumpkin, and the pair in the corner",
+      },
+      {
+        input: "count_patches([[1, 1], [1, 1]])",
+        output: "1",
+      },
+      {
+        input: "count_patches([])",
+        output: "0",
+        note: "no field, no patches",
+      },
+    ],
+    tests: [
+      { call: "count_patches([])", args: "([],)", expected: "0" },
+      { call: "count_patches([[]])", args: "([[]],)", expected: "0" },
+      { call: "count_patches([[0, 0], [0, 0]])", args: "([[0, 0], [0, 0]],)", expected: "0" },
+      { call: "count_patches([[1]])", args: "([[1]],)", expected: "1" },
+      { call: "count_patches([[1, 0, 1], [0, 1, 0], [1, 0, 1]])", args: "([[1, 0, 1], [0, 1, 0], [1, 0, 1]],)", expected: "5" },
+      { call: "count_patches([[1, 1, 0, 0, 0], [1, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 1]])", args: "([[1, 1, 0, 0, 0], [1, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 1]],)", expected: "3" },
+      { call: "count_patches([[1, 1], [1, 1]])", args: "([[1, 1], [1, 1]],)", expected: "1" },
+      { call: "count_patches([[1, 0, 1, 1]])", args: "([[1, 0, 1, 1]],)", expected: "2" },
+      { call: "count_patches([[1], [0], [1], [1]])", args: "([[1], [0], [1], [1]],)", expected: "2" },
+      { call: "count_patches([[1, 0, 0], [0, 1, 0], [0, 0, 1]])", args: "([[1, 0, 0], [0, 1, 0], [0, 0, 1]],)", expected: "3" },
+      { call: "count_patches([[1, 1, 1], [0, 0, 1], [1, 1, 1]])", args: "([[1, 1, 1], [0, 0, 1], [1, 1, 1]],)", expected: "1" },
+      { call: "count_patches([[1, 0, 1], [1, 0, 1], [1, 1, 1]])", args: "([[1, 0, 1], [1, 0, 1], [1, 1, 1]],)", expected: "1" },
+      { call: "count_patches([[1, 1, 1], [1, 0, 1], [1, 1, 1]])", args: "([[1, 1, 1], [1, 0, 1], [1, 1, 1]],)", expected: "1" },
+      { call: "count_patches([[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]])", args: "([[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]],)", expected: "2" },
+      { call: "count_patches([[1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1]])", args: "([[1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1]],)", expected: "6" },
+    ],
+  },
+
   // -----------------------------------------------------------------------
   // DAY 3
   // -----------------------------------------------------------------------
