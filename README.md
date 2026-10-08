@@ -4,10 +4,11 @@
 
 A cozy, game-like site to practice Python in the browser. Help Bob book the
 village barns, line up delivery crates, untangle his chore wheel, tally the
-crate ledger, plant a spiral garden, read grandma's quilt and repaint the
-signposts — one chore at a time. No timers, no pressure: pick a chore, read
-Bob's note, write your function and hit **Grade me!**. Bob's little robot
-helper checks your code right in your browser and shows a full test trace.
+crate ledger, water the pumpkin patches, plant a spiral garden, read grandma's
+quilt and repaint the signposts — one chore at a time. No timers, no pressure:
+pick a chore, read Bob's note, write your function and hit **Grade me!**. Bob's
+little robot helper checks your code right in your browser and shows a full
+test trace.
 
 **🌐 Live site:** https://italoalmeida0.github.io/call-me-bob-05/
 
@@ -25,7 +26,7 @@ after) solving it.
 | 1 | The Crate Rows | Split a list into rows of n, padding the short last row with `None` | List Chunking, Matrix Building |
 | 2 | The Chore Wheel | Detect a directed cycle in a chore graph — **without** `graphlib` (`TopologicalSorter`, `CycleError`) | Graph Cycle Detection, DFS |
 | 2 | The Crate Ledger | Run-length encode a tally and decode it back — counts never exceed 9, two functions | Run-Length Encoding, String Parsing |
-| 2 | The Pumpkin Patches | Count groups of connected 1s in a grid, up/down/left/right only | Number of Islands, Flood Fill / DFS |
+| 3 | The Pumpkin Patches | Count groups of connected 1s in a grid, up/down/left/right only | Number of Islands, Flood Fill / DFS |
 | 3 | The Coil Garden | Fill an n×n matrix with 1..n² in a clockwise spiral | Spiral Matrix, Matrix Simulation |
 | 3 | Grandma's Quilt | Find a word in a letter grid across 8 directions, reporting position and direction | Word Search, 2D Grid Traversal |
 | 3 | Signpost Repaint | Shortest word chain changing one letter at a time through a dictionary | Word Ladder, BFS |
